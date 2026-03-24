@@ -3,25 +3,18 @@ using System.Configuration;
 using System.Data.Common;
 using MySql.Data.MySqlClient;
 using Dapper;
-using Org.BouncyCastle.Crypto.Generators;
-using BCrypt.Net;
-using Org.BouncyCastle.Asn1.Mozilla;
+using API.Helpers;
 
 namespace API.Services
 {
-    public class LogInInfo()
-    {
-        public int ID { get; set; }
-        public string? Password { get; set; }
-    }
-    
+    //Interfejs serwisu SQL do wsrtzykiwania zależności
     public interface ILoggingSqlService
     {
         Task<int> ValidateLogIn(string Username, string Password);
-        Task CreateUser(string Username, string Password);
-
+        Task<bool> CreateUser(string Username, string Password);
     }
 
+    //Implementacja interfejsu ILoggingSqlService
     public class LoggingSqlService(IConfiguration configuration) : ILoggingSqlService
     {
         private readonly string _connectionString = configuration.GetConnectionString("Default")!;
@@ -31,6 +24,8 @@ namespace API.Services
             return new MySqlConnection(_connectionString);
         }
 
+        //Funkcja walidująca logowanie, sprawdza czy hasło zgadza się z hashem w bazie danych.
+        //Jeśli walidacja przebiegła pomyślnie, zwraca id użytkownika, jeśli nie przebiegła pomyślnie, zwraca 0.
         public async Task<int> ValidateLogIn(string Username, string Password)
         {
             string query = """
@@ -40,7 +35,7 @@ namespace API.Services
             var connection = CreateConnection();
             try
             {
-                var data = await connection.QuerySingleAsync<LogInInfo>(query, new { Username });
+                var data = await connection.QuerySingleAsync<LogInData>(query, new { Username });
                 if(BCrypt.Net.BCrypt.Verify(Password, data.Password))
                 {
                     return data.ID;
@@ -56,7 +51,9 @@ namespace API.Services
             }
         }
 
-        public async Task CreateUser(string Username, string Password)
+        //Funkcja tworząca użytkownika.
+        //Zwraca wartość true, jeśli wszystko przebiegło pomyślnie i wartość false, jeśli coś poszło nie tak.
+        public async Task<bool> CreateUser(string Username, string Password)
         {
             string query = """
                            INSERT INTO logindata (Username, Password) VALUES (@Username, @HashedPassword)
@@ -67,10 +64,11 @@ namespace API.Services
             {
                 var HashedPassword = BCrypt.Net.BCrypt.HashPassword(Password);
                 await connection.ExecuteAsync(query, new { Username, HashedPassword });
+                return true;
             }
             catch
             {
-                return;
+                return false;
             }
         }
     }

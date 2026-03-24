@@ -1,29 +1,34 @@
-using API.Filters;
+﻿using API.Filters;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 
+//Odczytanie RSA z pliku tekstowego
 var rsa = RSA.Create();
 rsa.ImportFromPem(File.ReadAllText("private_key.pem"));
 
+//Wyeksportowanie klucza publicznego z RSA
 var publicKey = new RsaSecurityKey(rsa.ExportParameters(false))
 {
-    KeyId = "My_key_id"
+    KeyId = "RSA_KEY_ID"
 };
 
+//Builder
 var builder = WebApplication.CreateBuilder(args);
 
+//Konfiguracja maksymalnego rozmiaru Requesta
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MaxRequestBodySize = 1_000_000;
 });
 
+//Rejestracja serwisów
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILoggingSqlService, LoggingSqlService>();
 builder.Services.AddScoped<CsrfFilter>();
 
+//Autentykacja JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(jwtOptions =>
 {
     jwtOptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
@@ -47,21 +52,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         },
         OnMessageReceived = context =>
         {
+            //Wyciągamy token JWT z cookies do kontekstu, tak aby JWT authenticator go widział
             context.Token = context.Request.Cookies["JWT_Token"];
             return Task.CompletedTask;
         }
     };
 });
 
+//Autoryzacja JWT
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+//Uruchomienie zabezpieczeń
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
+//Middleware odpowiedzialny za zabezpieczenie przed atakami XSS
 app.Use(async (context, next) =>
 {
     context.Response.Headers.ContentSecurityPolicy =
@@ -80,6 +88,8 @@ app.Use(async (context, next) =>
     await next();
 });
 
+//Mapowanie kontrolerów
 app.MapControllers();
 
+//Uruchomienie aplikacji
 app.Run();

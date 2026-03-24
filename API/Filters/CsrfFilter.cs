@@ -4,6 +4,7 @@ using System.Net;
 
 namespace API.Filters
 {
+    //Customowy filtr porównujący token CSRF zapisany w cookies z tym wysłanym przez request
     public class CsrfFilter : IAsyncActionFilter
     {
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -17,6 +18,7 @@ namespace API.Filters
 
             if ((string.IsNullOrEmpty(cookieToken) || string.IsNullOrEmpty(headerToken) || cookieToken != headerToken))
             {
+                //W przypadku niezgodności tokenu zwracany jest status code 403
                 context.Result = new StatusCodeResult(403);
                 return;
             }
