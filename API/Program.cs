@@ -26,6 +26,7 @@ builder.WebHost.ConfigureKestrel(options =>
 //Rejestracja serwisów
 builder.Services.AddControllers();
 builder.Services.AddScoped<ILoggingSqlService, LoggingSqlService>();
+builder.Services.AddScoped<IItemsSqlService, ItemsSqlService>();
 builder.Services.AddScoped<CsrfFilter>();
 
 //Autentykacja JWT

@@ -19,11 +19,6 @@ namespace API.Services
     {
         private readonly string _connectionString = configuration.GetConnectionString("Default")!;
 
-        private MySqlConnection CreateConnection()
-        {
-            return new MySqlConnection(_connectionString);
-        }
-
         //Funkcja walidująca logowanie, sprawdza czy hasło zgadza się z hashem w bazie danych.
         //Jeśli walidacja przebiegła pomyślnie, zwraca id użytkownika, jeśli nie przebiegła pomyślnie, zwraca 0.
         public async Task<int> ValidateLogIn(string Username, string Password)
@@ -32,7 +27,7 @@ namespace API.Services
                            SELECT ID, Password FROM logindata WHERE BINARY Username = @Username
                            """;
 
-            var connection = CreateConnection();
+            var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
                 var data = await connection.QuerySingleAsync<LogInData>(query, new { Username });
@@ -59,7 +54,7 @@ namespace API.Services
                            INSERT INTO logindata (Username, Password) VALUES (@Username, @HashedPassword)
                            """;
 
-            var connection = CreateConnection();
+            var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
                 var HashedPassword = BCrypt.Net.BCrypt.HashPassword(Password);

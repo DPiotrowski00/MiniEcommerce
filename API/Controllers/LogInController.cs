@@ -22,15 +22,29 @@ namespace API.Controllers
         [ServiceFilter(typeof(CsrfFilter))]
         [Authorize]
         [HttpGet]
-        public ActionResult Get()
+        public ActionResult Test()
         {
             return Ok();
         }
 
-        //Endpoint do walidacji logowania. W odpowiedzi zwraca [JWS httponly secure cookie] i [CSRF secure cookie]
+        //Endpoint do walidacji logowania. W odpowiedzi zwraca [JWS http-only secure cookie] i [CSRF secure cookie]
         [HttpPost]
         public async Task<ActionResult<string>> ValidateLogIn([FromBody] LogInData request)
         {
+            //Walidacja wartości wprowadzonych przez użytkownika
+            if (request.Login == null || request.Password == null) return BadRequest();
+            //Szablon filtrujący login i hasło przesłane przez użytkownika, dozwolone znaki to litery a-z, A-Z oraz cyfry 0-9
+            string regex = "[0-9a-zA-Z]{3,8}";
+
+            //Sprawdzenie czy wartości są zgodne z szablonem
+            var matchLogin = Regex.Match(request.Login, regex);
+            var matchPassword = Regex.Match(request.Password, regex);
+            if (!matchLogin.Success || !matchPassword.Success)
+            {
+                //Zwracaj BadRequest gdy login lub hasło nie jest poprawne
+                return BadRequest();
+            }
+
             //Pobranie RSA z pliku tekstowego
             var rsa = RSA.Create();
             rsa.ImportFromPem(System.IO.File.ReadAllText("private_key.pem"));
@@ -99,6 +113,8 @@ namespace API.Controllers
         [HttpPut]
         public async Task<ActionResult> CreateUser([FromBody] LogInData request)
         {
+            //Walidacja wartości wprowadzonych przez użytkownika
+            if (request.Login == null || request.Password == null) return BadRequest();
             //Szablon filtrujący login i hasło przesłane przez użytkownika, dozwolone znaki to litery a-z, A-Z oraz cyfry 0-9
             string regex = "[0-9a-zA-Z]{3,8}";
 
