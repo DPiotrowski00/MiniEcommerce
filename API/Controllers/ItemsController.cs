@@ -3,9 +3,9 @@ using API.Filters;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace API.Controllers
@@ -22,12 +22,61 @@ namespace API.Controllers
             public IFormFile? Image { get; set; }
         }
 
+        public class ItemResponse
+        {
+            public int ID { get; set; }
+            public string? CreatorName { get; set; }
+            public string? Name { get; set; }
+            public string? Description { get; set; }
+            public decimal Price { get; set; }
+            public string? ThumbnailURL { get; set; }
+            public DateTime? CreationTime { get; set; }
+        }
+
         [ServiceFilter(typeof(CsrfFilter))]
         [Authorize]
         [HttpGet]
-        public ActionResult Test()
+        public async Task<ActionResult> GetItems()
         {
-            return Ok();
+            var items = await _sqlService.GetItems();
+            List<ItemResponse> response = [];
+
+            foreach (var i in items)
+            {
+                ItemResponse newItem = new()
+                {
+                    ID = i.ID,
+                    CreatorName = await _sqlService.GetCreatorName(i.ID),
+                    Name = i.Name,
+                    Description = i.Description,
+                    Price = i.Price,
+                    ThumbnailURL = "/uploads/" + i.Thumbnail,
+                    CreationTime = i.CreationTime
+                };
+                response.Add(newItem);
+            }
+
+            return Ok(response);
+        }
+
+        [ServiceFilter(typeof(CsrfFilter))]
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetItemById(int id)
+        {
+            var item = await _sqlService.GetItemById(id);
+            ItemResponse response = new()
+            {
+                ID = item.ID,
+                CreatorName = await _sqlService.GetCreatorName(item.ID),
+                Name = item.Name,
+                Description = item.Description,
+                Price = item.Price,
+                ThumbnailURL = "/uploads/" + item.Thumbnail,
+                CreationTime = item.CreationTime
+            };
+
+            return Ok(response);
         }
 
         [ServiceFilter(typeof(CsrfFilter))]
@@ -57,20 +106,11 @@ namespace API.Controllers
                 var extension = Path.GetExtension(image.FileName);
                 var fileName = $"{Guid.NewGuid()}{extension}";
                 var filePath = Path.Combine("Uploads", fileName);
-                if (!Directory.Exists("Uploads"))
-                {
-                    Directory.CreateDirectory("Uploads");
-                }
 
                 using var stream = new FileStream(filePath, FileMode.Create);
                 await image.CopyToAsync(stream);
 
                 item.Thumbnail = fileName;
-                Console.WriteLine("Zapisano zdjęcie");
-            }
-            else
-            {
-                Console.WriteLine("Nie przesłano zdjęcia");
             }
 
             if (await _sqlService.AddItem(item))

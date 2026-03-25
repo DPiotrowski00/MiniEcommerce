@@ -18,6 +18,14 @@ namespace API.Controllers
     {
         private readonly ILoggingSqlService _sqlService = service;
 
+        private string CreateRefreshToken()
+        {
+            var randomBytes = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomBytes);
+            return Convert.ToBase64String(randomBytes);
+        }
+         
         //Endpoint do testowania zabezpieczeń
         [ServiceFilter(typeof(CsrfFilter))]
         [Authorize]
@@ -25,6 +33,79 @@ namespace API.Controllers
         public ActionResult Test()
         {
             return Ok();
+        }
+
+        //Endpoint do odświeżania tokenów
+        [ServiceFilter(typeof(CsrfFilter))]
+        [HttpPost]
+        [Route("/refresh")]
+        public async Task<ActionResult<string>> RefreshToken()
+        {
+            if (!Request.Cookies.TryGetValue("Refresh-Token", out var refreshTokenFromCookie))
+                return Unauthorized();
+
+            //Pobranie RSA z pliku tekstowego
+            var rsa = RSA.Create();
+            rsa.ImportFromPem(System.IO.File.ReadAllText("private_key.pem"));
+
+            //Odczytanie klucza prywatnego z RSA
+            var privateKey = new RsaSecurityKey(rsa)
+            {
+                KeyId = "RSA_KEY_ID"
+            };
+
+            int id = await _sqlService.GetIdFromRefreshToken(refreshTokenFromCookie);
+
+            if (await _sqlService.ValidateRefreshToken(Convert.ToInt32(id), refreshTokenFromCookie))
+            {
+                //Generowanie tokena CSRF
+                var csrfToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+
+                //Tworzenie Refresh Tokena i zapisanie go w bazie
+                var refreshToken = CreateRefreshToken();
+                await _sqlService.UpdateRefreshToken(id, refreshToken);
+
+                //Utworzenie podpisu dla tokena JWT
+                var creds = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);
+
+                //W claims zaszyte są dane użytkownika
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                    new Claim(ClaimTypes.Role, "user")
+                };
+
+                var jwt = new JwtSecurityToken(
+                issuer: "https://localhost:7153",
+                audience: "https://localhost:7153",
+                signingCredentials: creds,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(10)
+                );
+
+                //Dodanie tokena JWT do cookies odpowiedzi
+                Response.Cookies.Append("Refresh-Token", refreshToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddDays(30),
+                    Path = "/"
+                });
+
+                //Dodanie tokena SCRF do cookies odpowiedzi
+                Response.Cookies.Append("CSRF-Token", csrfToken, new CookieOptions
+                {
+                    HttpOnly = false,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddDays(30),
+                    Path = "/"
+                });
+
+                return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
+            }
+            return Unauthorized();
         }
 
         //Endpoint do walidacji logowania. W odpowiedzi zwraca [JWS http-only secure cookie] i [CSRF secure cookie]
@@ -81,28 +162,32 @@ namespace API.Controllers
                 //Generowanie tokena CSRF
                 var csrfToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
 
+                //Tworzenie Refresh Tokena i zapisanie go w bazie
+                var refreshToken = CreateRefreshToken();
+                await _sqlService.UpdateRefreshToken(id, refreshToken);
+
                 //Dodanie tokena JWT do cookies odpowiedzi
-                Response.Cookies.Append("JWT_Token", new JwtSecurityTokenHandler().WriteToken(jwt), new CookieOptions
+                Response.Cookies.Append("Refresh-Token", refreshToken, new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
-                    Expires = DateTime.UtcNow.AddMinutes(10),
+                    Expires = DateTime.UtcNow.AddDays(30),
                     Path = "/"
                 });
 
                 //Dodanie tokena SCRF do cookies odpowiedzi
-                Response.Cookies.Append("CSRF_Token", csrfToken, new CookieOptions
+                Response.Cookies.Append("CSRF-Token", csrfToken, new CookieOptions
                 {
                     HttpOnly = false,
                     Secure = true,
                     SameSite = SameSiteMode.Strict,
-                    Expires = DateTime.UtcNow.AddMinutes(10),
+                    Expires = DateTime.UtcNow.AddDays(30),
                     Path = "/"
                 });
 
                 //Zwracaj Ok jeśli poprawnie zalogowano
-                return Ok();
+                return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
             }
 
             //Zwracaj Unauthorized jeśli login lub hasło się nie zgadza

@@ -1,6 +1,7 @@
 ﻿using API.Filters;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 
@@ -51,12 +52,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         {
             return Task.CompletedTask;
         },
-        OnMessageReceived = context =>
-        {
-            //Wyciągamy token JWT z cookies do kontekstu, tak aby JWT authenticator go widział
-            context.Token = context.Request.Cookies["JWT_Token"];
-            return Task.CompletedTask;
-        }
+        //OnMessageReceived = context =>
+        //{
+        //    //Wyciągamy token JWT z cookies do kontekstu, tak aby JWT authenticator go widział
+        //    context.Token = context.Request.Cookies["JWT_Token"];
+        //    return Task.CompletedTask;
+        //}
     };
 });
 
@@ -87,6 +88,20 @@ app.Use(async (context, next) =>
     context.Response.Headers.XFrameOptions = "DENY";
 
     await next();
+});
+
+//
+var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
+
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
 });
 
 //Mapowanie kontrolerów

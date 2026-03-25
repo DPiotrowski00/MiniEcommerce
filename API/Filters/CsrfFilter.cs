@@ -11,7 +11,7 @@ namespace API.Filters
         {
             var request = context.HttpContext.Request;
             
-            string? cookieToken = request.Cookies["CSRF_Token"];
+            string? cookieToken = request.Cookies["CSRF-Token"];
             string? headerToken = request.Headers["X-CSRF-Token"];
 
             headerToken = WebUtility.UrlDecode(headerToken);

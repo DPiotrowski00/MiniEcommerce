@@ -5,8 +5,13 @@ namespace API.Services
 {
     public interface IItemsSqlService
     {
+        Task<List<ItemModel>> GetItems();
+        Task<ItemModel> GetItemById(int ID);
+
         Task<bool> AddItem(ItemModel item);
         Task<bool> UpdateItem(ItemModel item);
+
+        Task<string> GetCreatorName(int ID);
     }
 
     public class ItemsSqlService (IConfiguration configuration) : IItemsSqlService
@@ -27,6 +32,24 @@ namespace API.Services
             catch
             {
                 return [];
+            }
+        }
+
+        public async Task<ItemModel> GetItemById(int ID)
+        {
+            string query = """
+                           SELECT * FROM Items WHERE ID = @ID
+                           """;
+
+            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                return await connection.QuerySingleAsync<ItemModel>(query, new { ID });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new();
             }
         }
 
@@ -64,6 +87,25 @@ namespace API.Services
             catch
             {
                 return false;
+            }
+        }
+
+        public async Task<string> GetCreatorName(int ID)
+        {
+            string query = """
+                           SELECT ld.Username FROM logindata ld
+                           JOIN items i ON i.CreatorID = ld.ID
+                           WHERE i.ID = @ID
+                           """;
+
+            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                return await connection.QuerySingleAsync<string>(query, new { ID });
+            }
+            catch
+            {
+                return "";
             }
         }
     }

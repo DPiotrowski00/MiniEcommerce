@@ -12,6 +12,12 @@ namespace API.Services
     {
         Task<int> ValidateLogIn(string Username, string Password);
         Task<bool> CreateUser(string Username, string Password);
+
+        Task UpdateRefreshToken(int UserID, string Token);
+        Task<bool> ValidateRefreshToken(int UserID, string Token);
+        Task DeleteRefreshToken(int UserID);
+
+        Task<int> GetIdFromRefreshToken(string Token);
     }
 
     //Implementacja interfejsu ILoggingSqlService
@@ -64,6 +70,80 @@ namespace API.Services
             catch
             {
                 return false;
+            }
+        }
+
+        //Funkcja aktualizująca refresh token dla danego użytkownika
+        public async Task UpdateRefreshToken(int UserID, string Token)
+        {
+            string query = """
+                           UPDATE logindata SET RefreshToken = @Token TokenExpiresAt = @TokenExpiresAt WHERE ID = @UserID
+                           """;
+
+            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                var TokenHash = BCrypt.Net.BCrypt.HashPassword(Token);
+                await connection.ExecuteAsync(query, new { UserID, TokenHash, TokenExpiresAt = DateTime.Now.AddDays(30) });
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        //Funkcja walidująca refresh token przekazany przez użytkownika
+        public async Task<bool> ValidateRefreshToken(int UserID, string Token)
+        {
+            string query = """
+                           SELECT RefreshToken, TokenExpiresAt FROM logindata WHERE ID = @UserID
+                           """;
+
+            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                var TokenData = await connection.QuerySingleAsync<KeyValuePair<string, DateTime>>(query, new { UserID });
+                return BCrypt.Net.BCrypt.Verify(Token, TokenData.Key) && TokenData.Value > DateTime.Now;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        //Funkcja usuwająca refresh token użytkownika (np. przy wylogowaniu)
+        public async Task DeleteRefreshToken(int UserID)
+        {
+            string query = """
+                           DELETE RefreshToken FROM logindata WHERE ID = @UserID
+                           """;
+
+            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                await connection.ExecuteAsync(query, new { UserID });
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        public async Task<int> GetIdFromRefreshToken(string Token)
+        {
+            string query = """
+                           SELECT ID FROM logindata WHERE RefreshToken = @tokenHash
+                           """;
+
+            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                var TokenHash = BCrypt.Net.BCrypt.HashPassword(Token);
+                return await connection.ExecuteAsync(query, new { TokenHash });
+            }
+            catch
+            {
+                return 0;
             }
         }
     }
