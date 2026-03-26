@@ -24,7 +24,7 @@ namespace API.Services
                            SELECT * FROM Items
                            """;
 
-            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
                 return [.. await connection.QueryAsync<ItemModel>(query)];
@@ -41,7 +41,7 @@ namespace API.Services
                            SELECT * FROM Items WHERE ID = @ID
                            """;
 
-            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
                 return await connection.QuerySingleAsync<ItemModel>(query, new { ID });
@@ -59,10 +59,10 @@ namespace API.Services
                            INSERT INTO Items (CreatorID, Name, Description, Price, Thumbnail, CreationTime) VALUES (@CreatorID, @Name, @Description, @Price, @Thumbnail, @CreationTime)
                            """;
 
-            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
-                await connection.ExecuteAsync(query, new { item.CreatorID, item.Name, item.Description, item.Price, item.Thumbnail, CreationTime = DateTime.Now });
+                await connection.ExecuteAsync(query, new { item.CreatorID, item.Name, item.Description, item.Price, item.Thumbnail, CreationTime = DateTime.UtcNow });
                 return true;
             }
             catch(Exception ex)
@@ -78,7 +78,7 @@ namespace API.Services
                            UPDATE Items SET Name = @Name, Description = @Description, Price = @Price, Thumbnail = @Thumbnail WHERE ID = @ID
                            """;
 
-            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
                 await connection.ExecuteAsync(query, new { item.Name, item.Description, item.Price, item.Thumbnail, item.ID });
@@ -98,7 +98,7 @@ namespace API.Services
                            WHERE i.ID = @ID
                            """;
 
-            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
                 return await connection.QuerySingleAsync<string>(query, new { ID });

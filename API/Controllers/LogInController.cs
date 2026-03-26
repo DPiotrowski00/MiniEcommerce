@@ -14,11 +14,17 @@ namespace API.Controllers
     //Kontroler logowania oraz rejestracji
     [ApiController]
     [Route("[controller]")]
-    public class LogInController(ILoggingSqlService service) : ControllerBase
+    public class LogInController(ILoggingSqlService loginService, ISessionSqlService sessionService) : ControllerBase
     {
-        private readonly ILoggingSqlService _sqlService = service;
+        private readonly ILoggingSqlService _loginSqlService = loginService;
+        private readonly ISessionSqlService _sessionSqlService = sessionService;
 
-        private string CreateRefreshToken()
+        public class RefreshTokenRequest()
+        {
+            public string DeviceID { get; set; }
+        }
+
+        private static string CreateRefreshToken()
         {
             var randomBytes = new byte[64];
             using var rng = RandomNumberGenerator.Create();
@@ -35,13 +41,31 @@ namespace API.Controllers
             return Ok();
         }
 
+        [ServiceFilter(typeof(CsrfFilter))]
+        [Authorize]
+        [HttpPost]
+        [Route("/logout")]
+        public async Task<ActionResult> LogOut()
+        {
+            if (!Request.Cookies.TryGetValue("Refresh-Token", out var refreshTokenFromCookie))
+                return Unauthorized();
+
+            await _sessionSqlService.DeleteSession(refreshTokenFromCookie);
+            return Ok();
+        }
+
         //Endpoint do odświeżania tokenów
         [ServiceFilter(typeof(CsrfFilter))]
         [HttpPost]
-        [Route("/refresh")]
-        public async Task<ActionResult<string>> RefreshToken()
+        [Route("/login/refresh")]
+        public async Task<ActionResult<string>> RefreshToken([FromBody] RefreshTokenRequest request)
         {
             if (!Request.Cookies.TryGetValue("Refresh-Token", out var refreshTokenFromCookie))
+                return Unauthorized();
+
+            var session = await _sessionSqlService.GetSessionByToken(refreshTokenFromCookie);
+
+            if (session == null || session.ExpiresAt <= DateTime.UtcNow)
                 return Unauthorized();
 
             //Pobranie RSA z pliku tekstowego
@@ -54,16 +78,18 @@ namespace API.Controllers
                 KeyId = "RSA_KEY_ID"
             };
 
-            int id = await _sqlService.GetIdFromRefreshToken(refreshTokenFromCookie);
-
-            if (await _sqlService.ValidateRefreshToken(Convert.ToInt32(id), refreshTokenFromCookie))
+            if (session.DeviceID == request.DeviceID)
             {
                 //Generowanie tokena CSRF
                 var csrfToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
 
                 //Tworzenie Refresh Tokena i zapisanie go w bazie
                 var refreshToken = CreateRefreshToken();
-                await _sqlService.UpdateRefreshToken(id, refreshToken);
+
+                session.ExpiresAt = DateTime.UtcNow.AddDays(30);
+                session.RefreshTokenHash = HashHelper.ComputeSha256(refreshToken);
+
+                await _sessionSqlService.UpdateSession(session);
 
                 //Utworzenie podpisu dla tokena JWT
                 var creds = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);
@@ -71,7 +97,7 @@ namespace API.Controllers
                 //W claims zaszyte są dane użytkownika
                 var claims = new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, session.UserID.ToString()),
                     new Claim(ClaimTypes.Role, "user")
                 };
 
@@ -120,7 +146,7 @@ namespace API.Controllers
             //Sprawdzenie czy wartości są zgodne z szablonem
             var matchLogin = Regex.Match(request.Login, regex);
             var matchPassword = Regex.Match(request.Password, regex);
-            if (!matchLogin.Success || !matchPassword.Success)
+            if (!matchLogin.Success || !matchPassword.Success || request.DeviceID == null)
             {
                 //Zwracaj BadRequest gdy login lub hasło nie jest poprawne
                 return BadRequest();
@@ -136,11 +162,11 @@ namespace API.Controllers
                 KeyId = "RSA_KEY_ID"
             };
 
-            int id = await _sqlService.ValidateLogIn(request.Login, request.Password);
+            int id = await _loginSqlService.ValidateLogIn(request.Login, request.Password);
 
             if (id != 0)
             {
-                //Utworzenie podpisu dla tokena JWT
+                //Utworzenie podpisu do podpiania tokena JWT
                 var creds = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);
 
                 //W claims zaszyte są dane użytkownika
@@ -164,9 +190,29 @@ namespace API.Controllers
 
                 //Tworzenie Refresh Tokena i zapisanie go w bazie
                 var refreshToken = CreateRefreshToken();
-                await _sqlService.UpdateRefreshToken(id, refreshToken);
+                var session = await _sessionSqlService.GetSessionByDeviceId(id, request.DeviceID);
 
-                //Dodanie tokena JWT do cookies odpowiedzi
+                if (session == null)
+                {
+                    session = new()
+                    {
+                        UserID = id,
+                        CreatedAt = DateTime.UtcNow,
+                        ExpiresAt = DateTime.UtcNow.AddDays(30),
+                        RefreshTokenHash = HashHelper.ComputeSha256(refreshToken),
+                        DeviceID = request.DeviceID,
+                    };
+                    await _sessionSqlService.CreateSession(session);
+                }
+                else
+                {
+                    session.RefreshTokenHash = HashHelper.ComputeSha256(refreshToken);
+                    session.ExpiresAt = DateTime.UtcNow.AddDays(30);
+
+                    await _sessionSqlService.UpdateSession(session);
+                }
+
+                //Dodanie refresh tokena do cookies odpowiedzi
                 Response.Cookies.Append("Refresh-Token", refreshToken, new CookieOptions
                 {
                     HttpOnly = true,
@@ -201,7 +247,7 @@ namespace API.Controllers
             //Walidacja wartości wprowadzonych przez użytkownika
             if (request.Login == null || request.Password == null) return BadRequest();
             //Szablon filtrujący login i hasło przesłane przez użytkownika, dozwolone znaki to litery a-z, A-Z oraz cyfry 0-9
-            string regex = "[0-9a-zA-Z]{3,8}";
+            string regex = "^[0-9a-zA-Z]{3,8}$";
 
             //Sprawdzenie czy wartości są zgodne z szablonem
             var matchLogin = Regex.Match(request.Login, regex);
@@ -213,7 +259,7 @@ namespace API.Controllers
             }
 
             //Finalnie spróbuj utworzyć użytkownika
-            if(await _sqlService.CreateUser(request.Login, request.Password))
+            if(await _loginSqlService.CreateUser(request.Login, request.Password))
             {
                 //Jeśli tworzenie użytkownika się powiodło odpowiadaj Ok
                 return Ok();
