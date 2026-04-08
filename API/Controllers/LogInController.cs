@@ -21,7 +21,7 @@ namespace API.Controllers
 
         public class RefreshTokenRequest()
         {
-            public string DeviceID { get; set; }
+            public string? DeviceID { get; set; }
         }
 
         private static string CreateRefreshToken()
@@ -50,7 +50,23 @@ namespace API.Controllers
             if (!Request.Cookies.TryGetValue("Refresh-Token", out var refreshTokenFromCookie))
                 return Unauthorized();
 
-            await _sessionSqlService.DeleteSession(refreshTokenFromCookie);
+            var session = await _sessionSqlService.GetSessionByToken(refreshTokenFromCookie);
+            await _sessionSqlService.RevokeSession(session!);
+
+            Response.Cookies.Delete("Refresh-Token", new CookieOptions
+            {
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Path = "/"
+            });
+
+            Response.Cookies.Delete("CSRF-Token", new CookieOptions
+            {
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Path = "/"
+            });
+
             return Ok();
         }
 
@@ -89,7 +105,7 @@ namespace API.Controllers
                 session.ExpiresAt = DateTime.UtcNow.AddDays(30);
                 session.RefreshTokenHash = HashHelper.ComputeSha256(refreshToken);
 
-                await _sessionSqlService.UpdateSession(session);
+                await _sessionSqlService.RotateRefreshToken(session);
 
                 //Utworzenie podpisu dla tokena JWT
                 var creds = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);
@@ -141,7 +157,7 @@ namespace API.Controllers
             //Walidacja wartości wprowadzonych przez użytkownika
             if (request.Login == null || request.Password == null) return BadRequest();
             //Szablon filtrujący login i hasło przesłane przez użytkownika, dozwolone znaki to litery a-z, A-Z oraz cyfry 0-9
-            string regex = "[0-9a-zA-Z]{3,8}";
+            string regex = "^[0-9a-zA-Z]{3,8}$";
 
             //Sprawdzenie czy wartości są zgodne z szablonem
             var matchLogin = Regex.Match(request.Login, regex);
@@ -209,7 +225,7 @@ namespace API.Controllers
                     session.RefreshTokenHash = HashHelper.ComputeSha256(refreshToken);
                     session.ExpiresAt = DateTime.UtcNow.AddDays(30);
 
-                    await _sessionSqlService.UpdateSession(session);
+                    await _sessionSqlService.RotateRefreshToken(session);
                 }
 
                 //Dodanie refresh tokena do cookies odpowiedzi

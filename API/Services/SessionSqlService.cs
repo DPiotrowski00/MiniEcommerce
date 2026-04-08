@@ -18,9 +18,9 @@ namespace API.Services
     {
         Task<Session?> GetSessionByDeviceId(int UserID, string DeviceID);
         Task<Session?> GetSessionByToken(string RefreshToken);
+        Task RotateRefreshToken(Session session);
         Task CreateSession(Session session);
-        Task UpdateSession(Session session);
-        Task DeleteSession(string RefreshToken);
+        Task RevokeSession(Session session);
     }
 
     public class SessionSqlService (IConfiguration configuration) : ISessionSqlService
@@ -48,7 +48,7 @@ namespace API.Services
         public async Task<Session?> GetSessionByToken(string RefreshToken)
         {
             string query = """
-                           SELECT * FROM sessions WHERE RefreshTokenHash = @RefreshTokenHash
+                           SELECT * FROM sessions s JOIN tokens t ON t.SessionID = s.ID WHERE t.RefreshTokenHash = @RefreshTokenHash
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -63,16 +63,23 @@ namespace API.Services
             }
         }
 
-        public async Task UpdateSession(Session session)
+        public async Task RotateRefreshToken(Session session)
         {
             string query = """
-                           UPDATE sessions SET ExpiresAt = @ExpiresAt, RefreshTokenHash = @RefreshTokenHash WHERE ID = @ID
+                           START TRANSACTION;
+
+                           INSERT INTO tokens (RefreshTokenHash, CreatedAt, ExpiresAt, SessionID)
+                           VALUES (@RefreshTokenHash, NOW(), @ExpiresAt, @ID)
+
+                           SET @NewTokenId = LAST_INSERT_ID();
+
+                           UPDATE tokens SET ReplacedByTokenID = @NewTokenID, IsRevoked = 1, RevokedAt = NOW(), RevokedReason = 'Refresh' WHERE SessionID = @ID
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
-                await connection.ExecuteAsync(query, new { session.ID, session.ExpiresAt, session.RefreshTokenHash });
+                await connection.ExecuteAsync(query, new { session.RefreshTokenHash, session.CreatedAt, session.ExpiresAt, session.ID });
             }
             catch (Exception ex)
             {
@@ -84,7 +91,17 @@ namespace API.Services
         public async Task CreateSession(Session session)
         {
             string query = """
-                           INSERT INTO sessions (UserID, CreatedAt, ExpiresAt, RefreshTokenHash, DeviceID) VALUES (@UserID, @CreatedAt, @ExpiresAt, @RefreshTokenHash, @DeviceID)
+                           START TRANSACTION;
+
+                           INSERT INTO sessions (UserID, DeviceID, CreatedAt, ExpiresAt, IsRevoked)
+                           VALUES (@UserID, @DeviceID, @CreatedAt, @ExpiresAt, 0);
+
+                           SET @NewSessionId = LAST_INSERT_ID();
+
+                           INSERT INTO tokens (RefreshTokenHash, ReplacedByTokenID, CreatedAt, ExpiresAt, IsRevoked, RevokedAt, RevokedReason, SessionID)
+                           VALUES (@RefreshTokenHash, NULL, @CreatedAt, @ExpiresAt, 0, NULL, NULL, @NewSessionId);
+
+                           COMMIT;
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -99,20 +116,22 @@ namespace API.Services
             }
         }
 
-        public async Task DeleteSession(string RefreshToken)
+        public async Task RevokeSession(Session session)
         {
             string query = """
-                           DELETE FROM sessions WHERE RefreshTokenHash = @RefreshTokenHash
+                           UPDATE sessions SET IsRevoked = 1 WHERE ID = @ID;
+                           UPDATE tokens SET IsRevoked = 1, RevokedAt = NOW(), RevokedReason = 'Logged out' WHERE SessionID = @ID;
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
-                await connection.ExecuteAsync(query, new { RefreshTokenHash = HashHelper.ComputeSha256(RefreshToken) });
+                await connection.ExecuteAsync(query, new { session.ID });
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return;
             }
         }
     }
