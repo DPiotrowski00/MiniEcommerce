@@ -71,9 +71,7 @@ namespace API.Services
                            INSERT INTO tokens (RefreshTokenHash, CreatedAt, ExpiresAt, SessionID)
                            VALUES (@RefreshTokenHash, NOW(), @ExpiresAt, @ID)
 
-                           SET @NewTokenId = LAST_INSERT_ID();
-
-                           UPDATE tokens SET ReplacedByTokenID = @NewTokenID, IsRevoked = 1, RevokedAt = NOW(), RevokedReason = 'Refresh' WHERE SessionID = @ID
+                           UPDATE tokens SET ReplacedByTokenID = LAST_INSERT_ID(), IsRevoked = 1, RevokedAt = NOW(), RevokedReason = 'Refresh' WHERE SessionID = @ID
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -96,10 +94,8 @@ namespace API.Services
                            INSERT INTO sessions (UserID, DeviceID, CreatedAt, ExpiresAt, IsRevoked)
                            VALUES (@UserID, @DeviceID, @CreatedAt, @ExpiresAt, 0);
 
-                           SET @NewSessionId = LAST_INSERT_ID();
-
                            INSERT INTO tokens (RefreshTokenHash, ReplacedByTokenID, CreatedAt, ExpiresAt, IsRevoked, RevokedAt, RevokedReason, SessionID)
-                           VALUES (@RefreshTokenHash, NULL, @CreatedAt, @ExpiresAt, 0, NULL, NULL, @NewSessionId);
+                           VALUES (@RefreshTokenHash, NULL, @CreatedAt, @ExpiresAt, 0, NULL, NULL, LAST_INSERT_ID());
 
                            COMMIT;
                            """;
@@ -111,7 +107,7 @@ namespace API.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.ToString());
                 return;
             }
         }
