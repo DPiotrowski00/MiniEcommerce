@@ -3,6 +3,7 @@ using API.Helpers;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -18,6 +19,23 @@ namespace API.Controllers
     {
         private readonly ILoggingSqlService _loginSqlService = loginService;
         private readonly ISessionSqlService _sessionSqlService = sessionService;
+
+        private readonly RsaSecurityKey privateKey = GetPrivateKey();
+
+        private static RsaSecurityKey GetPrivateKey()
+        {
+            //Pobranie RSA z pliku tekstowego
+            var rsa = RSA.Create();
+            rsa.ImportFromPem(System.IO.File.ReadAllText("private_key.pem"));
+
+            //Odczytanie klucza prywatnego z RSA
+            var key = new RsaSecurityKey(rsa)
+            {
+                KeyId = "RSA_KEY_ID"
+            };
+
+            return key;
+        }
 
         public class RefreshTokenRequest()
         {
@@ -51,7 +69,7 @@ namespace API.Controllers
                 return Unauthorized();
 
             var session = await _sessionSqlService.GetSessionByToken(refreshTokenFromCookie);
-            await _sessionSqlService.RevokeSession(session!);
+            await _sessionSqlService.RevokeSession(session!.ID);
 
             Response.Cookies.Delete("Refresh-Token", new CookieOptions
             {
@@ -71,6 +89,7 @@ namespace API.Controllers
         }
 
         //Endpoint do odświeżania tokenów
+        [EnableRateLimiting("RefreshPolicy")]
         [ServiceFilter(typeof(CsrfFilter))]
         [HttpPost]
         [Route("/login/refresh")]
@@ -79,20 +98,18 @@ namespace API.Controllers
             if (!Request.Cookies.TryGetValue("Refresh-Token", out var refreshTokenFromCookie))
                 return Unauthorized();
 
+            int RevokeSessionID = await _sessionSqlService.CheckForTokenReuse(refreshTokenFromCookie);
+
+            if (RevokeSessionID != 0)
+            {
+                await _sessionSqlService.RevokeSession(RevokeSessionID);
+                return Unauthorized();
+            }
+
             var session = await _sessionSqlService.GetSessionByToken(refreshTokenFromCookie);
 
-            if (session == null || session.ExpiresAt <= DateTime.UtcNow)
+            if (session == null || session.ExpiresAt <= DateTime.UtcNow || session.IsRevoked)
                 return Unauthorized();
-
-            //Pobranie RSA z pliku tekstowego
-            var rsa = RSA.Create();
-            rsa.ImportFromPem(System.IO.File.ReadAllText("private_key.pem"));
-
-            //Odczytanie klucza prywatnego z RSA
-            var privateKey = new RsaSecurityKey(rsa)
-            {
-                KeyId = "RSA_KEY_ID"
-            };
 
             if (session.DeviceID == request.DeviceID)
             {
@@ -114,7 +131,9 @@ namespace API.Controllers
                 var claims = new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, session.UserID.ToString()),
-                    new Claim(ClaimTypes.Role, "user")
+                    new Claim(ClaimTypes.Role, "user"),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("sid", session.ID.ToString())
                 };
 
                 var jwt = new JwtSecurityToken(
@@ -145,12 +164,16 @@ namespace API.Controllers
                     Path = "/"
                 });
 
+                Response.Headers.CacheControl = "no-store";
+                Response.Headers.Pragma = "no-store";
+
                 return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
             }
             return Unauthorized();
         }
 
         //Endpoint do walidacji logowania. W odpowiedzi zwraca [JWS http-only secure cookie] i [CSRF secure cookie]
+        [EnableRateLimiting("LogInPolicy")]
         [HttpPost]
         public async Task<ActionResult<string>> ValidateLogIn([FromBody] LogInData request)
         {
@@ -168,39 +191,10 @@ namespace API.Controllers
                 return BadRequest();
             }
 
-            //Pobranie RSA z pliku tekstowego
-            var rsa = RSA.Create();
-            rsa.ImportFromPem(System.IO.File.ReadAllText("private_key.pem"));
-
-            //Odczytanie klucza prywatnego z RSA
-            var privateKey = new RsaSecurityKey(rsa)
-            {
-                KeyId = "RSA_KEY_ID"
-            };
-
             int id = await _loginSqlService.ValidateLogIn(request.Login, request.Password);
 
             if (id != 0)
             {
-                //Utworzenie podpisu do podpiania tokena JWT
-                var creds = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);
-
-                //W claims zaszyte są dane użytkownika
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, id.ToString()),
-                    new Claim(ClaimTypes.Role, "user")
-                };
-
-                //Generowanie tokena JWT
-                var jwt = new JwtSecurityToken(
-                    issuer: "https://localhost:7153",
-                    audience: "https://localhost:7153",
-                    signingCredentials: creds,
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddMinutes(10)
-                    );
-
                 //Generowanie tokena CSRF
                 var csrfToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
 
@@ -228,6 +222,27 @@ namespace API.Controllers
                     await _sessionSqlService.RotateRefreshToken(session);
                 }
 
+                //Utworzenie podpisu do podpiania tokena JWT
+                var creds = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);
+
+                //W claims zaszyte są dane użytkownika
+                var claims = new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                    new Claim(ClaimTypes.Role, "user"),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("sid", session.ID.ToString())
+                };
+
+                //Generowanie tokena JWT
+                var jwt = new JwtSecurityToken(
+                    issuer: "https://localhost:7153",
+                    audience: "https://localhost:7153",
+                    signingCredentials: creds,
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddMinutes(10)
+                    );
+
                 //Dodanie refresh tokena do cookies odpowiedzi
                 Response.Cookies.Append("Refresh-Token", refreshToken, new CookieOptions
                 {
@@ -248,6 +263,9 @@ namespace API.Controllers
                     Path = "/"
                 });
 
+                Response.Headers.CacheControl = "no-store";
+                Response.Headers.Pragma = "no-store";
+
                 //Zwracaj Ok jeśli poprawnie zalogowano
                 return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
             }
@@ -257,6 +275,7 @@ namespace API.Controllers
         }
 
         //Endpoint odpowiedzialny za tworzenie nowych użytkowników
+        [EnableRateLimiting("RegisterPolicy")]
         [HttpPut]
         public async Task<ActionResult> CreateUser([FromBody] LogInData request)
         {
@@ -285,7 +304,6 @@ namespace API.Controllers
                 //Jeśli nie udało się utworzyć użytkownika odpowiadaj BadRequest
                 return BadRequest();
             }
-            
         }
     }
 }
