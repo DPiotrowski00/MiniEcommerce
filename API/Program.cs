@@ -16,6 +16,12 @@ var publicKey = new RsaSecurityKey(rsa.ExportParameters(false))
     KeyId = "RSA_KEY_ID"
 };
 
+//Odczytanie klucza prywatnego z RSA
+var privateKey = new RsaSecurityKey(rsa)
+{
+    KeyId = "RSA_KEY_ID"
+};
+
 //Builder
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +37,9 @@ builder.Services.AddScoped<ILoggingSqlService, LoggingSqlService>();
 builder.Services.AddScoped<IItemsSqlService, ItemsSqlService>();
 builder.Services.AddScoped<ISessionSqlService, SessionSqlService>();
 builder.Services.AddScoped<CsrfFilter>();
+
+builder.Services.AddSingleton<RSA>(_ => rsa);
+builder.Services.AddSingleton(privateKey);
 
 //Autentykacja JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(jwtOptions =>

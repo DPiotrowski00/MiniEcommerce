@@ -15,27 +15,12 @@ namespace API.Controllers
     //Kontroler logowania oraz rejestracji
     [ApiController]
     [Route("[controller]")]
-    public class LogInController(ILoggingSqlService loginService, ISessionSqlService sessionService) : ControllerBase
+    public class LogInController(ILoggingSqlService loginService, ISessionSqlService sessionService, RsaSecurityKey privateKey) : ControllerBase
     {
         private readonly ILoggingSqlService _loginSqlService = loginService;
         private readonly ISessionSqlService _sessionSqlService = sessionService;
 
-        private readonly RsaSecurityKey privateKey = GetPrivateKey();
-
-        private static RsaSecurityKey GetPrivateKey()
-        {
-            //Pobranie RSA z pliku tekstowego
-            var rsa = RSA.Create();
-            rsa.ImportFromPem(System.IO.File.ReadAllText("private_key.pem"));
-
-            //Odczytanie klucza prywatnego z RSA
-            var key = new RsaSecurityKey(rsa)
-            {
-                KeyId = "RSA_KEY_ID"
-            };
-
-            return key;
-        }
+        private readonly RsaSecurityKey _privateKey = privateKey;
 
         public class RefreshTokenRequest()
         {
@@ -122,10 +107,10 @@ namespace API.Controllers
                 session.ExpiresAt = DateTime.UtcNow.AddDays(30);
                 session.RefreshTokenHash = HashHelper.ComputeSha256(refreshToken);
 
-                await _sessionSqlService.RotateRefreshToken(session);
+                await _sessionSqlService.RotateRefreshToken(session, refreshTokenFromCookie);
 
                 //Utworzenie podpisu dla tokena JWT
-                var creds = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);
+                var creds = new SigningCredentials(_privateKey, SecurityAlgorithms.RsaSha256);
 
                 //W claims zaszyte są dane użytkownika
                 var claims = new[]
@@ -180,11 +165,12 @@ namespace API.Controllers
             //Walidacja wartości wprowadzonych przez użytkownika
             if (request.Login == null || request.Password == null) return BadRequest();
             //Szablon filtrujący login i hasło przesłane przez użytkownika, dozwolone znaki to litery a-z, A-Z oraz cyfry 0-9
-            string regex = "^[0-9a-zA-Z]{3,8}$";
+            string loginRegex = @"^[0-9a-zA-Z]{3,8}$";
+            string passwordRegex = @"^[\w!@#$%^&*()\-+=\[\]{};:'"",.<>/?\\|`~]{8,12}$";
 
             //Sprawdzenie czy wartości są zgodne z szablonem
-            var matchLogin = Regex.Match(request.Login, regex);
-            var matchPassword = Regex.Match(request.Password, regex);
+            var matchLogin = Regex.Match(request.Login, loginRegex);
+            var matchPassword = Regex.Match(request.Password, passwordRegex);
             if (!matchLogin.Success || !matchPassword.Success || request.DeviceID == null)
             {
                 //Zwracaj BadRequest gdy login lub hasło nie jest poprawne
@@ -216,14 +202,15 @@ namespace API.Controllers
                 }
                 else
                 {
+                    var oldTokenHash = session.RefreshTokenHash;
                     session.RefreshTokenHash = HashHelper.ComputeSha256(refreshToken);
                     session.ExpiresAt = DateTime.UtcNow.AddDays(30);
 
-                    await _sessionSqlService.RotateRefreshToken(session);
+                    await _sessionSqlService.RotateRefreshToken(session, oldTokenHash!);
                 }
 
                 //Utworzenie podpisu do podpiania tokena JWT
-                var creds = new SigningCredentials(privateKey, SecurityAlgorithms.RsaSha256);
+                var creds = new SigningCredentials(_privateKey, SecurityAlgorithms.RsaSha256);
 
                 //W claims zaszyte są dane użytkownika
                 var claims = new[]

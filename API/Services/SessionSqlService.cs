@@ -1,5 +1,6 @@
 ﻿using API.Helpers;
 using Dapper;
+using MySqlX.XDevAPI;
 using System.Security.Policy;
 
 namespace API.Services
@@ -19,7 +20,7 @@ namespace API.Services
     {
         Task<Session?> GetSessionByDeviceId(int UserID, string DeviceID);
         Task<Session?> GetSessionByToken(string RefreshToken);
-        Task RotateRefreshToken(Session session);
+        Task RotateRefreshToken(Session session, string OldTokenHash);
         Task CreateSession(Session session);
         Task RevokeSession(int SessionID);
         Task<int> CheckForTokenReuse(string token);
@@ -65,14 +66,14 @@ namespace API.Services
             }
         }
 
-        public async Task RotateRefreshToken(Session session)
+        public async Task RotateRefreshToken(Session session, string OldTokenHash)
         {
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             using var transaction = connection.BeginTransaction();
             try
             {
                 await connection.ExecuteAsync("INSERT INTO tokens (RefreshTokenHash, CreatedAt, ExpiresAt, SessionID) VALUES (@RefreshTokenHash, NOW(), @ExpiresAt, @ID)", new { session.RefreshTokenHash, session.CreatedAt, session.ExpiresAt, session.ID }, transaction);
-                await connection.ExecuteAsync("UPDATE tokens SET ReplacedByTokenID = LAST_INSERT_ID(), IsRevoked = 1, RevokedAt = NOW(), RevokedReason = 'Refresh' WHERE SessionID = @ID AND ID != LAST_INSERT_ID()", new { session.RefreshTokenHash, session.CreatedAt, session.ExpiresAt, session.ID }, transaction);
+                await connection.ExecuteAsync("UPDATE tokens SET ReplacedByTokenID = LAST_INSERT_ID(), IsRevoked = 1, RevokedAt = NOW(), RevokedReason = 'Refresh' WHERE RefreshTokenHash = @OldTokenHash ", new { session.RefreshTokenHash, session.CreatedAt, session.ExpiresAt, session.ID, OldTokenHash }, transaction);
 
                 transaction.Commit();
             }
@@ -124,12 +125,7 @@ namespace API.Services
         public async Task<int> CheckForTokenReuse(string token)
         {
             string query = """
-                           SELECT IFNULL((
-                               SELECT SessionId 
-                               FROM tokens 
-                               WHERE RefreshTokenHash = @RefreshTokenHash AND IsRevoked = 1 
-                               LIMIT 1
-                           ), 0) AS SessionId;
+                           SELECT IFNULL((SELECT SessionId FROM tokens WHERE RefreshTokenHash = @RefreshTokenHash AND IsRevoked = 1 AND ReplacedByTokenID IS NOT NULL LIMIT 1), 0) AS SessionId;
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
