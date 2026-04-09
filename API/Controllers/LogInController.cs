@@ -15,12 +15,15 @@ namespace API.Controllers
     //Kontroler logowania oraz rejestracji
     [ApiController]
     [Route("[controller]")]
-    public class LogInController(ILoggingSqlService loginService, ISessionSqlService sessionService, RsaSecurityKey privateKey) : ControllerBase
+    public class LogInController(ILoggingSqlService loginService, ISessionSqlService sessionService, RsaSecurityKey privateKey, string issuer, string audience) : ControllerBase
     {
         private readonly ILoggingSqlService _loginSqlService = loginService;
         private readonly ISessionSqlService _sessionSqlService = sessionService;
 
         private readonly RsaSecurityKey _privateKey = privateKey;
+
+        private readonly string _issuer = issuer;
+        private readonly string _audience = audience;
 
         //Szablony filtrujące login i hasło przesłane przez użytkownika
         private readonly string loginRegex = "^[0-9a-zA-Z]{3,8}$";
@@ -126,8 +129,8 @@ namespace API.Controllers
                 };
 
                 var jwt = new JwtSecurityToken(
-                issuer: "https://localhost:7153",
-                audience: "https://localhost:7153",
+                issuer: _issuer,
+                audience: _audience,
                 signingCredentials: creds,
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(10)
@@ -224,8 +227,8 @@ namespace API.Controllers
 
                 //Generowanie tokena JWT
                 var jwt = new JwtSecurityToken(
-                    issuer: "https://localhost:7153",
-                    audience: "https://localhost:7153",
+                    issuer: _issuer,
+                    audience: _audience,
                     signingCredentials: creds,
                     claims: claims,
                     expires: DateTime.UtcNow.AddMinutes(10)

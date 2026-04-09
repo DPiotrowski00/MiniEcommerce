@@ -3,6 +3,7 @@ using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using System.Configuration;
 using System.Security.Cryptography;
 using System.Threading.RateLimiting;
 
@@ -41,6 +42,12 @@ builder.Services.AddScoped<CsrfFilter>();
 builder.Services.AddSingleton<RSA>(_ => rsa);
 builder.Services.AddSingleton(privateKey);
 
+string? issuer = builder.Configuration["Issuer"];
+string? audience = builder.Configuration["Audience"];
+
+builder.Services.AddSingleton(issuer!);
+builder.Services.AddSingleton(audience!);
+
 //Autentykacja JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(jwtOptions =>
 {
@@ -50,8 +57,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateAudience = true,
         ValidateIssuerSigningKey = true,
         ValidateLifetime = true,
-        ValidIssuer = "https://localhost:7153",
-        ValidAudience = "https://localhost:7153",
+        ValidIssuer = issuer,
+        ValidAudience = audience,
         IssuerSigningKey = publicKey,
         ClockSkew = TimeSpan.Zero,
         RequireExpirationTime = true
@@ -76,7 +83,7 @@ builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-    options.AddPolicy("LoginPolicy", httpContext =>
+    options.AddPolicy("LogInPolicy", httpContext =>
         RateLimitPartition.GetFixedWindowLimiter(
             partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
             factory: _ => new FixedWindowRateLimiterOptions

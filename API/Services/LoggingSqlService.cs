@@ -61,8 +61,9 @@ namespace API.Services
                 await connection.ExecuteAsync(query, new { Username, HashedPassword });
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
         }

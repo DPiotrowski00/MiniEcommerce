@@ -33,7 +33,7 @@ namespace API.Services
         public async Task<Session?> GetSessionByDeviceId(int UserID, string DeviceID)
         {
             string query = """
-                           SELECT * FROM sessions WHERE DeviceID = @DeviceID AND UserID = @UserID AND ExpiresAt < NOW() AND IsRevoked = 0
+                           SELECT * FROM sessions WHERE DeviceID = @DeviceID AND UserID = @UserID AND ExpiresAt > NOW() AND IsRevoked = 0
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -51,13 +51,14 @@ namespace API.Services
         public async Task<Session?> GetSessionByToken(string RefreshToken)
         {
             string query = """
-                           SELECT s.ID, s.UserID, s.CreatedAt, s.ExpiresAt, t.RefreshTokenHash, s.DeviceID, s.IsRevoked FROM sessions s JOIN tokens t ON t.SessionID = s.ID WHERE t.RefreshTokenHash = @RefreshTokenHash AND s.ExpiresAt < NOW() AND s.IsRevoked = 0
+                           SELECT s.ID, s.UserID, s.CreatedAt, s.ExpiresAt, t.RefreshTokenHash, s.DeviceID, s.IsRevoked FROM sessions s JOIN tokens t ON t.SessionID = s.ID WHERE t.RefreshTokenHash = @RefreshTokenHash AND s.ExpiresAt > NOW() AND s.IsRevoked = 0
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
-                return await connection.QuerySingleAsync<Session?>(query, new { RefreshTokenHash = HashHelper.ComputeSha256(RefreshToken) });
+                var RefreshTokenHash = HashHelper.ComputeSha256(RefreshToken);
+                return await connection.QuerySingleAsync<Session?>(query, new { RefreshTokenHash });
             }
             catch (Exception ex)
             {
@@ -69,6 +70,7 @@ namespace API.Services
         public async Task RotateRefreshToken(Session session, string OldToken)
         {
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            await connection.OpenAsync();
             using var transaction = connection.BeginTransaction();
             try
             {
@@ -88,6 +90,7 @@ namespace API.Services
         public async Task<int> CreateSession(Session session)
         {
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            await connection.OpenAsync();
             using var transaction = connection.BeginTransaction();
             try
             {
@@ -109,6 +112,7 @@ namespace API.Services
         public async Task RevokeSession(int SessionID)
         {
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            await connection.OpenAsync();
             using var transaction = connection.BeginTransaction();
             try
             {
