@@ -22,6 +22,10 @@ namespace API.Controllers
 
         private readonly RsaSecurityKey _privateKey = privateKey;
 
+        //Szablony filtrujące login i hasło przesłane przez użytkownika
+        private readonly string loginRegex = "^[0-9a-zA-Z]{3,8}$";
+        private readonly string passwordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,64}$";
+
         public class RefreshTokenRequest()
         {
             public string? DeviceID { get; set; }
@@ -150,7 +154,7 @@ namespace API.Controllers
                 });
 
                 Response.Headers.CacheControl = "no-store";
-                Response.Headers.Pragma = "no-store";
+                Response.Headers.Pragma = "no-cache";
 
                 return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
             }
@@ -164,9 +168,6 @@ namespace API.Controllers
         {
             //Walidacja wartości wprowadzonych przez użytkownika
             if (request.Login == null || request.Password == null) return BadRequest();
-            //Szablon filtrujący login i hasło przesłane przez użytkownika, dozwolone znaki to litery a-z, A-Z oraz cyfry 0-9
-            string loginRegex = @"^[0-9a-zA-Z]{3,8}$";
-            string passwordRegex = @"^[\w!@#$%^&*()\-+=\[\]{};:'"",.<>/?\\|`~]{8,12}$";
 
             //Sprawdzenie czy wartości są zgodne z szablonem
             var matchLogin = Regex.Match(request.Login, loginRegex);
@@ -188,7 +189,7 @@ namespace API.Controllers
                 var refreshToken = CreateRefreshToken();
                 var session = await _sessionSqlService.GetSessionByDeviceId(id, request.DeviceID);
 
-                if (session == null)
+                if (session == null || session.ExpiresAt < DateTime.UtcNow || session.IsRevoked)
                 {
                     session = new()
                     {
@@ -198,7 +199,7 @@ namespace API.Controllers
                         RefreshTokenHash = HashHelper.ComputeSha256(refreshToken),
                         DeviceID = request.DeviceID,
                     };
-                    await _sessionSqlService.CreateSession(session);
+                    session.ID = await _sessionSqlService.CreateSession(session);
                 }
                 else
                 {
@@ -251,7 +252,7 @@ namespace API.Controllers
                 });
 
                 Response.Headers.CacheControl = "no-store";
-                Response.Headers.Pragma = "no-store";
+                Response.Headers.Pragma = "no-cache";
 
                 //Zwracaj Ok jeśli poprawnie zalogowano
                 return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
@@ -268,12 +269,10 @@ namespace API.Controllers
         {
             //Walidacja wartości wprowadzonych przez użytkownika
             if (request.Login == null || request.Password == null) return BadRequest();
-            //Szablon filtrujący login i hasło przesłane przez użytkownika, dozwolone znaki to litery a-z, A-Z oraz cyfry 0-9
-            string regex = "^[0-9a-zA-Z]{3,8}$";
 
             //Sprawdzenie czy wartości są zgodne z szablonem
-            var matchLogin = Regex.Match(request.Login, regex);
-            var matchPassword = Regex.Match(request.Password, regex);
+            var matchLogin = Regex.Match(request.Login, loginRegex);
+            var matchPassword = Regex.Match(request.Password, passwordRegex);
             if (!matchLogin.Success || !matchPassword.Success)
             {
                 //Zwracaj BadRequest gdy login lub hasło nie jest poprawne

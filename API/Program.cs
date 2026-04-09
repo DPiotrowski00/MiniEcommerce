@@ -117,9 +117,9 @@ var app = builder.Build();
 
 //Uruchomienie zabezpieczeń
 app.UseHttpsRedirection();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseRateLimiter();
 
 //Middleware odpowiedzialny za zabezpieczenie przed atakami XSS
 app.Use(async (context, next) =>
