@@ -1,5 +1,6 @@
 ﻿using API.DataModels;
 using Dapper;
+using System.Runtime.CompilerServices;
 
 namespace API.Services
 {
@@ -11,7 +12,9 @@ namespace API.Services
         Task<bool> AddItem(ItemModel item);
         Task<bool> UpdateItem(ItemModel item);
 
-        Task<string> GetCreatorName(int ID);
+        Task<bool> AddImages(ItemModel item, List<string> images);
+        Task SwitchPrimaryImage(ItemModel item, string image);
+        Task DeleteImages(List<string> images);
     }
 
     public class ItemsSqlService (IConfiguration configuration) : IItemsSqlService
@@ -21,7 +24,7 @@ namespace API.Services
         public async Task<List<ItemModel>> GetItems()
         {
             string query = """
-                           SELECT * FROM Items
+                           SELECT i.ID, i.CreatorID, l.Name as CreatorName, i.Name, i.Description, i.Price, im.GUID as Thumbnail, i.CreationTime FROM items i JOIN images im ON i.ID = im.ItemID JOIN logindata l ON i.CreatorID = l.ID WHERE im.IsPrimary = 1
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -38,7 +41,7 @@ namespace API.Services
         public async Task<ItemModel> GetItemById(int ID)
         {
             string query = """
-                           SELECT * FROM Items WHERE ID = @ID
+                           SELECT i.ID, i.CreatorID, l.Name as CreatorName, i.Name, i.Description, i.Price, im.GUID as Thumbnail, i.CreationTime FROM items i JOIN images im ON i.ID = im.ItemID JOIN logindata l ON i.CreatorID = l.ID WHERE im.IsPrimary = 1 AND i.ID = @ID
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -55,19 +58,21 @@ namespace API.Services
 
         public async Task<bool> AddItem(ItemModel item)
         {
-            string query = """
-                           INSERT INTO Items (CreatorID, Name, Description, Price, Thumbnail, CreationTime) VALUES (@CreatorID, @Name, @Description, @Price, @Thumbnail, @CreationTime)
-                           """;
-
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            connection.Open();
+            var transaction = connection.BeginTransaction();
             try
             {
-                await connection.ExecuteAsync(query, new { item.CreatorID, item.Name, item.Description, item.Price, item.Thumbnail, CreationTime = DateTime.UtcNow });
+                await connection.ExecuteAsync("INSERT INTO items (CreatorID, Name, Description, Price, CreationTime) VALUES (@CreatorID, @Name, @Description, @Price, @CreationTime)", new { item.CreatorID, item.Name, item.Description, item.Price, CreationTime = DateTime.UtcNow });
+                await connection.ExecuteAsync("INSERT INTO images (GUID, ItemID, IsPrimary) VALUES (@Thumbnail, LAST_INSERT_ID(), 1)", new { item.Thumbnail });
+
+                transaction.Commit();
                 return true;
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                transaction.Rollback();
                 return false;
             }
         }
@@ -75,7 +80,8 @@ namespace API.Services
         public async Task<bool> UpdateItem(ItemModel item)
         {
             string query = """
-                           UPDATE Items SET Name = @Name, Description = @Description, Price = @Price, Thumbnail = @Thumbnail WHERE ID = @ID
+                           UPDATE items SET Name = @Name, Description = @Description, Price = @Price WHERE ID = @ID;
+                           UPDATE images SET GUID = @Thumbnail WHERE ItemID = @ID AND IsPrimary = 1;
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -90,22 +96,68 @@ namespace API.Services
             }
         }
 
-        public async Task<string> GetCreatorName(int ID)
+        public async Task<bool> AddImages(ItemModel item, List<string> images)
         {
             string query = """
-                           SELECT ld.Username FROM logindata ld
-                           JOIN items i ON i.CreatorID = ld.ID
-                           WHERE i.ID = @ID
+                           INSERT INTO images (GUID, ItemID, IsPrimary) VALUES (@image, @ID, 0);
                            """;
-
-            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            
+            var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
-                return await connection.QuerySingleAsync<string>(query, new { ID });
+                foreach (var image in images)
+                {
+                    await connection.ExecuteAsync(query, new { image, item.ID });
+                }
+                return true;
             }
-            catch
+            catch (Exception ex)
             {
-                return "";
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+
+        public async Task SwitchPrimaryImage(ItemModel item, string image)
+        {
+            string query = """
+                           UPDATE images SET IsPrimary = 0 WHERE ItemID = @ID;
+                           UPDATE images SET IsPrimary = 1 WHERE ItemID = @ID AND GUID = @image;
+                           """;
+
+            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                await connection.ExecuteAsync(query, new { item.ID, image });
+                return;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return;
+            }
+        }
+
+        public async Task DeleteImages(List<string> images)
+        {
+            string query = """
+                           DELETE FROM images WHERE GUID = @image AND IsPrimary = 0
+                           """;
+
+            var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                foreach(var image in images)
+                {
+                    await connection.ExecuteAsync(query, new { image });
+                }
+                
+                return;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return;
             }
         }
     }

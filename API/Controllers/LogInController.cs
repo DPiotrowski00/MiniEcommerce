@@ -83,6 +83,7 @@ namespace API.Controllers
         //Endpoint do odświeżania tokenów
         [EnableRateLimiting("RefreshPolicy")]
         [ServiceFilter(typeof(CsrfFilter))]
+        [Authorize]
         [HttpPost]
         [Route("/login/refresh")]
         public async Task<ActionResult<string>> RefreshToken([FromBody] RefreshTokenRequest request)
@@ -136,7 +137,7 @@ namespace API.Controllers
                 expires: DateTime.UtcNow.AddMinutes(10)
                 );
 
-                //Dodanie tokena JWT do cookies odpowiedzi
+                //Dodanie refresh tokena do cookies odpowiedzi
                 Response.Cookies.Append("Refresh-Token", refreshToken, new CookieOptions
                 {
                     HttpOnly = true,
@@ -231,7 +232,7 @@ namespace API.Controllers
                     audience: _audience,
                     signingCredentials: creds,
                     claims: claims,
-                    expires: DateTime.UtcNow.AddMinutes(10)
+                    expires: DateTime.UtcNow.AddMinutes(60)
                     );
 
                 //Dodanie refresh tokena do cookies odpowiedzi

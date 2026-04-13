@@ -3,10 +3,12 @@ using API.Filters;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Crypto;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
+using System.IO;
 
 namespace API.Controllers
 {
@@ -46,7 +48,7 @@ namespace API.Controllers
                 ItemResponse newItem = new()
                 {
                     ID = i.ID,
-                    CreatorName = await _sqlService.GetCreatorName(i.ID),
+                    CreatorName = i.CreatorName,
                     Name = i.Name,
                     Description = i.Description,
                     Price = i.Price,
@@ -68,7 +70,7 @@ namespace API.Controllers
             ItemResponse response = new()
             {
                 ID = item.ID,
-                CreatorName = await _sqlService.GetCreatorName(item.ID),
+                CreatorName = item.CreatorName,
                 Name = item.Name,
                 Description = item.Description,
                 Price = item.Price,
@@ -81,10 +83,68 @@ namespace API.Controllers
 
         [ServiceFilter(typeof(CsrfFilter))]
         [Authorize]
-        [HttpPost]
+        [HttpPut]
+        [Route("/items/images")]
+        public async Task<ActionResult> AddImages([FromForm] int ItemID, [FromForm] List<IFormFile> images)
+        {
+            var authHeader = Request.Headers.Authorization.ToString();
+            var token = authHeader.Replace("Bearer ", "");
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+            var claims = jwt.Claims;
+            if (claims == null) return BadRequest("Claims są null");
+
+            int id = Convert.ToInt32(claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
+            if (id == 0) return BadRequest("Id jest null");
+
+            if (id == 0) return BadRequest("ItemID jest null");
+
+            List<string> fileNames = [];
+
+            foreach (var image in images)
+            {
+                if (image != null)
+                {
+                    if (!image.ContentType.StartsWith("image/") || image.Length == 0) return BadRequest("Zdjęcie jest puste");
+
+                    var extension = Path.GetExtension(image.FileName);
+                    var fileName = $"{Guid.NewGuid()}{extension}";
+                    var filePath = Path.Combine("Uploads", fileName);
+
+                    using var stream = new FileStream(filePath, FileMode.Create);
+                    await image.CopyToAsync(stream);
+
+                    fileNames.Add(fileName);
+                }
+            }
+
+            if (await _sqlService.AddImages(new ItemModel() { ID = ItemID }, fileNames))
+            {
+                return Ok();
+            }
+            else
+            {
+                foreach (var fileName in fileNames)
+                {
+                    var filePath = Path.Combine("Uploads", fileName);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                }
+
+                return BadRequest("Nie udało się zapisać");
+            }
+        }
+
+        [ServiceFilter(typeof(CsrfFilter))]
+        [Authorize]
+        [HttpPut]
         public async Task<ActionResult> CreateItem([FromForm] ItemWrapper wrapper)
         {
-            var token = Request.Cookies["JWT_Token"];
+            var authHeader = Request.Headers.Authorization.ToString();
+            var token = authHeader.Replace("Bearer ", "");
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
 
             var claims = jwt.Claims;

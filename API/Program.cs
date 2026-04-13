@@ -37,6 +37,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ILoggingSqlService, LoggingSqlService>();
 builder.Services.AddScoped<IItemsSqlService, ItemsSqlService>();
 builder.Services.AddScoped<ISessionSqlService, SessionSqlService>();
+builder.Services.AddScoped<IOrderSqlService, OrderSqlService>();
 builder.Services.AddScoped<CsrfFilter>();
 
 builder.Services.AddSingleton<RSA>(_ => rsa);
