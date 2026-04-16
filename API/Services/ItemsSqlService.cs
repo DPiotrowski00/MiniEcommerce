@@ -24,7 +24,7 @@ namespace API.Services
         public async Task<List<ItemModel>> GetItems()
         {
             string query = """
-                           SELECT i.ID, i.CreatorID, l.Name as CreatorName, i.Name, i.Description, i.Price, im.GUID as Thumbnail, i.CreationTime FROM items i JOIN images im ON i.ID = im.ItemID JOIN logindata l ON i.CreatorID = l.ID WHERE im.IsPrimary = 1
+                           SELECT i.ID, i.CreatorID, l.DisplayName as CreatorName, i.Name, i.Description, i.Price, im.GUID as Thumbnail, i.CreationTime FROM items i JOIN images im ON i.ID = im.ItemID JOIN logindata l ON i.CreatorID = l.ID WHERE im.IsPrimary = 1
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -41,7 +41,7 @@ namespace API.Services
         public async Task<ItemModel> GetItemById(int ID)
         {
             string query = """
-                           SELECT i.ID, i.CreatorID, l.Name as CreatorName, i.Name, i.Description, i.Price, im.GUID as Thumbnail, i.CreationTime FROM items i JOIN images im ON i.ID = im.ItemID JOIN logindata l ON i.CreatorID = l.ID WHERE im.IsPrimary = 1 AND i.ID = @ID
+                           SELECT i.ID, i.CreatorID, l.DisplayName as CreatorName, i.Name, i.Description, i.Price, im.GUID as Thumbnail, i.CreationTime FROM items i JOIN images im ON i.ID = im.ItemID JOIN logindata l ON i.CreatorID = l.ID WHERE im.IsPrimary = 1 AND i.ID = @ID
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);

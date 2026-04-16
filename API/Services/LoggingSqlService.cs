@@ -4,6 +4,7 @@ using System.Data.Common;
 using MySql.Data.MySqlClient;
 using Dapper;
 using API.Helpers;
+using API.DataModels;
 
 namespace API.Services
 {
@@ -11,7 +12,7 @@ namespace API.Services
     public interface ILoggingSqlService
     {
         Task<int> ValidateLogIn(string Username, string Password);
-        Task<bool> CreateUser(string Username, string Password);
+        Task<bool> CreateUser(LogInData data);
     }
 
     //Implementacja interfejsu ILoggingSqlService
@@ -48,17 +49,17 @@ namespace API.Services
 
         //Funkcja tworząca użytkownika.
         //Zwraca wartość true, jeśli wszystko przebiegło pomyślnie i wartość false, jeśli coś poszło nie tak.
-        public async Task<bool> CreateUser(string Username, string Password)
+        public async Task<bool> CreateUser(LogInData data)
         {
             string query = """
-                           INSERT INTO logindata (Username, Password) VALUES (@Username, @HashedPassword)
+                           INSERT INTO logindata (Username, Password, DisplayName) VALUES (@Login, @HashedPassword, @DisplayName)
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
-                var HashedPassword = BCrypt.Net.BCrypt.HashPassword(Password);
-                await connection.ExecuteAsync(query, new { Username, HashedPassword });
+                var HashedPassword = BCrypt.Net.BCrypt.HashPassword(data.Password);
+                await connection.ExecuteAsync(query, new { data.Login, HashedPassword, data.DisplayName });
                 return true;
             }
             catch (Exception ex)

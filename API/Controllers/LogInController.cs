@@ -1,4 +1,5 @@
-﻿using API.Filters;
+﻿using API.DataModels;
+using API.Filters;
 using API.Helpers;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -66,14 +67,14 @@ namespace API.Controllers
             Response.Cookies.Delete("Refresh-Token", new CookieOptions
             {
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Path = "/"
             });
 
             Response.Cookies.Delete("CSRF-Token", new CookieOptions
             {
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Path = "/"
             });
 
@@ -142,7 +143,7 @@ namespace API.Controllers
                 {
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(30),
                     Path = "/"
                 });
@@ -152,7 +153,7 @@ namespace API.Controllers
                 {
                     HttpOnly = false,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(30),
                     Path = "/"
                 });
@@ -165,7 +166,7 @@ namespace API.Controllers
             return Unauthorized();
         }
 
-        //Endpoint do walidacji logowania. W odpowiedzi zwraca [JWS http-only secure cookie] i [CSRF secure cookie]
+        //Endpoint do walidacji logowania. W odpowiedzi zwraca [JWS w body], [CSRF jako secure cookie] oraz [RefreshToken jako secure http-only cookie]
         [EnableRateLimiting("LogInPolicy")]
         [HttpPost]
         public async Task<ActionResult<string>> ValidateLogIn([FromBody] LogInData request)
@@ -240,7 +241,7 @@ namespace API.Controllers
                 {
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(30),
                     Path = "/"
                 });
@@ -250,7 +251,7 @@ namespace API.Controllers
                 {
                     HttpOnly = false,
                     Secure = true,
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(30),
                     Path = "/"
                 });
@@ -284,7 +285,7 @@ namespace API.Controllers
             }
 
             //Finalnie spróbuj utworzyć użytkownika
-            if(await _loginSqlService.CreateUser(request.Login, request.Password))
+            if(await _loginSqlService.CreateUser(request))
             {
                 //Jeśli tworzenie użytkownika się powiodło odpowiadaj Ok
                 return Ok();

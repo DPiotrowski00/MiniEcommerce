@@ -38,6 +38,7 @@ builder.Services.AddScoped<ILoggingSqlService, LoggingSqlService>();
 builder.Services.AddScoped<IItemsSqlService, ItemsSqlService>();
 builder.Services.AddScoped<ISessionSqlService, SessionSqlService>();
 builder.Services.AddScoped<IOrderSqlService, OrderSqlService>();
+builder.Services.AddScoped<IAccountSqlService, AccountSqlService>();
 builder.Services.AddScoped<CsrfFilter>();
 
 builder.Services.AddSingleton<RSA>(_ => rsa);
@@ -78,6 +79,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         //    return Task.CompletedTask;
         //}
     };
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
 });
 
 builder.Services.AddRateLimiter(options =>
@@ -123,11 +136,22 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseCors("AllowFrontend");
+
 //Uruchomienie zabezpieczeń
 app.UseHttpsRedirection();
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
+
+//
+var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
 
 //Middleware odpowiedzialny za zabezpieczenie przed atakami XSS
 app.Use(async (context, next) =>
@@ -148,19 +172,10 @@ app.Use(async (context, next) =>
     await next();
 });
 
-//
-var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-
 if (!Directory.Exists(uploadsPath))
 {
     Directory.CreateDirectory(uploadsPath);
 }
-
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(uploadsPath),
-    RequestPath = "/uploads"
-});
 
 //Mapowanie kontrolerów
 app.MapControllers();

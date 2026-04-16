@@ -1,0 +1,8 @@
+export default function ItemPage(item) {
+    return (
+        <>
+            <h1>{item.name}</h1>
+            <p>{item.description}</p>
+        </>
+    )
+}

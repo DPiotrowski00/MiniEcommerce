@@ -1,4 +1,5 @@
-﻿using static API.Controllers.OrderController;
+﻿using API.DataModels;
+using static API.Controllers.OrderController;
 
 namespace API.Services
 {
@@ -13,9 +14,9 @@ namespace API.Services
 
         public async Task PlaceOrder(OrderModel order)
         {
-            string query = """
-                           INSERT INTO orders (ClientID, )
-                           """;
+            //string query = """
+            //               INSERT INTO orders (ClientID, )
+            //               """;
         }
     }
 }

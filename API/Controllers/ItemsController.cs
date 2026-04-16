@@ -35,8 +35,6 @@ namespace API.Controllers
             public DateTime? CreationTime { get; set; }
         }
 
-        [ServiceFilter(typeof(CsrfFilter))]
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult> GetItems()
         {
@@ -61,8 +59,6 @@ namespace API.Controllers
             return Ok(response);
         }
 
-        [ServiceFilter(typeof(CsrfFilter))]
-        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult> GetItemById(int id)
         {
