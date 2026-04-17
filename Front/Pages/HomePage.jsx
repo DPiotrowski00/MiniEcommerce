@@ -1,5 +1,6 @@
-import useItems from "../Hooks/useItems";
+﻿import useItems from "../Hooks/useItems";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
     const [items, setItems] = useState([]);
@@ -9,21 +10,34 @@ export default function HomePage() {
         const fetchItems = async () => {
             const data = await GetItems();
             setItems(data);
-        }
+        };
 
         fetchItems();
     });
+
+    function formatPrice(price) {
+        return price.toLocaleString("pl-PL", {
+            style: "currency",
+            currency: "PLN",
+        });
+    }
 
     return (
         <div>
             {items.map((item) => (
                 <div key={item.id}>
-                    <h2>{item.name}</h2>
-                    <p>{item.price}</p>
-                    <img
-                        src={"https://localhost:7153" + item.thumbnailURL}
-                        alt={item.name}
-                    />
+                    <Link
+                        to={`/item/${item.id}`}
+                        style={{ textDecoration: "none", color: "inherit" }}
+                    >
+                        <div>
+                            <img
+                                src={`https://localhost:7153${item.thumbnailURL}`}
+                            />
+                            <h3>{item.name}</h3>
+                            <p>{formatPrice(item.price)}</p>
+                        </div>
+                    </Link>
                 </div>
             ))}
         </div>

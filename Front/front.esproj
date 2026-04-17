@@ -10,7 +10,4 @@
     <PackageJsonDirectory>$(MSBuildProjectDirectory)\front</PackageJsonDirectory>
     <StartupCommandWorkingDirectory>$(MSBuildProjectDirectory)\front</StartupCommandWorkingDirectory>
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="Components\" />
-  </ItemGroup>
 </Project>

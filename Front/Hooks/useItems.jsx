@@ -8,5 +8,12 @@ export default function useItems() {
         return res.json();
     };
 
-    return { GetItems };
+    const GetItemById = async (id) => {
+        const res = await apiFetch(`/items/${id}`, {
+            method: "GET",
+        });
+        return res.json();
+    };
+
+    return { GetItems, GetItemById };
 }
