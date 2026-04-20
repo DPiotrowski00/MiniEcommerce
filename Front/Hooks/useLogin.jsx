@@ -1,4 +1,4 @@
-import { apiFetch, setAccessToken } from "../API/apiClient";
+import { apiFetch } from "../API/apiClient";
 import getDeviceId from "../Helpers/getDeviceId";
 
 export default function useLogin() {
@@ -14,8 +14,8 @@ export default function useLogin() {
             }),
         });
 
-        const token = await response.text();
-        setAccessToken(token);
+        const accessToken = await response.text();
+        localStorage.setItem("access-token", accessToken);
     };
 
     const TestLogin = async () => {

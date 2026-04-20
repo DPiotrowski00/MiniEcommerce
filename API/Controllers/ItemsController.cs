@@ -20,7 +20,7 @@ namespace API.Controllers
 
         public class ItemWrapper
         {
-            public required ItemModel Item { get; set; }
+            public ItemModel Item { get; set; } = new();
             public IFormFile? Image { get; set; }
         }
 
@@ -93,7 +93,7 @@ namespace API.Controllers
             int id = Convert.ToInt32(claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
             if (id == 0) return BadRequest("Id jest null");
 
-            if (id == 0) return BadRequest("ItemID jest null");
+            if (ItemID == 0) return BadRequest("ItemID jest null");
 
             List<string> fileNames = [];
 

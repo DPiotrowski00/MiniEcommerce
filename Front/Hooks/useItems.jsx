@@ -15,5 +15,23 @@ export default function useItems() {
         return res.json();
     };
 
-    return { GetItems, GetItemById };
+    const TryCreateItem = async (thumbnail, name, description, price) => {
+        const formData = new FormData();
+        formData.append("Item.Name", name);
+        formData.append("Item.Description", description);
+        formData.append("Item.Price", price);
+        formData.append("Image", thumbnail);
+
+        const res = await apiFetch(`/items`, {
+            method: "PUT",
+            body: formData,
+        });
+        if (res.status === 200) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    return { GetItems, GetItemById, TryCreateItem };
 }

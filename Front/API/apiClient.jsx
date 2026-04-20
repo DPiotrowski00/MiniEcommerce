@@ -2,12 +2,6 @@ import { getCookie } from "../Helpers/getCookie";
 
 const BASE_URL = "https://localhost:7153";
 
-let accessToken = null;
-
-export const setAccessToken = (token) => {
-    accessToken = token;
-};
-
 const tryRefreshToken = async () => {
     try {
         const response = await fetch(BASE_URL + "/login/refresh", {
@@ -19,8 +13,8 @@ const tryRefreshToken = async () => {
             return false;
         }
 
-        const token = await response.text();
-        setAccessToken(token);
+        const accessToken = await response.text();
+        localStorage.setItem("access-token", accessToken);
 
         return true;
     } catch {
@@ -30,9 +24,12 @@ const tryRefreshToken = async () => {
 
 export const apiFetch = async (url, options) => {
     const csrfToken = getCookie("CSRF-Token");
+    const accessToken = localStorage.getItem("access-token");
+
+    const isFormData = options.body instanceof FormData;
 
     const headers = {
-        "Content-Type": "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
         ...(options.headers || {}),
     };
 

@@ -33,6 +33,8 @@ export default function HomePage() {
                         <div>
                             <img
                                 src={`https://localhost:7153${item.thumbnailURL}`}
+                                width="10%"
+                                height="10%"
                             />
                             <h3>{item.name}</h3>
                             <p>{formatPrice(item.price)}</p>

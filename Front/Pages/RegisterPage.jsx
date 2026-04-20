@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useRegister from "../Hooks/useRegister"
+import useRegister from "../Hooks/useRegister";
 
 export default function RegisterPage() {
     const { tryRegister } = useRegister();
