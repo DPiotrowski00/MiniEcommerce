@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.2752196">
+﻿<Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/1.0.2752196">
   <PropertyGroup>
     <StartupCommand>npm run dev</StartupCommand>
     <JavaScriptTestRoot>src\</JavaScriptTestRoot>
@@ -10,4 +10,7 @@
     <PackageJsonDirectory>$(MSBuildProjectDirectory)\front</PackageJsonDirectory>
     <StartupCommandWorkingDirectory>$(MSBuildProjectDirectory)\front</StartupCommandWorkingDirectory>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Styles\" />
+  </ItemGroup>
 </Project>
