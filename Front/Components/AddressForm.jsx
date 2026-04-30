@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from "react";
-import useAddress from "../Hooks/useAddress";
+import useAccount from "../Hooks/useAccount";
 
 export default function AddressForm() {
     const [country, setCountry] = useState("");
@@ -9,7 +9,7 @@ export default function AddressForm() {
     const [buildingNumber, setBuildingNumber] = useState("");
     const [apartmentNumber, setApartmentNumber] = useState("");
 
-    const { setAddress, deleteAddress, getAddress } = useAddress();
+    const { getAddress, setAddress, deleteAddress } = useAccount();
 
     useEffect(() => {
         const LoadAddress = async () => {

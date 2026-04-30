@@ -7,9 +7,10 @@ export default function LogInPage() {
 
     const { TryLogin, TestLogin } = useLogin();
 
-    function LogInClick() {
-        TryLogin(login, password);
-    }
+    const LogInClick = async () => {
+        await TryLogin(login, password);
+        window.location.reload();
+    };
 
     function Test() {
         TestLogin();

@@ -7,8 +7,7 @@ import LogInPage from "../../Pages/LogInPage";
 import RegisterPage from "../../Pages/RegisterPage";
 import ItemPage from "../../Pages/ItemPage";
 import ItemCreationPage from "../../Pages/ItemCreationPage";
-
-import AddressForm from "../../Components/AddressForm";
+import AccountPage from "../../Pages/AccountPage";
 
 export default function App() {
     return (
@@ -19,7 +18,7 @@ export default function App() {
                 <Route path="/login" element={<LogInPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/item/:id" element={<ItemPage />} />
-                <Route path="/address" element={<AddressForm />} />
+                <Route path="/account" element={<AccountPage />} />
                 <Route path="/item/add" element={<ItemCreationPage />} />
             </Routes>
         </>

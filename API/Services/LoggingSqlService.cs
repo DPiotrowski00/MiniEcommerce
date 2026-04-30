@@ -1,9 +1,4 @@
-﻿using System.Data;
-using System.Configuration;
-using System.Data.Common;
-using MySql.Data.MySqlClient;
-using Dapper;
-using API.Helpers;
+﻿using Dapper;
 using API.DataModels;
 
 namespace API.Services
@@ -13,6 +8,7 @@ namespace API.Services
     {
         Task<int> ValidateLogIn(string Username, string Password);
         Task<bool> CreateUser(LogInData data);
+        Task<bool> ChangePassword(int UserID, string oldPass, string newPass);
     }
 
     //Implementacja interfejsu ILoggingSqlService
@@ -61,6 +57,38 @@ namespace API.Services
                 var HashedPassword = BCrypt.Net.BCrypt.HashPassword(data.Password);
                 await connection.ExecuteAsync(query, new { data.Login, HashedPassword, data.DisplayName });
                 return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+
+        public async Task<bool> ChangePassword(int UserID, string oldPass, string newPass)
+        {
+            string checker = """
+                             SELECT Password FROM logindata WHERE ID = @UserID
+                             """;
+
+            string setter = """
+                            UPDATE logindata SET Password = @Password WHERE ID = @UserID
+                            """;
+
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                var passhash = await connection.QuerySingleAsync<string>(checker, new { UserID });
+                if (BCrypt.Net.BCrypt.Verify(oldPass, passhash))
+                {
+                    var Password = BCrypt.Net.BCrypt.HashPassword(newPass);
+                    await connection.ExecuteAsync(setter, new { Password, UserID });
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception ex)
             {

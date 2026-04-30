@@ -3,7 +3,6 @@ using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
-using System.Configuration;
 using System.Security.Cryptography;
 using System.Threading.RateLimiting;
 

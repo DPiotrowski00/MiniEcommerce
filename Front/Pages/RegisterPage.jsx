@@ -1,16 +1,15 @@
 import { useState } from "react";
-import useRegister from "../Hooks/useRegister";
+import useLogin from "../Hooks/useLogin";
 
 export default function RegisterPage() {
-    const { tryRegister } = useRegister();
+    const { TryRegister } = useLogin();
 
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
     const [displayName, setDisplayName] = useState("");
-    const [message, setMessage] = useState("msg");
 
     function RegisterClick() {
-        tryRegister(login, password, displayName);
+        TryRegister(login, password, displayName);
     }
 
     return (
@@ -33,7 +32,6 @@ export default function RegisterPage() {
             <button type="submit" onClick={RegisterClick}>
                 Register
             </button>
-            <label>{message}</label>
         </div>
     );
 }

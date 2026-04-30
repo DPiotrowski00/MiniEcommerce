@@ -18,14 +18,12 @@ export default function CheckoutPage() {
                 </tr>
                 {orders.map((order) => {
                     <tr>
-                        <table>
-                            <tr>
-                                <th>Item name</th>
-                                <th>Quantity</th>
-                                <th>Value</th>
-                            </tr>
-                        </table>
-                    </tr>
+                        <tr>
+                            <th>Item name</th>
+                            <th>Quantity</th>
+                            <th>Value</th>
+                        </tr>
+                    </tr>;
             })}
             </table>
         </>

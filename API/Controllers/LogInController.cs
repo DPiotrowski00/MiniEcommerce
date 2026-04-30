@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -35,6 +36,12 @@ namespace API.Controllers
             public string? DeviceID { get; set; }
         }
 
+        public record PassChangeInfo
+        {
+            public string? OldPass { get; set; }
+            public string? NewPass { get; set; }
+        }
+
         private static string CreateRefreshToken()
         {
             var randomBytes = new byte[64];
@@ -58,6 +65,16 @@ namespace API.Controllers
         [Route("/logout")]
         public async Task<ActionResult> LogOut()
         {
+            var authHeader = Request.Headers.Authorization.ToString();
+            var token = authHeader.Replace("Bearer ", "");
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+            var claims = jwt.Claims;
+            if (claims == null) return BadRequest("Claims are null.");
+
+            int id = Convert.ToInt32(claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
+            if (id == 0) return BadRequest("Id is null.");
+
             if (!Request.Cookies.TryGetValue("Refresh-Token", out var refreshTokenFromCookie))
                 return Unauthorized();
 
@@ -102,8 +119,13 @@ namespace API.Controllers
 
             var session = await _sessionSqlService.GetSessionByToken(refreshTokenFromCookie);
 
-            if (session == null || session.ExpiresAt <= DateTime.UtcNow || session.IsRevoked)
+            if (session == null || session.IsRevoked)
                 return Unauthorized();
+
+            if (session.ExpiresAt <= DateTime.UtcNow)
+            {
+                await _sessionSqlService.RevokeSession(session.ID);
+            }
 
             if (session.DeviceID == request.DeviceID)
             {
@@ -294,6 +316,45 @@ namespace API.Controllers
             {
                 //Jeśli nie udało się utworzyć użytkownika odpowiadaj BadRequest
                 return BadRequest();
+            }
+        }
+
+        [ServiceFilter(typeof(CsrfFilter))]
+        [Authorize]
+        [Route("/password")]
+        [HttpPost]
+        public async Task<ActionResult> SetNewPassword([FromBody] PassChangeInfo request)
+        {
+            var authHeader = Request.Headers.Authorization.ToString();
+            var token = authHeader.Replace("Bearer ", "");
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+            var claims = jwt.Claims;
+            if (claims == null) return BadRequest("Claims are null.");
+
+            int id = Convert.ToInt32(claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
+            if (id == 0) return BadRequest("Id is null.");
+
+            if (request.NewPass == null || request.OldPass == null)
+            {
+                return BadRequest("Password cannot be null.");
+            }
+
+            var matchPassword = Regex.Match(request.NewPass, passwordRegex);
+            if (!matchPassword.Success)
+            {
+                return BadRequest("Password doesn't match regex.");
+            }
+            else
+            {
+                if (await _loginSqlService.ChangePassword(id, request.OldPass, request.NewPass))
+                {
+                    return Ok("Password change successful.");
+                }
+                else
+                {
+                    return BadRequest("Password change was not successful.");
+                }
             }
         }
     }
