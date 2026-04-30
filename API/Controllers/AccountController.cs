@@ -54,10 +54,10 @@ namespace API.Controllers
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
 
             var claims = jwt.Claims;
-            if (claims == null) return BadRequest("Claims są null");
+            if (claims == null) return BadRequest("Claims are null.");
 
             int id = Convert.ToInt32(claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
-            if (id == 0) return BadRequest("Id jest null");
+            if (id == 0) return BadRequest("Id is null.");
 
             await _userSqlService.UpdateAddress(id, address);
             return Ok();
@@ -74,10 +74,10 @@ namespace API.Controllers
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
 
             var claims = jwt.Claims;
-            if (claims == null) return BadRequest("Claims są null");
+            if (claims == null) return BadRequest("Claims are null.");
 
             int id = Convert.ToInt32(claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
-            if (id == 0) return BadRequest("Id jest null");
+            if (id == 0) return BadRequest("Id is null.");
 
             await _userSqlService.DeleteAddress(id);
             return Ok();

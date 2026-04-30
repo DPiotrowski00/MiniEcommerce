@@ -88,12 +88,12 @@ namespace API.Controllers
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
 
             var claims = jwt.Claims;
-            if (claims == null) return BadRequest("Claims są null");
+            if (claims == null) return BadRequest("Claims are null.");
 
             int id = Convert.ToInt32(claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
-            if (id == 0) return BadRequest("Id jest null");
+            if (id == 0) return BadRequest("Id is null.");
 
-            if (ItemID == 0) return BadRequest("ItemID jest null");
+            if (ItemID == 0) return BadRequest("Item id not provided.");
 
             List<string> fileNames = [];
 
@@ -130,7 +130,7 @@ namespace API.Controllers
                     }
                 }
 
-                return BadRequest("Nie udało się zapisać");
+                return BadRequest("Saving item failed.");
             }
         }
 
@@ -144,13 +144,13 @@ namespace API.Controllers
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
 
             var claims = jwt.Claims;
-            if (claims == null) return BadRequest("Claims są null");
+            if (claims == null) return BadRequest("Claims are null.");
 
             int id = Convert.ToInt32(claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
-            if (id == 0) return BadRequest("Id jest null");
+            if (id == 0) return BadRequest("Id is null.");
 
             var item = wrapper.Item;
-            if (item == null) return BadRequest("Item jest null");
+            if (item == null) return BadRequest("Item is null.");
 
             item.CreatorID = id;
 
@@ -171,11 +171,11 @@ namespace API.Controllers
 
             if (await _sqlService.AddItem(item))
             {
-                return Ok("Udało się zapisać");
+                return Ok("Item saved.");
             }
             else
             {
-                return BadRequest("Nie udało się zapisać");
+                return BadRequest("Couldn't save Item.");
             }
         }
     }

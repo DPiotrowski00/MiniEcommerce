@@ -10,6 +10,7 @@
     {
         public int ID { get; set; }
         public int UserID { get; set; }
-        public List<OrderPosition>? Positions { get; set; }
+        public required List<OrderPosition> Positions { get; set; }
+        public required AddressModel Address { get; set; }
     }
 }

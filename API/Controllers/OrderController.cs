@@ -25,10 +25,10 @@ namespace API.Controllers
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
 
             var claims = jwt.Claims;
-            if (claims == null) return BadRequest("Claims są null");
+            if (claims == null) return BadRequest("Claims are null.");
 
             int id = Convert.ToInt32(claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
-            if (id == 0) return BadRequest("Id jest null");
+            if (id == 0) return BadRequest("Id is null.");
 
             try
             {
@@ -47,9 +47,10 @@ namespace API.Controllers
         [HttpPut]
         public async Task<ActionResult> CreateOrder([FromBody] OrderModel order)
         {
-            if (order == null) return BadRequest("Zamówienie jest puste.");
-            if (order.Positions == null) return BadRequest("Lista artykułów jest pusta.");
-            if (order.Positions.Count == 0) return BadRequest("Lista artykułów jest pusta.");
+            if (order == null) return BadRequest("Order is null.");
+            if (order.Positions == null) return BadRequest("Positions are null.");
+            if (order.Positions.Count == 0) return BadRequest("Order has no positions.");
+            if (order.Address == null) return BadRequest("Address is null.");
 
             try
             {
@@ -70,7 +71,7 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<ActionResult> DeleteOrder([FromBody] int orderID)
         {
-            if (orderID == 0) return BadRequest("ID zamówienia jest nieprawidłowe");
+            if (orderID == 0) return BadRequest("Order id not provided.");
             try
             {
                 await _orderSqlService.DeleteOrder(orderID);

@@ -71,7 +71,7 @@ namespace API.Services
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.ToString());
                 transaction.Rollback();
                 return false;
             }

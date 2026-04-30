@@ -43,7 +43,7 @@ namespace API.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.ToString());
                 return null;
             }
         }
@@ -62,7 +62,7 @@ namespace API.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.ToString());
                 return null;
             }
         }
@@ -81,7 +81,7 @@ namespace API.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.ToString());
                 transaction.Rollback();
                 return;
             }
@@ -123,7 +123,7 @@ namespace API.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.ToString());
                 transaction.Rollback();
                 return;
             }
@@ -142,7 +142,7 @@ namespace API.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.ToString());
                 return 0;
             }
         }
