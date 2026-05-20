@@ -18,12 +18,9 @@ export default function CheckoutPage() {
                 </tr>
                 {orders.map((order) => {
                     <tr>
-                        <tr>
-                            <th>Item name</th>
-                            <th>Quantity</th>
-                            <th>Value</th>
-                        </tr>
-                    </tr>;
+                        <td>{order.ID}</td>
+                        <td>{order.Value}</td>
+                    </tr>
             })}
             </table>
         </>

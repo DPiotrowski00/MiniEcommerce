@@ -1,48 +1,246 @@
-/* Dropdown Button */
-.dropbtn {
-    background-color: #3498DB;
-    color: white;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
+/* NavBarStyle.css */
+
+* {
+    box-sizing: border-box;
 }
 
-/* Dropdown button on hover & focus */
-.dropbtn:hover, .dropbtn:focus {
-    background-color: #2980B9;
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 40px;
+    background: rgba(15, 17, 23, 0.88);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
-/* The container <div> - needed to position the dropdown content */
+/* LEFT SIDE */
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* NAV LINKS */
+
+.nav-link {
+    position: relative;
+    padding: 12px 18px;
+    border-radius: 14px;
+    text-decoration: none;
+    color: #d9e3f0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    transition: color 0.3s ease, background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .nav-link::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient( 135deg, rgba(0, 255, 200, 0.12), rgba(0, 140, 255, 0.08) );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .nav-link:hover {
+        color: #6fffd2;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25), 0 0 18px rgba(0, 255, 200, 0.08);
+    }
+
+        .nav-link:hover::before {
+            opacity: 1;
+        }
+
+/* RIGHT SIDE */
+
+.hidden-menu {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* DROPDOWN */
+
 .dropdown {
     position: relative;
-    display: inline-block;
 }
 
-/* Dropdown Content (Hidden by Default) */
+/* BUTTON */
+
+.dropbtn {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    background: linear-gradient( 145deg, rgba(33, 37, 48, 0.96), rgba(20, 22, 31, 0.98) );
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: #7effd8;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+    .dropbtn:hover,
+    .dropbtn:focus {
+        transform: translateY(-2px);
+        border-color: rgba(0, 255, 200, 0.22);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), 0 0 18px rgba(0, 255, 200, 0.08);
+        background: linear-gradient( 145deg, rgba(40, 44, 58, 0.98), rgba(24, 26, 36, 1) );
+    }
+
+/* DROPDOWN MENU */
+
 .dropdown-content {
-    display: none;
     position: absolute;
-    background-color: #f1f1f1;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+    top: calc(100% + 12px);
+    right: 0;
+    min-width: 220px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 20px;
+    background: linear-gradient( 145deg, rgba(33, 37, 48, 0.98), rgba(20, 22, 31, 0.98) );
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), 0 0 25px rgba(0, 255, 200, 0.06);
+    animation: dropdownFade 0.25s ease;
 }
 
-/* Links inside the dropdown */
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
+/* SHOW */
 
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {
-    background-color: #ddd;
-}
-
-/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
 .show {
-    display: block;
+    display: flex;
+}
+
+/* LINKS INSIDE */
+
+.dropdown-content a {
+    position: relative;
+    padding: 15px 18px;
+    text-decoration: none;
+    color: #d9e3f0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background 0.25s ease, color 0.25s ease, padding-left 0.25s ease;
+}
+
+    .dropdown-content a::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 4px;
+        height: 0;
+        border-radius: 999px;
+        background: #6fffd2;
+        transform: translateY(-50%);
+        transition: height 0.25s ease;
+    }
+
+    .dropdown-content a:hover {
+        color: #6fffd2;
+        background: rgba(255, 255, 255, 0.03);
+        padding-left: 24px;
+    }
+
+        .dropdown-content a:hover::before {
+            height: 55%;
+        }
+
+/* CART */
+
+.cart-link {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: linear-gradient( 145deg, rgba(33, 37, 48, 0.96), rgba(20, 22, 31, 0.98) );
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .cart-link:hover {
+        transform: translateY(-2px);
+        border-color: rgba(0, 255, 200, 0.22);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), 0 0 18px rgba(0, 255, 200, 0.08);
+    }
+
+    .cart-link img {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+        filter: brightness(0) saturate(100%) invert(88%) sepia(24%) saturate(564%) hue-rotate(97deg) brightness(104%) contrast(103%);
+    }
+
+/* LOGOUT BUTTON */
+
+.logout-button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    background: rgba(255, 70, 70, 0.12);
+    border: 1px solid rgba(255, 70, 70, 0.16);
+    color: #ff9a9a;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .logout-button:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 70, 70, 0.18);
+        box-shadow: 0 10px 25px rgba(255, 70, 70, 0.12), 0 0 18px rgba(255, 70, 70, 0.08);
+    }
+
+/* ANIMATION */
+
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 18px;
+        padding: 20px;
+    }
+
+    .navbar-links,
+    .hidden-menu {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .dropdown-content {
+        right: 50%;
+        transform: translateX(50%);
+    }
 }

@@ -31,7 +31,12 @@ export default function useLogin() {
             }),
         });
 
-        const accessToken = await response.text();
+        let accessToken = null;
+
+        if (response.status === 200) {
+            accessToken = await response.text();
+        }
+
         localStorage.setItem("access-token", accessToken);
         accessToken !== null && accessToken !== ""
             ? localStorage.setItem("logInStatus", true)

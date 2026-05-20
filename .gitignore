@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /API/appsettings.json
 /API/private_key.pem
+/API/uploads
+/API/Controllers/OrderController.cs

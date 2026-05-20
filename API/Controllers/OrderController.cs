@@ -1,7 +1,6 @@
 ﻿using API.DataModels;
 using API.Filters;
 using API.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -54,7 +53,6 @@ namespace API.Controllers
 
             try
             {
-
                 await _orderSqlService.PlaceOrder(order);
             }
             catch (Exception ex)

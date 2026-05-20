@@ -48,29 +48,46 @@ export default function NavBar() {
     };
 
     return (
-        <div>
-            <Link to="/">Home</Link>
-            <Link to="/login">Logowanie</Link>
-            <Link to="/register">Rejestracja</Link>
+        <div className="navbar">
+            <div className="navbar-links">
+                <Link className="nav-link" to="/">
+                    Home
+                </Link>
+
+                <Link className="nav-link" to="/login">
+                    Logowanie
+                </Link>
+
+                <Link className="nav-link" to="/register">
+                    Rejestracja
+                </Link>
+            </div>
+
             {logInStatus === true && (
                 <div className="hidden-menu">
                     <div className="dropdown">
                         <button className="dropbtn" onClick={handleDropdown}>
                             ꜜ
                         </button>
+
                         <div id="dropdown-content" className="dropdown-content">
                             <Link to="/item/add" onClick={handleDropdown}>
                                 Dodaj ofertę
                             </Link>
+
                             <Link to="/account" onClick={handleDropdown}>
                                 Moje konto
                             </Link>
                         </div>
                     </div>
-                    <Link to="/">
-                        <img src={cart} alt="koszyk" height="30px" />
+
+                    <Link to="/" className="cart-link">
+                        <img src={cart} alt="koszyk" />
                     </Link>
-                    <button onClick={logOut}>Wyloguj</button>
+
+                    <button className="logout-button" onClick={logOut}>
+                        Wyloguj
+                    </button>
                 </div>
             )}
         </div>

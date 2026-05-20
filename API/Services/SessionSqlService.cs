@@ -67,7 +67,7 @@ namespace API.Services
             }
         }
 
-        public async Task RotateRefreshToken(Session session, string OldToken)
+        public async Task RotateRefreshToken(Session session, string OldTokenHash)
         {
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             await connection.OpenAsync();
@@ -75,7 +75,7 @@ namespace API.Services
             try
             {
                 await connection.ExecuteAsync("INSERT INTO tokens (RefreshTokenHash, CreatedAt, ExpiresAt, SessionID) VALUES (@RefreshTokenHash, NOW(), @ExpiresAt, @ID)", new { session.RefreshTokenHash, session.CreatedAt, session.ExpiresAt, session.ID }, transaction);
-                await connection.ExecuteAsync("UPDATE tokens SET ReplacedByTokenID = LAST_INSERT_ID(), IsRevoked = 1, RevokedAt = NOW(), RevokedReason = 'Refresh' WHERE RefreshTokenHash = @OldTokenHash ", new { session.RefreshTokenHash, session.CreatedAt, session.ExpiresAt, session.ID, OldTokenHash = HashHelper.ComputeSha256(OldToken) }, transaction);
+                await connection.ExecuteAsync("UPDATE tokens SET ReplacedByTokenID = LAST_INSERT_ID(), IsRevoked = 1, RevokedAt = NOW(), RevokedReason = 'Refresh' WHERE RefreshTokenHash = @OldTokenHash ", new { session.RefreshTokenHash, session.CreatedAt, session.ExpiresAt, session.ID, OldTokenHash }, transaction);
 
                 transaction.Commit();
             }

@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
+import "../Styles/HomePageStyle.css";
+
 export default function HomePage() {
     const [items, setItems] = useState([]);
     const { GetItems } = useItems();
@@ -23,24 +25,39 @@ export default function HomePage() {
     }
 
     return (
-        <div>
+        <div className="items-container">
             {items.map((item) => (
-                <div key={item.id}>
-                    <Link
-                        to={`/item/${item.id}`}
-                        style={{ textDecoration: "none", color: "inherit" }}
-                    >
-                        <div>
+                <Link
+                    key={item.id}
+                    to={`/item/${item.id}`}
+                    className="item-card-link"
+                >
+                    <div className="item-card">
+                        <div className="floating-dot"></div>
+
+                        <div className="item-image-wrapper">
                             <img
                                 src={`https://localhost:7153${item.thumbnailURL}`}
-                                width="10%"
-                                height="10%"
+                                alt={item.name}
+                                className="item-image"
                             />
-                            <h3>{item.name}</h3>
-                            <p>{formatPrice(item.price)}</p>
+
+                            <div className="item-overlay">
+                                <p className="item-description">
+                                    {item.description}
+                                </p>
+                            </div>
                         </div>
-                    </Link>
-                </div>
+
+                        <div className="item-content">
+                            <h3 className="item-title">{item.name}</h3>
+
+                            <div className="item-price">
+                                {formatPrice(item.price)}
+                            </div>
+                        </div>
+                    </div>
+                </Link>
             ))}
         </div>
     );
