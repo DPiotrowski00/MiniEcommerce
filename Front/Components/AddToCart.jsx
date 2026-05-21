@@ -43,36 +43,24 @@ export default function AddToCart({ item }) {
             <div className="cart-header">
                 <h2>Dodaj do koszyka</h2>
 
-                <span className="cart-badge">
-                    Premium
-                </span>
+                <span className="cart-badge">Premium</span>
             </div>
 
             <div className="cart-price-section">
-
-                <span className="cart-price-label">
-                    Łączna kwota
-                </span>
+                <span className="cart-price-label">Łączna kwota</span>
 
                 <span className="cart-full-price">
                     {formatPrice(fullPrice)}
                 </span>
-
             </div>
 
             <div className="cart-quantity-section">
-
-                <label className="cart-label">
-                    Ilość
-                </label>
+                <label className="cart-label">Ilość</label>
 
                 <div className="quantity-box">
-
                     <button
                         className="quantity-btn"
-                        onClick={() =>
-                            handleQuantChange(quant - 1)
-                        }
+                        onClick={() => handleQuantChange(quant - 1)}
                     >
                         −
                     </button>
@@ -81,52 +69,38 @@ export default function AddToCart({ item }) {
                         type="number"
                         min="1"
                         value={quant}
-                        onChange={(e) =>
-                            handleQuantChange(e.target.value)
-                        }
+                        onChange={(e) => handleQuantChange(e.target.value)}
                         className="quantity-input"
                     />
 
                     <button
                         className="quantity-btn"
-                        onClick={() =>
-                            handleQuantChange(quant + 1)
-                        }
+                        onClick={() => handleQuantChange(quant + 1)}
                     >
                         +
                     </button>
-
                 </div>
-
             </div>
 
             <div className="cart-summary">
-
                 <div className="cart-summary-row">
                     <span>Cena za sztukę</span>
-                    <span>
-                        {formatPrice(item.price)}
-                    </span>
+                    <span>{formatPrice(item.price)}</span>
                 </div>
 
                 <div className="cart-summary-row">
                     <span>Ilość</span>
                     <span>{quant}</span>
                 </div>
-
             </div>
 
-            <button
-                className="add-cart-btn"
-                onClick={AddToCart}
-            >
+            <button className="add-cart-btn" onClick={AddToCart}>
                 Dodaj do koszyka
             </button>
 
             <div className="cart-footer-info">
                 Natychmiastowa dostawa po zakupie
             </div>
-
         </div>
     );
 }
