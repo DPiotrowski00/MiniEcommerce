@@ -33,7 +33,7 @@ export default function useLogin() {
 
         let accessToken = null;
 
-        if (response.status === 200) {
+        if (response.ok) {
             accessToken = await response.text();
         }
 

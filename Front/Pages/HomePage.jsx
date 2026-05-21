@@ -1,12 +1,15 @@
 ﻿import useItems from "../Hooks/useItems";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import stringFormatters from "../Helpers/stringFormatters";
 
 import "../Styles/HomePageStyle.css";
 
 export default function HomePage() {
     const [items, setItems] = useState([]);
     const { GetItems } = useItems();
+
+    const { formatPrice } = stringFormatters();
 
     useEffect(() => {
         const fetchItems = async () => {
@@ -16,13 +19,6 @@ export default function HomePage() {
 
         fetchItems();
     });
-
-    function formatPrice(price) {
-        return price.toLocaleString("pl-PL", {
-            style: "currency",
-            currency: "PLN",
-        });
-    }
 
     return (
         <div className="items-container">

@@ -17,9 +17,7 @@ export default function RegisterPage() {
     return (
         <div className="auth-page">
             <div className="auth-card">
-                <h1 className="auth-title">
-                    Rejestracja
-                </h1>
+                <h1 className="auth-title">Rejestracja</h1>
 
                 <div className="auth-form">
                     <div className="auth-group">

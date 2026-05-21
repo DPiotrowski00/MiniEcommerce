@@ -1,28 +1,27 @@
-import { useState, useEffect } from "react";
-import useOrders from "../Hooks/useOrders";
+﻿import { useState, useEffect } from "react";
+import { tryPlaceOrder } from "../Hooks/useOrders";
 
 export default function CheckoutPage() {
-    const [orders, setOrders] = useState([]);
-    const { getOrders } = useOrders();
+    const [items, setItems] = useState([]);
 
     useEffect(() => {
-        setOrders(getOrders());
+        setItems(localStorage.getItem("cart"));
     });
 
     return (
-        <>
+        <div>
             <table>
                 <tr>
-                    <th>Order number</th>
-                    <th>Value</th>
+                    <th>Artykuł</th>
+                    <th>Wartość</th>
                 </tr>
-                {orders.map((order) => {
+                {items.map((item) => {
                     <tr>
-                        <td>{order.ID}</td>
-                        <td>{order.Value}</td>
-                    </tr>
+                        <td>{item.ID}</td>
+                        <td>{item.Value}</td>
+                    </tr>;
             })}
             </table>
-        </>
+        </div>
     );
 }

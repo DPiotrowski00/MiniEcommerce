@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useItems from "../Hooks/useItems";
+import AddToCart from "../Components/AddToCart";
 
 export default function ItemPage() {
     const { id } = useParams();
@@ -25,6 +26,7 @@ export default function ItemPage() {
             <p>{item.description}</p>
             <p>{item.price}</p>
             <p>{item.creatorName}</p>
+            <AddToCart item={item} />
         </div>
     );
 }
