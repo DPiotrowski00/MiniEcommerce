@@ -8,6 +8,7 @@ import RegisterPage from "../../Pages/RegisterPage";
 import ItemPage from "../../Pages/ItemPage";
 import ItemCreationPage from "../../Pages/ItemCreationPage";
 import AccountPage from "../../Pages/AccountPage";
+import CheckoutPage from "../../Pages/CheckoutPage";
 
 export default function App() {
     return (
@@ -20,6 +21,7 @@ export default function App() {
                 <Route path="/item/:id" element={<ItemPage />} />
                 <Route path="/account" element={<AccountPage />} />
                 <Route path="/item/add" element={<ItemCreationPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
             </Routes>
         </>
     );

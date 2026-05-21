@@ -81,7 +81,7 @@ export default function NavBar() {
                         </div>
                     </div>
 
-                    <Link to="/" className="cart-link">
+                    <Link to="/checkout" className="cart-link">
                         <img src={cart} alt="koszyk" />
                     </Link>
 

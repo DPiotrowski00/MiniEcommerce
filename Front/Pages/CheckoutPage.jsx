@@ -1,8 +1,9 @@
 ﻿import { useState, useEffect } from "react";
-import { tryPlaceOrder } from "../Hooks/useOrders";
+import useOrders from "../Hooks/useOrders";
 
 export default function CheckoutPage() {
     const [items, setItems] = useState([]);
+    const { tryPlaceOrder } = useOrders();
 
     useEffect(() => {
         setItems(localStorage.getItem("cart"));
@@ -10,17 +11,25 @@ export default function CheckoutPage() {
 
     return (
         <div>
+            <h1>CHECKOUT</h1>
+
             <table>
-                <tr>
-                    <th>Artykuł</th>
-                    <th>Wartość</th>
-                </tr>
-                {items.map((item) => {
+                <thead>
                     <tr>
-                        <td>{item.ID}</td>
-                        <td>{item.Value}</td>
-                    </tr>;
-            })}
+                        <th>Artykuł</th>
+                        <th>Wartość</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {items &&
+                        items.map((item) => (
+                            <tr key={item.ID}>
+                                <td>{item.ID}</td>
+                                <td>{item.Value}</td>
+                            </tr>
+                        ))}
+                </tbody>
             </table>
         </div>
     );
