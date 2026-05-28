@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import useItems from "../Hooks/useItems";
 import AddToCart from "../Components/AddToCart";
+import stringFormatters from "../Helpers/stringFormatters";
 
 import "../Styles/ItemPageStyle.css";
 
@@ -9,6 +10,8 @@ export default function ItemPage() {
     const { id } = useParams();
     const { GetItemById } = useItems();
     const [item, setItem] = useState();
+
+    const { formatPrice } = stringFormatters();
 
     useEffect(() => {
         const fetchItem = async () => {
@@ -42,26 +45,26 @@ export default function ItemPage() {
                     </div>
 
                     <div className="item-info-card">
-                        <div className="item-category">DIGITAL PRODUCT</div>
+                        <div className="item-category">PRODUKT CYFROWY</div>
 
                         <h1 className="item-page-title">{item.name}</h1>
 
                         <div className="item-meta">
                             <div className="item-meta-box">
-                                <span className="meta-label">Creator</span>
+                                <span className="meta-label">Właściciel</span>
                                 <span className="meta-value">
                                     {item.creatorName}
                                 </span>
                             </div>
 
                             <div className="item-meta-box">
-                                <span className="meta-label">Item ID</span>
+                                <span className="meta-label">ID</span>
                                 <span className="meta-value">#{id}</span>
                             </div>
                         </div>
 
                         <div className="item-description-box">
-                            <h2>Description</h2>
+                            <h2>Opis</h2>
 
                             <p>{item.description}</p>
                         </div>
@@ -75,9 +78,9 @@ export default function ItemPage() {
                         <div className="purchase-glow"></div>
 
                         <div className="price-section">
-                            <span className="price-label">Price</span>
+                            <span className="price-label">Cena</span>
                             <span className="item-page-price">
-                                ${item.price}
+                                {formatPrice(item.price)}
                             </span>
                         </div>
 
@@ -85,17 +88,17 @@ export default function ItemPage() {
 
                         <div className="purchase-info">
                             <div className="purchase-info-row">
-                                <span>Instant delivery</span>
+                                <span>Natychmiastowa dostawa</span>
                                 <span className="purchase-check">✓</span>
                             </div>
 
                             <div className="purchase-info-row">
-                                <span>Secure payment</span>
+                                <span>Bezpieczna płatność</span>
                                 <span className="purchase-check">✓</span>
                             </div>
 
                             <div className="purchase-info-row">
-                                <span>Premium quality</span>
+                                <span>Jakość premium</span>
                                 <span className="purchase-check">✓</span>
                             </div>
                         </div>

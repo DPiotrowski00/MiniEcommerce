@@ -16,15 +16,25 @@ export default function AddToCart({ item }) {
     }, [quant]);
 
     function AddToCart() {
+        const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        for (let c of storedCart) {
+            if (c.ItemId === item.id) {
+                c.Quantity += quant;
+                setItems(storedCart);
+                localStorage.setItem("cart", JSON.stringify(storedCart));
+                return;
+            }
+        }
+
         const newItem = {
             ItemId: item.id,
             Quantity: quant,
-            PicURL: item.thumbnailurl,
+            PicURL: item.thumbnailURL,
             Name: item.name,
             Price: item.price,
         };
 
-        const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
         const updatedCart = [...storedCart, newItem];
         setItems(updatedCart);
         localStorage.setItem("cart", JSON.stringify(updatedCart));
