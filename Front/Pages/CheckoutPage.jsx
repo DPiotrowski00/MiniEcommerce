@@ -33,10 +33,13 @@ export default function CheckoutPage() {
         localStorage.setItem("cart", JSON.stringify(updatedItems));
     }
 
+    function handlePlaceOrder() {
+        tryPlaceOrder(items);
+    }
+
     return (
         <div>
             <h1>CHECKOUT</h1>
-
             <table>
                 <thead>
                     <tr>
@@ -53,6 +56,7 @@ export default function CheckoutPage() {
                             <tr
                                 key={item.ItemId}
                                 onClick={() => navigate(`/item/${item.ItemId}`)}
+                                style={{ cursor: "pointer" }}
                             >
                                 <td>
                                     <img
@@ -65,9 +69,10 @@ export default function CheckoutPage() {
                                 <td>
                                     <div>
                                         <button
-                                            onClick={() =>
-                                                handleQuantityChange(item, -1)
-                                            }
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleQuantityChange(item, -1);
+                                            }}
                                         >
                                             -
                                         </button>
@@ -75,9 +80,10 @@ export default function CheckoutPage() {
                                             {formatPrice(item.Quantity)}
                                         </span>
                                         <button
-                                            onClick={() =>
-                                                handleQuantityChange(item, 1)
-                                            }
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleQuantityChange(item, 1);
+                                            }}
                                         >
                                             +
                                         </button>
@@ -91,6 +97,7 @@ export default function CheckoutPage() {
                         ))}
                 </tbody>
             </table>
+            <button onClick={handlePlaceOrder}>Złóż zamówienie</button>
         </div>
     );
 }

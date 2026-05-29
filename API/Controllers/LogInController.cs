@@ -237,7 +237,7 @@ namespace API.Controllers
                     await _sessionSqlService.RotateRefreshToken(session, oldTokenHash!);
                 }
 
-                //Utworzenie podpisu do podpiania tokena JWT
+                //Utworzenie podpisu do podpisania tokena JWT
                 var creds = new SigningCredentials(_privateKey, SecurityAlgorithms.RsaSha256);
 
                 //W claims zaszyte są dane użytkownika

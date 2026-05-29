@@ -1,4 +1,5 @@
 ﻿using API.DataModels;
+using API.DataTransferObjects;
 using Dapper;
 using static API.Controllers.OrderController;
 
@@ -68,7 +69,7 @@ namespace API.Services
 
                 foreach(var order in orders)
                 {
-                    order.Positions = [.. await connection.QueryAsync<OrderPosition>(positionQuery, new { OrderID = order.ID })];
+                    order.Positions = [.. await connection.QueryAsync<OrderPositionDto>(positionQuery, new { OrderID = order.ID })];
                 }
 
                 return orders;

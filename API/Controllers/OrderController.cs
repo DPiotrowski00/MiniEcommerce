@@ -1,4 +1,5 @@
 ﻿using API.DataModels;
+using API.DataTransferObjects;
 using API.Filters;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -44,12 +45,27 @@ namespace API.Controllers
         [ServiceFilter(typeof(CsrfFilter))]
         [Authorize]
         [HttpPut]
-        public async Task<ActionResult> CreateOrder([FromBody] OrderModel order)
+        public async Task<ActionResult> CreateOrder([FromBody] PlaceOrderRequest request)
         {
-            if (order == null) return BadRequest("Order is null.");
-            if (order.Positions == null) return BadRequest("Positions are null.");
-            if (order.Positions.Count == 0) return BadRequest("Order has no positions.");
-            if (order.Address == null) return BadRequest("Address is null.");
+            if (request == null) return BadRequest("Order is null.");
+            if (request.Items == null) return BadRequest("Positions are null.");
+            if (request.Items.Count == 0) return BadRequest("Order has no positions.");
+
+            var authHeader = Request.Headers.Authorization.ToString();
+            var token = authHeader.Replace("Bearer ", "");
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+            var claims = jwt.Claims;
+            if (claims == null) return BadRequest("Claims are null.");
+
+            int id = Convert.ToInt32(claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
+            if (id == 0) return BadRequest("Id is null.");
+
+            OrderModel order = new()
+            {
+                UserID = id,
+                Positions = request.Items
+            };
 
             try
             {
@@ -69,6 +85,16 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<ActionResult> DeleteOrder([FromBody] int orderID)
         {
+            var authHeader = Request.Headers.Authorization.ToString();
+            var token = authHeader.Replace("Bearer ", "");
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
+            var claims = jwt.Claims;
+            if (claims == null) return BadRequest("Claims are null.");
+
+            int id = Convert.ToInt32(claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
+            if (id == 0) return BadRequest("Id is null.");
+
             if (orderID == 0) return BadRequest("Order id not provided.");
             try
             {
