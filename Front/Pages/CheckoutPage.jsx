@@ -21,7 +21,10 @@ export default function CheckoutPage() {
     }
 
     useEffect(() => {
-        setItems(JSON.parse(localStorage.getItem("cart")));
+        const loadedItems = localStorage.getItem("cart")
+            ? JSON.parse(localStorage.getItem("cart"))
+            : [];
+        setItems(loadedItems);
     }, []);
 
     function handleQuantityChange(item, modifier) {

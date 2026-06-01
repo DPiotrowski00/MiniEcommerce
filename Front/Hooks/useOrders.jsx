@@ -1,7 +1,7 @@
 import { apiFetch } from "../API/apiClient";
 
 export default function useOrders() {
-    function tryPlaceOrder(items) {
+    async function tryPlaceOrder(items) {
         let passedItems = [];
 
         for (let i of items) {
@@ -12,18 +12,17 @@ export default function useOrders() {
             passedItems = [...passedItems, item];
         }
 
-        const response = apiFetch("/order", {
+        const response = await apiFetch("/order", {
             method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify({
                 Items: passedItems,
             }),
         });
 
-        if (response.ok) {
-            return true;
-        } else {
-            return false;
-        }
+        return response.ok;
     }
 
     return { tryPlaceOrder };

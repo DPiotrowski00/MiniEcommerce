@@ -53,11 +53,9 @@ export default function NavBar() {
                 <Link className="nav-link" to="/">
                     Home
                 </Link>
-
                 <Link className="nav-link" to="/login">
                     Logowanie
                 </Link>
-
                 <Link className="nav-link" to="/register">
                     Rejestracja
                 </Link>
