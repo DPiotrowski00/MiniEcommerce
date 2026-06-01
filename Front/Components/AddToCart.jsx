@@ -2,13 +2,19 @@
 import stringFormatters from "../Helpers/stringFormatters";
 
 import "../Styles/AddToCart.css";
+import ModalWindow from "../Components/ModalWindow";
 
 export default function AddToCart({ item }) {
     const [fullPrice, setFullPrice] = useState(0.0);
     const [quant, setQuant] = useState(1);
     const [items, setItems] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const { formatPrice } = stringFormatters();
+
+    function toggleModal() {
+        setModalVisible(!modalVisible);
+    }
 
     useEffect(() => {
         setItems(JSON.parse(localStorage.getItem("cart")));
@@ -23,6 +29,7 @@ export default function AddToCart({ item }) {
                 c.Quantity += quant;
                 setItems(storedCart);
                 localStorage.setItem("cart", JSON.stringify(storedCart));
+                toggleModal();
                 return;
             }
         }
@@ -38,6 +45,7 @@ export default function AddToCart({ item }) {
         const updatedCart = [...storedCart, newItem];
         setItems(updatedCart);
         localStorage.setItem("cart", JSON.stringify(updatedCart));
+        toggleModal();
     }
 
     function handleQuantChange(value) {
@@ -111,6 +119,12 @@ export default function AddToCart({ item }) {
             <div className="cart-footer-info">
                 Natychmiastowa dostawa po zakupie
             </div>
+            <ModalWindow
+                visible={modalVisible}
+                toggleModal={toggleModal}
+                message="Artykuł został dodany do koszyka"
+                showButtons={true}
+            />
         </div>
     );
 }

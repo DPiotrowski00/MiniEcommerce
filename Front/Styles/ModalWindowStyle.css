@@ -1,0 +1,158 @@
+/* OVERLAY */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    animation: overlayFadeIn 0.25s ease;
+}
+
+/* WINDOW */
+
+.modal {
+    position: relative;
+    overflow: hidden;
+    width: 500px;
+    max-width: 90vw;
+    padding: 36px;
+    border-radius: 28px;
+    background: linear-gradient( 145deg, rgba(33, 37, 48, 0.96), rgba(20, 22, 31, 0.99) );
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 35px rgba(0, 255, 200, 0.08);
+    text-align: center;
+    animation: modalAppear 0.3s ease;
+}
+
+    /* GLOW */
+
+    .modal::before {
+        content: "";
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        top: -120px;
+        right: -120px;
+        border-radius: 50%;
+        background: radial-gradient( rgba(0, 255, 200, 0.15), transparent 70% );
+        pointer-events: none;
+    }
+
+    /* TITLE */
+
+    .modal h2 {
+        margin: 0 0 24px;
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: white;
+        line-height: 1.4;
+    }
+
+/* BUTTON CONTAINER */
+
+.modal-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+/* BUTTON BASE */
+
+.modal button {
+    flex: 1;
+    height: 56px;
+    border-radius: 18px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+    /* CONTINUE SHOPPING */
+
+    .modal button:first-child {
+        color: white;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.05);
+    }
+
+        .modal button:first-child:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+    /* GO TO CART */
+
+    .modal button:last-child {
+        position: relative;
+        overflow: hidden;
+        border: none;
+        color: #08110f;
+        background: linear-gradient( 135deg, #6fffd2, #36e7ff );
+    }
+
+        .modal button:last-child:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0,255,200,0.3);
+        }
+
+        .modal button:last-child::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -120%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient( 90deg, transparent, rgba(255,255,255,0.35), transparent );
+            transform: skewX(-20deg);
+            transition: left 0.8s ease;
+        }
+
+        .modal button:last-child:hover::after {
+            left: 150%;
+        }
+
+/* ANIMATIONS */
+
+@keyframes modalAppear {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes overlayFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+    .modal {
+        padding: 28px;
+    }
+
+    .modal-buttons {
+        flex-direction: column;
+    }
+
+    .modal h2 {
+        font-size: 1.5rem;
+    }
+}

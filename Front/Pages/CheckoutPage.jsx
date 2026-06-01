@@ -3,12 +3,22 @@ import { useNavigate } from "react-router-dom";
 import useOrders from "../Hooks/useOrders";
 import stringFormatters from "../Helpers/stringFormatters";
 
+import ModalWindow from "../Components/ModalWindow";
+
+import "../Styles/CheckoutPageStyle.css";
+
 export default function CheckoutPage() {
     const [items, setItems] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [message, setMessage] = useState("");
+
     const { tryPlaceOrder } = useOrders();
     const { formatPrice } = stringFormatters();
-
     const navigate = useNavigate();
+
+    function toggleModal() {
+        setModalVisible(!modalVisible);
+    }
 
     useEffect(() => {
         setItems(JSON.parse(localStorage.getItem("cart")));
@@ -34,70 +44,122 @@ export default function CheckoutPage() {
     }
 
     function handlePlaceOrder() {
-        tryPlaceOrder(items);
+        if (tryPlaceOrder(items)) {
+            setMessage("Zamówienie zostało przyjęte");
+            toggleModal();
+            localStorage.setItem("cart", []);
+        } else {
+            setMessage("Wystąpił błąd podczas składania zamówienia");
+            toggleModal();
+        }
     }
 
     return (
-        <div>
-            <h1>CHECKOUT</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Zdjęcie</th>
-                        <th>Nazwa</th>
-                        <th>Cena jednostkowa</th>
-                        <th>Ilość</th>
-                        <th>Cena całościowa</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {items &&
-                        items.map((item) => (
-                            <tr
-                                key={item.ItemId}
-                                onClick={() => navigate(`/item/${item.ItemId}`)}
-                                style={{ cursor: "pointer" }}
-                            >
-                                <td>
-                                    <img
-                                        src={`https://localhost:7153${item.PicURL}`}
-                                        width="50"
-                                    />
-                                </td>
-                                <td>{item.Name}</td>
-                                <td>{formatPrice(item.Price)}</td>
-                                <td>
-                                    <div>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleQuantityChange(item, -1);
-                                            }}
-                                        >
-                                            -
-                                        </button>
-                                        <span>
-                                            {formatPrice(item.Quantity)}
-                                        </span>
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleQuantityChange(item, 1);
-                                            }}
-                                        >
-                                            +
-                                        </button>
-                                    </div>
-                                </td>
-                                <td>{item.Quantity}</td>
-                                <td>
-                                    {formatPrice(item.Quantity * item.Price)}
-                                </td>
+        <div className="checkout-page">
+            <div className="checkout-container">
+                <h1 className="checkout-title">CHECKOUT</h1>
+                <div className="checkout-card">
+                    <table className="checkout-table">
+                        <thead>
+                            <tr>
+                                <th>Zdjęcie</th>
+                                <th>Nazwa</th>
+                                <th>Cena jednostkowa</th>
+                                <th>Ilość</th>
+                                <th>Cena całościowa</th>
                             </tr>
-                        ))}
-                </tbody>
-            </table>
-            <button onClick={handlePlaceOrder}>Złóż zamówienie</button>
+                        </thead>
+                        <tbody>
+                            {items &&
+                                items.map((item) => (
+                                    <tr
+                                        key={item.ItemId}
+                                        className="checkout-row"
+                                        onClick={() =>
+                                            navigate(`/item/${item.ItemId}`)
+                                        }
+                                    >
+                                        <td>
+                                            <img
+                                                className="checkout-image"
+                                                src={`https://localhost:7153${item.PicURL}`}
+                                            />
+                                        </td>
+                                        <td>{item.Name}</td>
+                                        <td>{formatPrice(item.Price)}</td>
+                                        <td>
+                                            <div className="quantity-controls">
+                                                <button
+                                                    className="quantity-btn"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleQuantityChange(
+                                                            item,
+                                                            -1
+                                                        );
+                                                    }}
+                                                >
+                                                    -
+                                                </button>
+
+                                                <span className="quantity-value">
+                                                    {item.Quantity}
+                                                </span>
+
+                                                <button
+                                                    className="quantity-btn"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleQuantityChange(
+                                                            item,
+                                                            1
+                                                        );
+                                                    }}
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {formatPrice(
+                                                item.Quantity * item.Price
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                        </tbody>
+                    </table>
+                    <div className="checkout-footer">
+                        <div className="checkout-total">
+                            <span className="checkout-total-label">
+                                Łączna kwota
+                            </span>
+                            <span className="checkout-total-price">
+                                {formatPrice(
+                                    items?.reduce(
+                                        (sum, item) =>
+                                            sum + item.Price * item.Quantity,
+                                        0
+                                    ) || 0
+                                )}
+                            </span>
+                        </div>
+
+                        <button
+                            className="place-order-btn"
+                            onClick={handlePlaceOrder}
+                        >
+                            Złóż zamówienie
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <ModalWindow
+                visible={modalVisible}
+                message={message}
+                showButtons={false}
+                toggleModal={toggleModal}
+            />
         </div>
     );
 }

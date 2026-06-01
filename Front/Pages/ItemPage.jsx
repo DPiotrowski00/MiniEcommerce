@@ -31,7 +31,6 @@ export default function ItemPage() {
                 {/* LEFT SIDE */}
 
                 <div className="item-main-section">
-
                     <div className="item-gallery-card">
                         <div className="item-gallery-glow"></div>
 

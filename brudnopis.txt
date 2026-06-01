@@ -1,4 +1,4 @@
-﻿Admin może
+﻿Admin może przeglądać zgłoszenia, modyfikować i usuwać artykuły, banować/blokować użytkowników
 
 Funkcjonalność admina:
 - admin panel,
@@ -13,6 +13,5 @@ Funkcjonalność kont:
 - Dwuskładnikowe logowanie
 - Logowanie kontem google
 
-UX:
-- Popupy przy dodawaniu do koszyka
-- Popupy przy składaniu zamówienia
+Problemy:
+- Rotowanie tokenu po wygaśnięciu sesji

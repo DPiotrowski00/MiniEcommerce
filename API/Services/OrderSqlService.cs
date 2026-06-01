@@ -18,18 +18,24 @@ namespace API.Services
 
         public async Task PlaceOrder(OrderModel order)
         {
-            string query = """
-                           INSERT INTO orders (UserID) VALUES (@UserID)
-                           """;
-
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            await connection.OpenAsync();
+            using var transaction = connection.BeginTransaction();
             try
             {
-                await connection.ExecuteAsync(query, new { order.UserID });
+                await connection.ExecuteAsync("INSERT INTO orders (UserID) VALUES (@UserID)", new { order.UserID });
+                var OrderID = await connection.QuerySingleAsync<int>("SELECT LAST_INSERT_ID()");
+                foreach (var pos in order.Positions)
+                {
+                    await connection.ExecuteAsync("INSERT INTO orderitems (OrderID, ItemID, Quantity) VALUES (@OrderID, @ItemID, @Quantity)", new { OrderID, pos.ItemID, pos.Quantity });
+                }
+
+                transaction.Commit();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                transaction.Rollback();
                 return;
             }
         }
