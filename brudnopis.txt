@@ -12,6 +12,3 @@ Funkcjonalność kont:
 - Potwierdzenie email
 - Dwuskładnikowe logowanie
 - Logowanie kontem google
-
-Problemy:
-- Rotowanie tokenu po wygaśnięciu sesji

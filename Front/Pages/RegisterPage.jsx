@@ -1,6 +1,8 @@
 ﻿import { useState } from "react";
 import useLogin from "../Hooks/useLogin";
 
+import ModalWindow from "../Components/ModalWindow";
+
 import "../Styles/AuthPageStyle.css";
 
 export default function RegisterPage() {
@@ -9,9 +11,22 @@ export default function RegisterPage() {
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
     const [displayName, setDisplayName] = useState("");
+    const [email, setEmail] = useState("");
 
-    function RegisterClick() {
-        TryRegister(login, password, displayName);
+    const [visible, setVisible] = useState(false);
+
+    function toggleModal() {
+        setVisible(!visible);
+    }
+
+    function handleRegister() {
+        if (TryRegister(login, password, displayName, email)) {
+            toggleModal();
+            setLogin("");
+            setPassword("");
+            setDisplayName("");
+            setEmail("");
+        }
     }
 
     return (
@@ -53,15 +68,32 @@ export default function RegisterPage() {
                         />
                     </div>
 
+                    <div className="auth-group">
+                        <label>Adres e-mail</label>
+
+                        <input
+                            type="text"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Wprowadź nazwę"
+                        />
+                    </div>
+
                     <button
                         className="auth-button"
                         type="submit"
-                        onClick={RegisterClick}
+                        onClick={handleRegister}
                     >
                         Zarejestruj
                     </button>
                 </div>
             </div>
+            <ModalWindow
+                visible={visible}
+                toggleModal={toggleModal}
+                message="Wysłano link aktywacyjny na podany adres email. Aby korzystać z serwisu potwierdź swój adres."
+                showButtons={false}
+            />
         </div>
     );
 }

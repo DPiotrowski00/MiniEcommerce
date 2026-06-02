@@ -9,6 +9,7 @@ namespace API.Services
         Task<int> ValidateLogIn(string Username, string Password);
         Task<bool> CreateUser(LogInData data);
         Task<bool> ChangePassword(int UserID, string oldPass, string newPass);
+        Task<bool> VerifyEmail(string token);
     }
 
     //Implementacja interfejsu ILoggingSqlService
@@ -21,7 +22,7 @@ namespace API.Services
         public async Task<int> ValidateLogIn(string Username, string Password)
         {
             string query = """
-                           SELECT ID, Password FROM logindata WHERE BINARY Username = @Username
+                           SELECT ID, Password FROM logindata WHERE BINARY Username = @Username AND Verified = 1
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -48,14 +49,33 @@ namespace API.Services
         public async Task<bool> CreateUser(LogInData data)
         {
             string query = """
-                           INSERT INTO logindata (Username, Password, DisplayName) VALUES (@Login, @HashedPassword, @DisplayName)
+                           INSERT INTO logindata (Username, Password, DisplayName, Verified, Email, VerificationToken) VALUES (@Login, @HashedPassword, @DisplayName, 0, @Email, @VerificationToken)
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
                 var HashedPassword = BCrypt.Net.BCrypt.HashPassword(data.Password);
-                await connection.ExecuteAsync(query, new { data.Login, HashedPassword, data.DisplayName });
+                await connection.ExecuteAsync(query, new { data.Login, HashedPassword, data.DisplayName, data.Email, data.VerificationToken });
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+
+        public async Task<bool> VerifyEmail(string token)
+        {
+            string query = """
+                           UPDATE logindata SET Verified = 1, VerificationToken = NULL WHERE VerificationToken = @token
+                           """;
+
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                await connection.ExecuteAsync(query, new { token });
                 return true;
             }
             catch (Exception ex)

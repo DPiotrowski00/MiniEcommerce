@@ -2,21 +2,18 @@ import { apiFetch } from "../API/apiClient";
 import getDeviceId from "../Helpers/getDeviceId";
 
 export default function useLogin() {
-    const TryRegister = async (Login, Password, DisplayName) => {
+    const TryRegister = async (Login, Password, DisplayName, Email) => {
         const res = await apiFetch("/login", {
             method: "PUT",
             body: JSON.stringify({
                 Login,
                 Password,
                 DisplayName,
+                Email,
             }),
         });
 
-        if (!res.ok) {
-            throw new Error("Register failed");
-        }
-
-        return res;
+        return res.ok;
     };
 
     const TryLogin = async (Login, Password) => {

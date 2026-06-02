@@ -5,6 +5,7 @@ using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,10 +18,11 @@ namespace API.Controllers
     //Kontroler logowania oraz rejestracji
     [ApiController]
     [Route("[controller]")]
-    public class LogInController(ILoggingSqlService loginService, ISessionSqlService sessionService, RsaSecurityKey privateKey, string issuer, string audience) : ControllerBase
+    public class LogInController(ILoggingSqlService loginService, ISessionSqlService sessionService, IEmailService emailService, RsaSecurityKey privateKey, string issuer, string audience) : ControllerBase
     {
         private readonly ILoggingSqlService _loginSqlService = loginService;
         private readonly ISessionSqlService _sessionSqlService = sessionService;
+        private readonly IEmailService _emailService = emailService;
 
         private readonly RsaSecurityKey _privateKey = privateKey;
 
@@ -295,7 +297,7 @@ namespace API.Controllers
         public async Task<ActionResult> CreateUser([FromBody] LogInData request)
         {
             //Walidacja wartości wprowadzonych przez użytkownika
-            if (request.Login == null || request.Password == null) return BadRequest();
+            if (request.Login == null || request.Password == null || request.Email == null) return BadRequest();
 
             //Sprawdzenie czy wartości są zgodne z szablonem
             var matchLogin = Regex.Match(request.Login, loginRegex);
@@ -306,11 +308,21 @@ namespace API.Controllers
                 return BadRequest();
             }
 
+            var VerificationToken = WebEncoders.Base64UrlEncode(RandomNumberGenerator.GetBytes(64));
+            request.VerificationToken = VerificationToken;
+
             //Finalnie spróbuj utworzyć użytkownika
-            if(await _loginSqlService.CreateUser(request))
+            if (await _loginSqlService.CreateUser(request))
             {
                 //Jeśli tworzenie użytkownika się powiodło odpowiadaj Ok
-                return Ok();
+                if (await _emailService.SendEmail(request.Email, VerificationToken))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Email verification failed");
+                }
             }
             else
             {
@@ -355,6 +367,21 @@ namespace API.Controllers
                 {
                     return BadRequest("Password change was not successful.");
                 }
+            }
+        }
+
+        [HttpGet("verify-email")]
+        public async Task<ActionResult> VerifyEmail(string token)
+        {
+            if (token == null) return BadRequest("Token cannot be null");
+
+            if (await _loginSqlService.VerifyEmail(token))
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest();
             }
         }
     }

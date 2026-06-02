@@ -9,7 +9,7 @@ export default function LogInPage() {
 
     const { TryLogin } = useLogin();
 
-    const LogInClick = async () => {
+    const handleLogin = async () => {
         await TryLogin(login, password);
         window.location.reload();
     };
@@ -42,7 +42,7 @@ export default function LogInPage() {
                         />
                     </div>
 
-                    <button className="auth-button" onClick={LogInClick}>
+                    <button className="auth-button" onClick={handleLogin}>
                         Zaloguj
                     </button>
                 </div>

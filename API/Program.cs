@@ -38,6 +38,7 @@ builder.Services.AddScoped<IItemsSqlService, ItemsSqlService>();
 builder.Services.AddScoped<ISessionSqlService, SessionSqlService>();
 builder.Services.AddScoped<IOrderSqlService, OrderSqlService>();
 builder.Services.AddScoped<IAccountSqlService, AccountSqlService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<CsrfFilter>();
 
 builder.Services.AddSingleton<RSA>(_ => rsa);
