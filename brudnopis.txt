@@ -9,6 +9,5 @@ Funkcjonalność zamówień:
 - Potwierdzene zamówienia na email
 
 Funkcjonalność kont:
-- Potwierdzenie email
 - Dwuskładnikowe logowanie
 - Logowanie kontem google

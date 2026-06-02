@@ -1,17 +1,31 @@
 ﻿import { useState } from "react";
 import useLogin from "../Hooks/useLogin";
 
+import ModalWindow from "../Components/ModalWindow";
+
 import "../Styles/AuthPageStyle.css";
 
 export default function LogInPage() {
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
 
+    const [message, setMessage] = useState("");
+    const [visible, setVisible] = useState(false);
+
     const { TryLogin } = useLogin();
 
+    function toggleModal() {
+        setVisible(!visible);
+    }
+
     const handleLogin = async () => {
-        await TryLogin(login, password);
-        window.location.reload();
+        const response = await TryLogin(login, password);
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            setMessage(response.message);
+            toggleModal();
+        }
     };
 
     return (
@@ -47,6 +61,12 @@ export default function LogInPage() {
                     </button>
                 </div>
             </div>
+            <ModalWindow
+                visible={visible}
+                toggleModal={toggleModal}
+                message={message}
+                showButtons={false}
+            />
         </div>
     );
 }

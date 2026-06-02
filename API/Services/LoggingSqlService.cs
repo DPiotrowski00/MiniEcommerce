@@ -7,6 +7,7 @@ namespace API.Services
     public interface ILoggingSqlService
     {
         Task<int> ValidateLogIn(string Username, string Password);
+        Task<bool> IsVerified(string Username);
         Task<bool> CreateUser(LogInData data);
         Task<bool> ChangePassword(int UserID, string oldPass, string newPass);
         Task<bool> VerifyEmail(string token);
@@ -22,7 +23,7 @@ namespace API.Services
         public async Task<int> ValidateLogIn(string Username, string Password)
         {
             string query = """
-                           SELECT ID, Password FROM logindata WHERE BINARY Username = @Username AND Verified = 1
+                           SELECT ID, Password FROM logindata WHERE BINARY Username = @Username
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -41,6 +42,23 @@ namespace API.Services
             catch
             {
                 return 0;
+            }
+        }
+
+        public async Task<bool> IsVerified(string Username)
+        {
+            string query = """
+                           SELECT Verified FROM logindata WHERE BINARY Username = @Username
+                           """;
+
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                return await connection.QuerySingleAsync<bool>(query, new { Username });
+            }
+            catch
+            {
+                return false;
             }
         }
 

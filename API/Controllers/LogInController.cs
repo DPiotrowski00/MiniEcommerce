@@ -209,6 +209,14 @@ namespace API.Controllers
 
             int id = await _loginSqlService.ValidateLogIn(request.Login, request.Password);
 
+            if (!await _loginSqlService.IsVerified(request.Login))
+            {
+                return BadRequest(new
+                {
+                    message = "Account not verified. Verify your account through the email address you provided on register."
+                });
+            }
+
             if (id != 0)
             {
                 //Generowanie tokena CSRF

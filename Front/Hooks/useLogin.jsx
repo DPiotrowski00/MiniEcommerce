@@ -38,6 +38,13 @@ export default function useLogin() {
         accessToken !== null && accessToken !== ""
             ? localStorage.setItem("logInStatus", true)
             : localStorage.setItem("logInStatus", false);
+
+        const data = await response.json();
+
+        return {
+            ok: response.ok,
+            message: data.message,
+        };
     };
 
     const TestLogin = async () => {
