@@ -75,7 +75,7 @@ CREATE TABLE `items` (
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   KEY `CreatorID_idx` (`CreatorID`),
   CONSTRAINT `CreatorID` FOREIGN KEY (`CreatorID`) REFERENCES `logindata` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,10 +90,13 @@ CREATE TABLE `logindata` (
   `Username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `Password` varchar(255) NOT NULL,
   `DisplayName` varchar(255) NOT NULL,
+  `Email` varchar(255) NOT NULL,
+  `Verified` tinyint NOT NULL,
+  `VerificationToken` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `unique_username` (`Username`),
   UNIQUE KEY `DisplayName_UNIQUE` (`DisplayName`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -113,7 +116,7 @@ CREATE TABLE `orderitems` (
   KEY `FK_ORDERITEMS_ORDER_ID_idx` (`OrderID`),
   CONSTRAINT `FK_ORDERITEMS_ITEM_ID` FOREIGN KEY (`ItemID`) REFERENCES `items` (`ID`),
   CONSTRAINT `FK_ORDERITEMS_ORDER_ID` FOREIGN KEY (`OrderID`) REFERENCES `orders` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,10 +129,14 @@ DROP TABLE IF EXISTS `orders`;
 CREATE TABLE `orders` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `UserID` int NOT NULL,
+  `StatusID` int NOT NULL,
+  `TimeStamp` datetime NOT NULL,
   PRIMARY KEY (`ID`),
   KEY `FK_USER_ID_idx` (`UserID`),
+  KEY `FK_STATUS_CODE_ID_idx` (`StatusID`),
+  CONSTRAINT `FK_STATUS_CODE_ID` FOREIGN KEY (`StatusID`) REFERENCES `statuscodes` (`ID`),
   CONSTRAINT `FK_USER_ID_ORDERS` FOREIGN KEY (`UserID`) REFERENCES `logindata` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,7 +157,22 @@ CREATE TABLE `sessions` (
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   KEY `UserID_idx` (`UserID`),
   CONSTRAINT `UserID` FOREIGN KEY (`UserID`) REFERENCES `logindata` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `statuscodes`
+--
+
+DROP TABLE IF EXISTS `statuscodes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `statuscodes` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `Status` varchar(255) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID_UNIQUE` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -173,8 +195,16 @@ CREATE TABLE `tokens` (
   PRIMARY KEY (`ID`),
   KEY `SessionID_idx` (`SessionID`),
   CONSTRAINT `FK_Session_ID` FOREIGN KEY (`SessionID`) REFERENCES `sessions` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping events for database 'miniecommerce'
+--
+
+--
+-- Dumping routines for database 'miniecommerce'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -185,4 +215,4 @@ CREATE TABLE `tokens` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-04-28 15:59:48
+-- Dump completed on 2026-06-03 15:30:37
