@@ -1,15 +1,15 @@
 ﻿Admin może przeglądać zgłoszenia, modyfikować i usuwać artykuły, banować/blokować użytkowników
 
 Funkcjonalność admina:
-- admin panel,
-- system zgłoszeń
+- admin panel, !
+- system zgłoszeń !
 
 Funkcjonalność zamówień:
 - Mapa paczkomatów InPost
 - Płatność kartą / blikiem
-- Potwierdzene zamówienia na email
-- Podstrona z podglądem zamówień i ich statusów
+- Podstrona z podglądem zamówień i ich statusów !
 
 Funkcjonalność kont:
 - Dwuskładnikowe logowanie
 - Logowanie kontem google
+- Zapomniałem hasła !

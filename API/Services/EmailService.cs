@@ -15,6 +15,7 @@ namespace API.Services
     {
         private readonly string _resendApiKey = configuration["ResendApiKey"]!;
         private readonly string _apiAddress = configuration["Issuer"]!;
+        private readonly string _frontAddress = configuration["Front"]!;
 
         private readonly IItemsSqlService _itemsSqlService = itemsSqlService;
         private readonly ILoggingSqlService _loggingSqlService = loggingSqlService;
@@ -58,7 +59,7 @@ namespace API.Services
                     totalValue += item.Price * position.Quantity;
                 }
                 
-                string orderLink = _apiAddress + "/order?id=" + order.ID;
+                string orderLink = _frontAddress + "/order?id=" + order.ID;
                 var html = File.ReadAllText("EmailTemplates\\order_confirmation.html")
                 .Replace("{{orderLink}}", orderLink)
                 .Replace("{{orderNumber}}", order.ID.ToString())

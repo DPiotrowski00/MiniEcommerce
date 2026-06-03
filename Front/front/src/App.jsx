@@ -9,6 +9,7 @@ import ItemPage from "../../Pages/ItemPage";
 import ItemCreationPage from "../../Pages/ItemCreationPage";
 import AccountPage from "../../Pages/AccountPage";
 import CheckoutPage from "../../Pages/CheckoutPage";
+import OrderPage from "../../Pages/OrderPage";
 
 export default function App() {
     return (
@@ -22,6 +23,7 @@ export default function App() {
                 <Route path="/account" element={<AccountPage />} />
                 <Route path="/item/add" element={<ItemCreationPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
+                <Route path="/order/:id" element={<OrderPage />} />
             </Routes>
         </>
     );

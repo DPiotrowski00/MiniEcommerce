@@ -23,7 +23,7 @@ namespace API.Services
             using var transaction = connection.BeginTransaction();
             try
             {
-                await connection.ExecuteAsync("INSERT INTO orders (UserID) VALUES (@UserID)", new { order.UserID });
+                await connection.ExecuteAsync("INSERT INTO orders (UserID, StatusID, TimeStamp) VALUES (@UserID, 1, NOW())", new { order.UserID });
                 var OrderID = await connection.QuerySingleAsync<int>("SELECT LAST_INSERT_ID()");
                 foreach (var pos in order.Positions)
                 {

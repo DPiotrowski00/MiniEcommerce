@@ -102,11 +102,9 @@ namespace API.Controllers
 
         //Endpoint do odświeżania tokenów
         [EnableRateLimiting("RefreshPolicy")]
-        [ServiceFilter(typeof(CsrfFilter))]
-        [Authorize]
         [HttpPost]
         [Route("/login/refresh")]
-        public async Task<ActionResult<string>> RefreshToken([FromBody] RefreshTokenRequest request)
+        public async Task<ActionResult<string>> RefreshToken()
         {
             if (!Request.Cookies.TryGetValue("Refresh-Token", out var refreshTokenFromCookie))
                 return Unauthorized();
@@ -129,65 +127,61 @@ namespace API.Controllers
                 await _sessionSqlService.RevokeSession(session.ID);
             }
 
-            if (session.DeviceID == request.DeviceID)
+            //Generowanie tokena CSRF
+            var csrfToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+
+            //Tworzenie Refresh Tokena i zapisanie go w bazie
+            var refreshToken = CreateRefreshToken();
+
+            session.ExpiresAt = DateTime.UtcNow.AddDays(30);
+            session.RefreshTokenHash = HashHelper.ComputeSha256(refreshToken);
+
+            await _sessionSqlService.RotateRefreshToken(session, refreshTokenFromCookie);
+
+            //Utworzenie podpisu dla tokena JWT
+            var creds = new SigningCredentials(_privateKey, SecurityAlgorithms.RsaSha256);
+
+            //W claims zaszyte są dane użytkownika
+            var claims = new[]
             {
-                //Generowanie tokena CSRF
-                var csrfToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+                new Claim(ClaimTypes.NameIdentifier, session.UserID.ToString()),
+                new Claim(ClaimTypes.Role, "user"),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("sid", session.ID.ToString())
+            };
 
-                //Tworzenie Refresh Tokena i zapisanie go w bazie
-                var refreshToken = CreateRefreshToken();
+            var jwt = new JwtSecurityToken(
+            issuer: _issuer,
+            audience: _audience,
+            signingCredentials: creds,
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(10)
+            );
 
-                session.ExpiresAt = DateTime.UtcNow.AddDays(30);
-                session.RefreshTokenHash = HashHelper.ComputeSha256(refreshToken);
+            //Dodanie refresh tokena do cookies odpowiedzi
+            Response.Cookies.Append("Refresh-Token", refreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddDays(30),
+                Path = "/"
+            });
 
-                await _sessionSqlService.RotateRefreshToken(session, refreshTokenFromCookie);
+            //Dodanie tokena SCRF do cookies odpowiedzi
+            Response.Cookies.Append("CSRF-Token", csrfToken, new CookieOptions
+            {
+                HttpOnly = false,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddDays(30),
+                Path = "/"
+            });
 
-                //Utworzenie podpisu dla tokena JWT
-                var creds = new SigningCredentials(_privateKey, SecurityAlgorithms.RsaSha256);
+            Response.Headers.CacheControl = "no-store";
+            Response.Headers.Pragma = "no-cache";
 
-                //W claims zaszyte są dane użytkownika
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, session.UserID.ToString()),
-                    new Claim(ClaimTypes.Role, "user"),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim("sid", session.ID.ToString())
-                };
-
-                var jwt = new JwtSecurityToken(
-                issuer: _issuer,
-                audience: _audience,
-                signingCredentials: creds,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(10)
-                );
-
-                //Dodanie refresh tokena do cookies odpowiedzi
-                Response.Cookies.Append("Refresh-Token", refreshToken, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTime.UtcNow.AddDays(30),
-                    Path = "/"
-                });
-
-                //Dodanie tokena SCRF do cookies odpowiedzi
-                Response.Cookies.Append("CSRF-Token", csrfToken, new CookieOptions
-                {
-                    HttpOnly = false,
-                    Secure = true,
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTime.UtcNow.AddDays(30),
-                    Path = "/"
-                });
-
-                Response.Headers.CacheControl = "no-store";
-                Response.Headers.Pragma = "no-cache";
-
-                return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
-            }
-            return Unauthorized();
+            return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
         }
 
         //Endpoint do walidacji logowania. W odpowiedzi zwraca [JWS w body], [CSRF jako secure cookie] oraz [RefreshToken jako secure http-only cookie]
