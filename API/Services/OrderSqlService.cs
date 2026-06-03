@@ -8,7 +8,7 @@ namespace API.Services
     public interface IOrderSqlService
     {
         Task<List<OrderModel>> GetOrders(int UserID);
-        Task PlaceOrder(OrderModel order);
+        Task<int> PlaceOrder(OrderModel order);
         Task DeleteOrder(int OrderID);
     }
 
@@ -16,7 +16,7 @@ namespace API.Services
     {
         private readonly string _connectionString = configuration.GetConnectionString("Default")!;
 
-        public async Task PlaceOrder(OrderModel order)
+        public async Task<int> PlaceOrder(OrderModel order)
         {
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             await connection.OpenAsync();
@@ -31,12 +31,13 @@ namespace API.Services
                 }
 
                 transaction.Commit();
+                return OrderID;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 transaction.Rollback();
-                return;
+                return 0;
             }
         }
 

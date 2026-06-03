@@ -323,7 +323,7 @@ namespace API.Controllers
             if (await _loginSqlService.CreateUser(request))
             {
                 //Jeśli tworzenie użytkownika się powiodło odpowiadaj Ok
-                if (await _emailService.SendEmail(request.Email, VerificationToken))
+                if (await _emailService.SendVerificationEmail(request.Email, VerificationToken))
                 {
                     return Ok();
                 }

@@ -46,8 +46,8 @@ export default function CheckoutPage() {
         localStorage.setItem("cart", JSON.stringify(updatedItems));
     }
 
-    function handlePlaceOrder() {
-        if (tryPlaceOrder(items)) {
+    async function handlePlaceOrder() {
+        if (await tryPlaceOrder(items)) {
             setMessage("Zamówienie zostało przyjęte");
             toggleModal();
             localStorage.setItem("cart", []);

@@ -17,12 +17,20 @@ export default function AddToCart({ item }) {
     }
 
     useEffect(() => {
-        setItems(JSON.parse(localStorage.getItem("cart")));
+        const cart = localStorage.getItem("cart");
+
+        setItems(cart ? JSON.parse(cart) : []);
         setFullPrice(quant * item.price);
-    }, [quant]);
+    }, [quant, item.price]);
 
     function AddToCart() {
-        const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+        let storedCart = [];
+
+        try {
+            storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        } catch {
+            storedCart = [];
+        }
 
         for (let c of storedCart) {
             if (c.ItemId === item.id) {

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Potwierdzenie adresu e-mail</title>
+    <title>Potwierdzenie zamówienia</title>
 </head>
 <body style="
     margin:0;
@@ -43,13 +43,20 @@
                         padding:40px 30px;
                         border-bottom:1px solid rgba(255,255,255,0.06);
                     ">
+                            <div style="
+                            font-size:54px;
+                            margin-bottom:10px;
+                        ">
+                                🎉
+                            </div>
+
                             <h1 style="
                             margin:0;
                             color:#ffffff;
                             font-size:30px;
                             font-weight:700;
                         ">
-                                Potwierdź swój adres e-mail
+                                Zamówienie zostało przyjęte
                             </h1>
 
                             <div style="
@@ -73,17 +80,52 @@
                             font-size:16px;
                             line-height:1.7;
                         ">
-                                Dziękujemy za rejestrację.
+                                Dziękujemy za złożenie zamówienia w naszym sklepie.
                             </p>
 
                             <p style="
-                            margin:0 0 35px;
+                            margin:0 0 30px;
                             color:#d8dce8;
                             font-size:16px;
                             line-height:1.7;
                         ">
-                                Aby aktywować swoje konto, kliknij przycisk poniżej i potwierdź adres e-mail.
+                                Otrzymaliśmy Twoje zamówienie i rozpoczęliśmy jego realizację.
+                                Możesz sprawdzić aktualny status klikając przycisk poniżej.
                             </p>
+
+                            <!-- Status Card -->
+
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="
+                            background:#181b24;
+                            border:1px solid rgba(255,255,255,0.06);
+                            border-radius:16px;
+                            margin-bottom:30px;
+                        ">
+                                <tr>
+                                    <td style="padding:20px;">
+                                        <div style="
+                                        color:#9ca3af;
+                                        font-size:13px;
+                                        margin-bottom:8px;
+                                    ">
+                                            Status zamówienia
+                                        </div>
+
+                                        <span style="
+                                        display:inline-block;
+                                        padding:8px 14px;
+                                        border-radius:999px;
+                                        background:rgba(0,255,200,0.12);
+                                        border:1px solid rgba(0,255,200,0.18);
+                                        color:#7effd8;
+                                        font-size:14px;
+                                        font-weight:700;
+                                    ">
+                                            Oczekuje na realizację
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
 
                             <!-- Button -->
 
@@ -94,7 +136,7 @@
                                     border:1px solid rgba(0,255,200,0.25);
                                     border-radius:999px;
                                 ">
-                                        <a href="{{verificationLink}}"
+                                        <a href="{{orderLink}}"
                                            target="_blank"
                                            style="
                                             display:inline-block;
@@ -103,15 +145,12 @@
                                             text-decoration:none;
                                             font-size:16px;
                                             font-weight:700;
-                                            letter-spacing:0.3px;
                                        ">
-                                            Aktywuj konto
+                                            Zobacz szczegóły zamówienia
                                         </a>
                                     </td>
                                 </tr>
                             </table>
-
-                            <!-- Link -->
 
                             <p style="
                             margin:40px 0 10px;
@@ -119,7 +158,7 @@
                             color:#9ca3af;
                             line-height:1.6;
                         ">
-                                Jeśli przycisk nie działa, skopiuj i wklej poniższy adres do przeglądarki:
+                                Jeśli przycisk nie działa, skopiuj poniższy adres:
                             </p>
 
                             <div style="
@@ -133,18 +172,9 @@
                                 color:#6fffd2;
                                 font-size:14px;
                             ">
-                                    {{verificationLink}}
+                                    {{orderLink}}
                                 </span>
                             </div>
-
-                            <p style="
-                            margin-top:35px;
-                            font-size:14px;
-                            color:#9ca3af;
-                            line-height:1.7;
-                        ">
-                                Jeśli nie zakładałeś konta, możesz bezpiecznie zignorować tę wiadomość.
-                            </p>
 
                         </td>
                     </tr>

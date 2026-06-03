@@ -32,6 +32,13 @@ export default function useLogin() {
 
         if (response.ok) {
             accessToken = await response.text();
+        } else {
+            const data = await response.json();
+
+            return {
+                ok: response.ok,
+                message: data.message,
+            };
         }
 
         localStorage.setItem("access-token", accessToken);
@@ -39,11 +46,9 @@ export default function useLogin() {
             ? localStorage.setItem("logInStatus", true)
             : localStorage.setItem("logInStatus", false);
 
-        const data = await response.json();
-
         return {
             ok: response.ok,
-            message: data.message,
+            message: response.message,
         };
     };
 

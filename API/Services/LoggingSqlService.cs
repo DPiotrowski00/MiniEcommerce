@@ -11,6 +11,7 @@ namespace API.Services
         Task<bool> CreateUser(LogInData data);
         Task<bool> ChangePassword(int UserID, string oldPass, string newPass);
         Task<bool> VerifyEmail(string token);
+        Task<UserModel> GetUser(int UserID);
     }
 
     //Implementacja interfejsu ILoggingSqlService
@@ -132,6 +133,24 @@ namespace API.Services
             {
                 Console.WriteLine(ex.ToString());
                 return false;
+            }
+        }
+
+        public async Task<UserModel> GetUser(int UserID)
+        {
+            string query = """
+                           SELECT ID, Username, DisplayName, Email FROM logindata WHERE ID = @ID
+                           """;
+
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                return await connection.QuerySingleAsync<UserModel>(query, new { ID = UserID });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return new() { DisplayName = "", Email = "", Username = "" };
             }
         }
     }

@@ -39,7 +39,7 @@ export default function ModalWindow({
                 )}
                 {!showButtons && (
                     <div className="modal-buttons">
-                        <button onClick={toggleModal}>OK</button>
+                        <button onClick={() => { toggleModal(); window.location.reload(); }}>OK</button>
                     </div>
                 )}
             </div>

@@ -2,11 +2,13 @@
 
 Funkcjonalność admina:
 - admin panel,
+- system zgłoszeń
 
 Funkcjonalność zamówień:
 - Mapa paczkomatów InPost
 - Płatność kartą / blikiem
 - Potwierdzene zamówienia na email
+- Podstrona z podglądem zamówień i ich statusów
 
 Funkcjonalność kont:
 - Dwuskładnikowe logowanie

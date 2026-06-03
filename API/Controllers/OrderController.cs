@@ -11,9 +11,10 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class OrderController(IOrderSqlService orderSqlService) : ControllerBase
+    public class OrderController(IOrderSqlService orderSqlService, IEmailService emailService) : ControllerBase
     {
         private readonly IOrderSqlService _orderSqlService = orderSqlService;
+        private readonly IEmailService _emailService = emailService;
 
         [ServiceFilter(typeof(CsrfFilter))]
         [Authorize]
@@ -69,7 +70,9 @@ namespace API.Controllers
 
             try
             {
-                await _orderSqlService.PlaceOrder(order);
+                order.ID = await _orderSqlService.PlaceOrder(order);
+
+                await _emailService.SendOrderConfirmation(order);
             }
             catch (Exception ex)
             {
