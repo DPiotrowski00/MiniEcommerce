@@ -1,4 +1,5 @@
 ﻿using API.Filters;
+using API.Middleware;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
@@ -135,6 +136,8 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+app.UseMiddleware<LoggingMiddleware>();
 
 app.UseCors("AllowFrontend");
 
