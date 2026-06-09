@@ -13,9 +13,8 @@ namespace API.Filters
             
             string? cookieToken = request.Cookies["CSRF-Token"];
             string? headerToken = request.Headers["X-CSRF-Token"];
-
+            
             headerToken = WebUtility.UrlDecode(headerToken);
-            cookieToken = WebUtility.UrlDecode(cookieToken);
 
             if ((string.IsNullOrEmpty(cookieToken) || string.IsNullOrEmpty(headerToken) || cookieToken != headerToken))
             {
