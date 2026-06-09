@@ -1,13 +1,14 @@
 ﻿using API.DataModels;
 using API.DataTransferObjects;
 using Dapper;
+using System.ComponentModel;
 using static API.Controllers.OrderController;
 
 namespace API.Services
 {
     public interface IOrderSqlService
     {
-        Task<List<OrderModel>> GetOrders(int UserID);
+        Task<OrderModel> GetOrder(int UserID);
         Task<int> PlaceOrder(OrderModel order);
         Task DeleteOrder(int OrderID);
     }
@@ -56,6 +57,31 @@ namespace API.Services
             {
                 Console.WriteLine(ex.ToString());
                 return;
+            }
+        }
+
+        public async Task<OrderModel> GetOrder(int OrderID)
+        {
+            string query = """
+                           SELECT * FROM orders WHERE ID = @OrderID
+                           """;
+
+            string positionQuery = """
+                                   SELECT * FROM orderitems WHERE OrderID = @OrderID
+                                   """;
+
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                var order = await connection.QuerySingleAsync<OrderModel>(query, new { OrderID });
+                order.Positions = [.. await connection.QueryAsync<OrderPositionDto>(positionQuery, new { OrderID })];
+
+                return order;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return new() { Positions = [] };
             }
         }
 

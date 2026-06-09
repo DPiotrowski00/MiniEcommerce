@@ -14,15 +14,20 @@ export default function useOrders() {
 
         const response = await apiFetch("/order", {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
             body: JSON.stringify({
                 Items: passedItems,
             }),
         });
 
         return response.ok;
+    }
+
+    async function getOrder(id) {
+        const response = await apiFetch(`/order?id=${id}`, {
+            method: "GET",
+        });
+
+        return JSON.parse(response);
     }
 
     return { tryPlaceOrder };

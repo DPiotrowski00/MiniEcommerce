@@ -18,8 +18,8 @@ namespace API.Controllers
 
         [ServiceFilter(typeof(CsrfFilter))]
         [Authorize]
-        [HttpGet]
-        public async Task<ActionResult> GetOrders()
+        [HttpGet("{OrderID}")]
+        public async Task<ActionResult> GetOrder(int OrderID)
         {
             var authHeader = Request.Headers.Authorization.ToString();
             var token = authHeader.Replace("Bearer ", "");
@@ -33,7 +33,7 @@ namespace API.Controllers
 
             try
             {
-                var orders = await _orderSqlService.GetOrders(id);
+                var orders = await _orderSqlService.GetOrder(OrderID);
                 return Ok(orders);
             }
             catch (Exception ex)

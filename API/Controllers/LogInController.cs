@@ -379,7 +379,7 @@ namespace API.Controllers
 
             if (await _loginSqlService.VerifyEmail(token))
             {
-                return Ok();
+                return Redirect("http://localhost:5173/login");
             }
             else
             {

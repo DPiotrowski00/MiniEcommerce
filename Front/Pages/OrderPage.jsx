@@ -1,4 +1,4 @@
-﻿import { useParams } from "react-router-dom";
+﻿import { useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import useOrders from "../Hooks/useOrders";
@@ -6,14 +6,25 @@ import useOrders from "../Hooks/useOrders";
 import formatPrice from "../Helpers/stringFormatters";
 
 export default function OrderPage() {
-    const { id } = useParams();
     const [order, setOrder] = useState();
+
+    const [searchParams] = useSearchParams();
+    const id = searchParams.get("id");
+
     const { getOrder } = useOrders();
 
-    useEffect(async () => {
-        const data = await getOrder(id);
-        setOrder(data);
-    });
+    useEffect(() => {
+        const fetchOrder = async () => {
+            const data = await getOrder(id);
+            setOrder(data);
+        };
+
+        fetchOrder();
+    }, [id]);
+
+    if (!order) {
+        return <div>Ładowanie...</div>;
+    }
 
     return (
         <div>
