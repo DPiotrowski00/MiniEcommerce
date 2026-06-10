@@ -38,7 +38,7 @@ export const apiFetch = async (url, options) => {
     }
 
     if (csrfToken) {
-        headers["X-CSRF-Token"] = csrfToken;
+        headers["X-CSRF-Token"] = encodeURIComponent(csrfToken);
     }
 
     const response = await fetch(BASE_URL + url, {

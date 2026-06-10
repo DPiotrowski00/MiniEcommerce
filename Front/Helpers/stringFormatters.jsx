@@ -17,5 +17,19 @@ export default function stringFormatters() {
         );
     }
 
-    return { formatPrice, formatItem };
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+
+        const formatted =
+            date.toLocaleDateString("pl-PL") +
+            " " +
+            date.toLocaleTimeString("pl-PL", {
+                hour: "2-digit",
+                minute: "2-digit",
+            });
+
+        return formatted;
+    }
+
+    return { formatPrice, formatItem, formatDate };
 }

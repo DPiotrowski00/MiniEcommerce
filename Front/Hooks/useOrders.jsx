@@ -23,12 +23,20 @@ export default function useOrders() {
     }
 
     async function getOrder(id) {
-        const response = await apiFetch(`/order?id=${id}`, {
+        const response = await apiFetch(`/order/${id}`, {
             method: "GET",
         });
 
-        return JSON.parse(response);
+        return response.json();
     }
 
-    return { tryPlaceOrder };
+    async function getMyOrders() {
+        const response = await apiFetch("/order", {
+            method: "GET",
+        });
+
+        return response.json();
+    }
+
+    return { tryPlaceOrder, getOrder, getMyOrders };
 }

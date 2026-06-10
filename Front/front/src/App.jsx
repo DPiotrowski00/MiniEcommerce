@@ -10,6 +10,7 @@ import ItemCreationPage from "../../Pages/ItemCreationPage";
 import AccountPage from "../../Pages/AccountPage";
 import CheckoutPage from "../../Pages/CheckoutPage";
 import OrderPage from "../../Pages/OrderPage";
+import MyOrdersPage from "../../Pages/MyOrdersPage";
 
 export default function App() {
     return (
@@ -24,6 +25,7 @@ export default function App() {
                 <Route path="/item/add" element={<ItemCreationPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/order/:id" element={<OrderPage />} />
+                <Route path="/orders" element={<MyOrdersPage />} />
             </Routes>
         </>
     );

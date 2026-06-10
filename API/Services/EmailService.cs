@@ -59,7 +59,7 @@ namespace API.Services
                     totalValue += item.Price * position.Quantity;
                 }
                 
-                string orderLink = _frontAddress + "order?id=" + order.ID;
+                string orderLink = _frontAddress + "order/" + order.ID;
                 var html = File.ReadAllText("EmailTemplates\\order_confirmation.html")
                 .Replace("{{orderLink}}", orderLink)
                 .Replace("{{orderNumber}}", order.ID.ToString())

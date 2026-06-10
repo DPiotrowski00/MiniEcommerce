@@ -76,6 +76,10 @@ export default function NavBar() {
                             <Link to="/account" onClick={handleDropdown}>
                                 Moje konto
                             </Link>
+
+                            <Link to="/orders" onClick={handleDropdown}>
+                                Moje zamówienia
+                            </Link>
                         </div>
                     </div>
 

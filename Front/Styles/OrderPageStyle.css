@@ -1,0 +1,116 @@
+.order-page {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
+
+.order-card {
+    width: 100%;
+    max-width: 1100px;
+    padding: 32px;
+    background: linear-gradient( 145deg, rgba(33, 37, 48, 0.95), rgba(20, 22, 31, 0.98) );
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    overflow: hidden;
+}
+
+.order-title {
+    margin: 0 0 28px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+}
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+    .order-table thead {
+        background: rgba(0, 255, 200, 0.12);
+    }
+
+    .order-table th {
+        padding: 18px;
+        text-align: left;
+        color: #7effd8;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .order-table td {
+        padding: 18px;
+        color: rgba(255, 255, 255, 0.9);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .order-table tbody tr {
+        transition: background 0.25s ease, transform 0.25s ease;
+    }
+
+        .order-table tbody tr:hover {
+            background: rgba(0, 255, 200, 0.05);
+        }
+
+.order-summary {
+    margin-top: 32px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+    .order-summary p {
+        flex: 1;
+        min-width: 250px;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 18px;
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+        .order-summary p:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 255, 200, 0.2);
+        }
+
+    .order-summary span {
+        color: rgba(255, 255, 255, 0.75);
+    }
+
+    .order-summary strong {
+        color: #7effd8;
+        font-size: 1.1rem;
+    }
+
+@media (max-width: 768px) {
+    .order-page {
+        padding: 20px;
+    }
+
+    .order-card {
+        padding: 20px;
+    }
+
+    .order-title {
+        font-size: 1.5rem;
+    }
+
+    .order-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .order-summary {
+        flex-direction: column;
+    }
+}

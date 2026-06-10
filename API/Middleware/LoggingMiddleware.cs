@@ -1,13 +1,8 @@
 ﻿namespace API.Middleware
 {
-    public class LoggingMiddleware
+    public class LoggingMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-
-        public LoggingMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
+        private readonly RequestDelegate _next = next;
 
         public async Task InvokeAsync(HttpContext context)
         {

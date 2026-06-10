@@ -1,0 +1,89 @@
+.my-orders-page {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
+
+.my-orders-card {
+    width: 100%;
+    max-width: 1200px;
+    padding: 32px;
+    background: linear-gradient( 145deg, rgba(33, 37, 48, 0.95), rgba(20, 22, 31, 0.98) );
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.my-orders-title {
+    margin: 0 0 28px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+}
+
+.my-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+    .my-orders-table thead {
+        background: rgba(0, 255, 200, 0.12);
+    }
+
+    .my-orders-table th {
+        padding: 18px;
+        text-align: left;
+        color: #7effd8;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+    }
+
+    .my-orders-table td {
+        padding: 18px;
+        color: rgba(255, 255, 255, 0.9);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .my-orders-table tbody tr {
+        cursor: pointer;
+        transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+        .my-orders-table tbody tr:hover {
+            background: rgba(0, 255, 200, 0.08);
+            box-shadow: inset 4px 0 0 #7effd8;
+            transform: translateX(4px);
+        }
+
+        .my-orders-table tbody tr:active {
+            transform: translateX(2px);
+        }
+
+    .my-orders-table tbody td:last-child {
+        color: #7effd8;
+        font-weight: 700;
+    }
+
+@media (max-width: 768px) {
+    .my-orders-page {
+        padding: 20px;
+    }
+
+    .my-orders-card {
+        padding: 20px;
+    }
+
+    .my-orders-title {
+        font-size: 1.6rem;
+    }
+
+    .my-orders-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}

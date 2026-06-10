@@ -7,9 +7,12 @@ Funkcjonalność admina:
 Funkcjonalność zamówień:
 - Mapa paczkomatów InPost
 - Płatność kartą / blikiem
-- Podstrona z podglądem zamówień i ich statusów !
 
 Funkcjonalność kont:
 - Dwuskładnikowe logowanie
 - Logowanie kontem google
 - Zapomniałem hasła !
+
+Mniejsze rzeczy:
+- Enter zatwierdza formularz,
+- Odklikiwanie menu

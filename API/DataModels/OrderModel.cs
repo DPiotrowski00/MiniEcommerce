@@ -6,6 +6,8 @@ namespace API.DataModels
     {
         public int ID { get; set; }
         public int UserID { get; set; }
+        public required string Status { get; set; }
+        public DateTime TimeStamp { get; set; }
         public required List<OrderPositionDto> Positions { get; set; }
     }
 }

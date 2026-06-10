@@ -9,6 +9,7 @@ namespace API.Services
     public interface IOrderSqlService
     {
         Task<OrderModel> GetOrder(int UserID);
+        Task<List<OrderModel>> GetUserOrders(int UserID);
         Task<int> PlaceOrder(OrderModel order);
         Task DeleteOrder(int OrderID);
     }
@@ -63,7 +64,7 @@ namespace API.Services
         public async Task<OrderModel> GetOrder(int OrderID)
         {
             string query = """
-                           SELECT * FROM orders WHERE ID = @OrderID
+                           SELECT o.ID, UserID, TimeStamp, Status FROM orders o JOIN statuscodes sc ON o.StatusID = sc.ID WHERE o.ID = @OrderID
                            """;
 
             string positionQuery = """
@@ -81,14 +82,14 @@ namespace API.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return new() { Positions = [] };
+                return new() { Positions = [], Status = "" };
             }
         }
 
-        public async Task<List<OrderModel>> GetOrders(int UserID)
+        public async Task<List<OrderModel>> GetUserOrders(int UserID)
         {
             string query = """
-                           SELECT * FROM orders WHERE UserID = @UserID
+                           SELECT o.ID, UserID, TimeStamp, Status FROM orders o JOIN statuscodes sc ON o.StatusID = sc.ID WHERE o.UserID = @UserID
                            """;
 
             string positionQuery = """

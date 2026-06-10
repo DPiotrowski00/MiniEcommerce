@@ -1,21 +1,34 @@
-﻿import { useSearchParams } from "react-router-dom";
+﻿import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import useOrders from "../Hooks/useOrders";
+import useItems from "../Hooks/useItems";
 
-import formatPrice from "../Helpers/stringFormatters";
+import stringFormatters from "../Helpers/stringFormatters";
+
+import "../Styles/OrderPageStyle.css";
 
 export default function OrderPage() {
     const [order, setOrder] = useState();
 
-    const [searchParams] = useSearchParams();
-    const id = searchParams.get("id");
-
+    const { id } = useParams();
     const { getOrder } = useOrders();
+    const { GetItemById } = useItems();
+
+    const { formatPrice } = stringFormatters();
 
     useEffect(() => {
         const fetchOrder = async () => {
             const data = await getOrder(id);
+            data.value = 0;
+
+            for (let pos of data.positions) {
+                const item = await GetItemById(pos.itemID);
+                pos.value = item.price * pos.quantity;
+                pos.name = item.name;
+                data.value += pos.value;
+            }
+
             setOrder(data);
         };
 
@@ -27,29 +40,43 @@ export default function OrderPage() {
     }
 
     return (
-        <div>
-            <h1>Zamówienie nr {order.ID}</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Artykuł</th>
-                        <th>Ilość</th>
-                        <th>Wartość</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {order.Positions &&
-                        order.Positions.map((position) => {
-                            <tr>
-                                <td>{position.ArticleID}</td>
-                                <td>{position.Quantity}</td>
-                                <td>{formatPrice(position.Value)}</td>
-                            </tr>;
-                        })}
-                </tbody>
-            </table>
-            <p>Wartość zamówienia: {formatPrice(order.Value)}</p>
-            <p>Status zamówienia: {order.Status}</p>
+        <div className="order-page">
+            <div className="order-card">
+                <h1 className="order-title">Zamówienie nr {order.id}</h1>
+
+                <table className="order-table">
+                    <thead>
+                        <tr>
+                            <th>Artykuł</th>
+                            <th>Ilość</th>
+                            <th>Wartość</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {order.positions &&
+                            order.positions.map((position) => (
+                                <tr key={position.itemID}>
+                                    <td>{position.name}</td>
+                                    <td>{position.quantity}</td>
+                                    <td>{formatPrice(position.value)}</td>
+                                </tr>
+                            ))}
+                    </tbody>
+                </table>
+
+                <div className="order-summary">
+                    <p>
+                        <span>Wartość zamówienia</span>
+                        <strong>{formatPrice(order.value)}</strong>
+                    </p>
+
+                    <p>
+                        <span>Status</span>
+                        <strong>{order.status}</strong>
+                    </p>
+                </div>
+            </div>
         </div>
     );
 }
