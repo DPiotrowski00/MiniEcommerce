@@ -11,6 +11,7 @@ import AccountPage from "../../Pages/AccountPage";
 import CheckoutPage from "../../Pages/CheckoutPage";
 import OrderPage from "../../Pages/OrderPage";
 import MyOrdersPage from "../../Pages/MyOrdersPage";
+import PasswordResetPage from "../../Pages/PasswordResetPage";
 
 export default function App() {
     return (
@@ -26,6 +27,7 @@ export default function App() {
                 <Route path="/checkout" element={<CheckoutPage />} />
                 <Route path="/order/:id" element={<OrderPage />} />
                 <Route path="/orders" element={<MyOrdersPage />} />
+                <Route path="/reset-password" element={<PasswordResetPage />} />
             </Routes>
         </>
     );

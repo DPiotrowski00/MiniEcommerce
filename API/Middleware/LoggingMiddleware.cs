@@ -1,4 +1,6 @@
-﻿namespace API.Middleware
+﻿using System.Net.Mail;
+
+namespace API.Middleware
 {
     public class LoggingMiddleware(RequestDelegate next)
     {

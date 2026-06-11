@@ -19,15 +19,15 @@ export default function RegisterPage() {
         setVisible(!visible);
     }
 
-    function handleRegister() {
-        if (TryRegister(login, password, displayName, email)) {
+    const handleRegister = async () => {
+        if (await TryRegister(login, password, displayName, email)) {
             toggleModal();
             setLogin("");
             setPassword("");
             setDisplayName("");
             setEmail("");
         }
-    }
+    };
 
     return (
         <div className="auth-page">

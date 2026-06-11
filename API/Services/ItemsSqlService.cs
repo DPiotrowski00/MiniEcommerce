@@ -8,10 +8,8 @@ namespace API.Services
     {
         Task<List<ItemModel>> GetItems();
         Task<ItemModel> GetItemById(int ID);
-
         Task<bool> AddItem(ItemModel item);
         Task<bool> UpdateItem(ItemModel item);
-
         Task<bool> AddImages(ItemModel item, List<string> images);
         Task SwitchPrimaryImage(ItemModel item, string image);
         Task DeleteImages(List<string> images);

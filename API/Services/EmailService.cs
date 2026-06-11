@@ -9,6 +9,7 @@ namespace API.Services
     {
         Task<bool> SendVerificationEmail(string r, string t);
         Task<bool> SendOrderConfirmation(OrderModel order);
+        Task<bool> SendNewPassword(string recipent, string password);
     }
 
     public class EmailService (IConfiguration configuration, IItemsSqlService itemsSqlService, ILoggingSqlService loggingSqlService) : IEmailService
@@ -50,7 +51,7 @@ namespace API.Services
         {
             try
             {
-                UserModel user = await _loggingSqlService.GetUser(order.UserID);
+                UserModel user = await _loggingSqlService.GetUserById(order.UserID);
                 
                 decimal totalValue = 0;
                 foreach (var position in order.Positions)
@@ -72,6 +73,31 @@ namespace API.Services
                     From = "onboarding@resend.dev",
                     To = user.Email,
                     Subject = "Potwierdzenie zamówienia",
+                    HtmlBody = html,
+                });
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+
+        public async Task<bool> SendNewPassword(string recipent, string password)
+        {
+            try
+            {
+                var html = File.ReadAllText("EmailTemplates//password_reset.html")
+                .Replace("{{password}}", password);
+
+                IResend resend = ResendClient.Create(_resendApiKey);
+                var resp = await resend.EmailSendAsync(new EmailMessage()
+                {
+                    From = "onboarding@resend.dev",
+                    To = recipent,
+                    Subject = "Resetowanie hasła",
                     HtmlBody = html,
                 });
 

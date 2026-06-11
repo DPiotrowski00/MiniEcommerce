@@ -10,8 +10,10 @@ namespace API.Services
         Task<bool> IsVerified(string Username);
         Task<bool> CreateUser(LogInData data);
         Task<bool> ChangePassword(int UserID, string oldPass, string newPass);
+        Task<bool> ChangePasswordExplicit(int UserID, string password);
         Task<bool> VerifyEmail(string token);
-        Task<UserModel> GetUser(int UserID);
+        Task<UserModel> GetUserById(int UserID);
+        Task<UserModel> GetUserByEmail(string email);
     }
 
     //Implementacja interfejsu ILoggingSqlService
@@ -23,9 +25,20 @@ namespace API.Services
         //Jeśli walidacja przebiegła pomyślnie, zwraca id użytkownika, jeśli nie przebiegła pomyślnie, zwraca 0.
         public async Task<int> ValidateLogIn(string Username, string Password)
         {
-            string query = """
-                           SELECT ID, Password FROM logindata WHERE BINARY Username = @Username
-                           """;
+            string query;
+
+            //if (Username.Contains('@'))
+            //{
+            //    query = """
+            //            SELECT ID, Password FROM logindata WHERE BINARY Email = @Username
+            //            """;
+            //}
+            //else
+            //{
+            query = """
+                    SELECT ID, Password FROM logindata WHERE BINARY Username = @Username
+                    """;
+            //}
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
@@ -135,8 +148,28 @@ namespace API.Services
                 return false;
             }
         }
+        
+        public async Task<bool> ChangePasswordExplicit(int UserID, string password)
+        {
+            string query = """
+                           UPDATE logindata SET Password = @Password WHERE ID = @UserID
+                           """;
 
-        public async Task<UserModel> GetUser(int UserID)
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                var Password = BCrypt.Net.BCrypt.HashPassword(password);
+                await connection.ExecuteAsync(query, new { Password, UserID });
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
+        }
+
+        public async Task<UserModel> GetUserById(int UserID)
         {
             string query = """
                            SELECT ID, Username, DisplayName, Email FROM logindata WHERE ID = @ID
@@ -151,6 +184,25 @@ namespace API.Services
             {
                 Console.WriteLine(ex.ToString());
                 return new() { DisplayName = "", Email = "", Username = "" };
+            }
+        }
+        
+        public async Task<UserModel> GetUserByEmail(string email)
+        {
+            string query = """
+                           SELECT ID, Username, DisplayName, Email FROM logindata WHERE Email = @email
+                           """;
+
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                var result = await connection.QuerySingleAsync<UserModel>(query, new { email });
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw new NotImplementedException();
             }
         }
     }

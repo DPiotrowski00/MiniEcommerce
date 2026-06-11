@@ -44,6 +44,11 @@ namespace API.Controllers
             public string? NewPass { get; set; }
         }
 
+        public class ForgotPasswordRequest
+        {
+            public string? Email { get; set; }
+        }
+
         private static string CreateRefreshToken()
         {
             var randomBytes = new byte[64];
@@ -290,7 +295,10 @@ namespace API.Controllers
             }
 
             //Zwracaj Unauthorized jeśli login lub hasło się nie zgadza
-            return Unauthorized();
+            return Unauthorized(new
+            {
+                message = "Nieprawidłowa próba logowania."
+            });
         }
 
         //Endpoint odpowiedzialny za tworzenie nowych użytkowników
@@ -383,6 +391,35 @@ namespace API.Controllers
             }
             else
             {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [Route("/login/reset-password")]
+        public async Task<ActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            try
+            {
+                if (request.Email == null) return BadRequest();
+                var email = request.Email;
+                UserModel user = await _loginSqlService.GetUserByEmail(email);
+                try
+                {
+                    string password = PasswordGenerator.GenerateNewPassword();
+                    await _loginSqlService.ChangePasswordExplicit(user.ID, password);
+                    await _emailService.SendNewPassword(email, password);
+                }
+                catch
+                {
+                    return BadRequest();
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
                 return BadRequest();
             }
         }

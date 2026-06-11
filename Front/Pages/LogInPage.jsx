@@ -1,4 +1,5 @@
 ﻿import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useLogin from "../Hooks/useLogin";
 
 import ModalWindow from "../Components/ModalWindow";
@@ -11,6 +12,8 @@ export default function LogInPage() {
 
     const [message, setMessage] = useState("");
     const [visible, setVisible] = useState(false);
+
+    const navigate = useNavigate();
 
     const { TryLogin } = useLogin();
 
@@ -58,6 +61,9 @@ export default function LogInPage() {
 
                     <button className="auth-button" onClick={handleLogin}>
                         Zaloguj
+                    </button>
+                    <button onClick={() => navigate("/reset-password")}>
+                        Zapomniałeś hasła?
                     </button>
                 </div>
             </div>

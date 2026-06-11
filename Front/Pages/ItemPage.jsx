@@ -27,7 +27,6 @@ export default function ItemPage() {
     return (
         <div className="item-page">
             <div className="item-page-container">
-
                 {/* LEFT SIDE */}
 
                 <div className="item-main-section">

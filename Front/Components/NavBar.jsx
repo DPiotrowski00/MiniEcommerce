@@ -21,7 +21,8 @@ export default function NavBar() {
         if (
             logInStatus === true &&
             (location.pathname === "/login" ||
-                location.pathname === "/register")
+                location.pathname === "/register" ||
+                location.pathname === "/reset-password")
         ) {
             navigate("/");
         } else {
@@ -29,7 +30,8 @@ export default function NavBar() {
                 logInStatus === false &&
                 location.pathname !== "/" &&
                 location.pathname !== "/login" &&
-                location.pathname !== "/register"
+                location.pathname !== "/register" &&
+                location.pathname !== "/reset-password"
             ) {
                 navigate("/login");
             }

@@ -75,7 +75,7 @@ CREATE TABLE `items` (
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   KEY `CreatorID_idx` (`CreatorID`),
   CONSTRAINT `CreatorID` FOREIGN KEY (`CreatorID`) REFERENCES `logindata` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,8 +95,9 @@ CREATE TABLE `logindata` (
   `VerificationToken` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `unique_username` (`Username`),
-  UNIQUE KEY `DisplayName_UNIQUE` (`DisplayName`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `DisplayName_UNIQUE` (`DisplayName`),
+  UNIQUE KEY `Email_UNIQUE` (`Email`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -116,7 +117,7 @@ CREATE TABLE `orderitems` (
   KEY `FK_ORDERITEMS_ORDER_ID_idx` (`OrderID`),
   CONSTRAINT `FK_ORDERITEMS_ITEM_ID` FOREIGN KEY (`ItemID`) REFERENCES `items` (`ID`),
   CONSTRAINT `FK_ORDERITEMS_ORDER_ID` FOREIGN KEY (`OrderID`) REFERENCES `orders` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -136,7 +137,7 @@ CREATE TABLE `orders` (
   KEY `FK_STATUS_CODE_ID_idx` (`StatusID`),
   CONSTRAINT `FK_STATUS_CODE_ID` FOREIGN KEY (`StatusID`) REFERENCES `statuscodes` (`ID`),
   CONSTRAINT `FK_USER_ID_ORDERS` FOREIGN KEY (`UserID`) REFERENCES `logindata` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -157,7 +158,7 @@ CREATE TABLE `sessions` (
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   KEY `UserID_idx` (`UserID`),
   CONSTRAINT `UserID` FOREIGN KEY (`UserID`) REFERENCES `logindata` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -195,7 +196,7 @@ CREATE TABLE `tokens` (
   PRIMARY KEY (`ID`),
   KEY `SessionID_idx` (`SessionID`),
   CONSTRAINT `FK_Session_ID` FOREIGN KEY (`SessionID`) REFERENCES `sessions` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -215,4 +216,4 @@ CREATE TABLE `tokens` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-06-03 15:30:37
+-- Dump completed on 2026-06-11 15:55:28

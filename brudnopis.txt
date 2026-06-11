@@ -12,7 +12,18 @@ Funkcjonalność kont:
 - Dwuskładnikowe logowanie
 - Logowanie kontem google
 - Zapomniałem hasła !
+- Logowanie mailem !
 
 Mniejsze rzeczy:
 - Enter zatwierdza formularz,
 - Odklikiwanie menu
+
+Zabezpieczenia:
+- Odczytywanie zamówień innych użytkowników
+- Zamawianie własnego artykułu
+- Role admin/user
+
+Przekierowania:
+- Do logowania po rejestracji
+- Do logowania po potwierdzeniu konta
+- Po utworzeniu artykułu: komunikat i przekierowanie do strony artykułu

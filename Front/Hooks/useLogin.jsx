@@ -74,5 +74,23 @@ export default function useLogin() {
         });
     };
 
-    return { TryRegister, TryLogin, TestLogin, LogOut, TryChangePassword };
+    const ResetPassword = async (email) => {
+        const response = await apiFetch("/login/reset-password", {
+            method: "POST",
+            body: JSON.stringify({
+                email,
+            }),
+        });
+
+        return response.ok;
+    };
+
+    return {
+        TryRegister,
+        TryLogin,
+        TestLogin,
+        LogOut,
+        TryChangePassword,
+        ResetPassword,
+    };
 }
