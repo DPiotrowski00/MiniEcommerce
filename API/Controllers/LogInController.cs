@@ -277,7 +277,7 @@ namespace API.Controllers
                     Path = "/"
                 });
 
-                //Dodanie tokena SCRF do cookies odpowiedzi
+                //Dodanie tokena CSRF do cookies odpowiedzi
                 Response.Cookies.Append("CSRF-Token", csrfToken, new CookieOptions
                 {
                     HttpOnly = false,

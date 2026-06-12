@@ -8,7 +8,7 @@ Funkcjonalność zamówień:
 - Mapa paczkomatów InPost
 - Płatność kartą / blikiem
 
-Funkcjonalność artykułów:
+Funkcjonalność artykułów: !
 - Modyfikacja artykułów,
 - Usuwanie/blokowanie artykułów,
 - Maksymalna ilość artykułu do sprzedaży
@@ -16,7 +16,7 @@ Funkcjonalność artykułów:
 Funkcjonalność kont:
 - Dwuskładnikowe logowanie
 - Logowanie kontem google
-- Przerobić generator haseł na token do zmiany hasła
+- Przerobić generator haseł na token do zmiany hasła !
 
 Mniejsze rzeczy:
 - Enter zatwierdza formularz,
@@ -31,3 +31,4 @@ Przekierowania:
 - Do logowania po rejestracji
 - Do logowania po potwierdzeniu konta
 - Po utworzeniu artykułu: komunikat i przekierowanie do strony artykułu
+- Po zmianie hasła
