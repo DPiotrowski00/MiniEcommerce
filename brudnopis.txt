@@ -8,11 +8,15 @@ Funkcjonalność zamówień:
 - Mapa paczkomatów InPost
 - Płatność kartą / blikiem
 
+Funkcjonalność artykułów:
+- Modyfikacja artykułów,
+- Usuwanie/blokowanie artykułów,
+- Maksymalna ilość artykułu do sprzedaży
+
 Funkcjonalność kont:
 - Dwuskładnikowe logowanie
 - Logowanie kontem google
-- Zapomniałem hasła !
-- Logowanie mailem !
+- Przerobić generator haseł na token do zmiany hasła
 
 Mniejsze rzeczy:
 - Enter zatwierdza formularz,

@@ -164,3 +164,22 @@ body {
         font-size: 1.6rem;
     }
 }
+
+.auth-link {
+    margin: -8px 0 4px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #9bb7d7;
+    cursor: pointer;
+    transition: color 0.25s ease, opacity 0.25s ease;
+    user-select: none;
+}
+
+    .auth-link:hover {
+        color: rgba(0, 255, 200, 0.9);
+        text-decoration: underline;
+    }
+
+    .auth-link:active {
+        opacity: 0.7;
+    }

@@ -200,15 +200,15 @@ namespace API.Controllers
             //Sprawdzenie czy wartości są zgodne z szablonem
             var matchLogin = Regex.Match(request.Login, loginRegex);
             var matchPassword = Regex.Match(request.Password, passwordRegex);
-            if (!matchLogin.Success || !matchPassword.Success || request.DeviceID == null)
+            if ((!matchLogin.Success && !request.Login.Contains('@') || !matchPassword.Success || request.DeviceID == null))
             {
                 //Zwracaj BadRequest gdy login lub hasło nie jest poprawne
                 return BadRequest();
             }
 
-            int id = await _loginSqlService.ValidateLogIn(request.Login, request.Password);
+            UserModel user = await _loginSqlService.ValidateLogIn(request.Login, request.Password);
 
-            if (!await _loginSqlService.IsVerified(request.Login))
+            if (!await _loginSqlService.IsVerified(user.ID))
             {
                 return BadRequest(new
                 {
@@ -216,20 +216,20 @@ namespace API.Controllers
                 });
             }
 
-            if (id != 0)
+            if (user != null)
             {
                 //Generowanie tokena CSRF
                 var csrfToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
 
                 //Tworzenie Refresh Tokena i zapisanie go w bazie
                 var refreshToken = CreateRefreshToken();
-                var session = await _sessionSqlService.GetSessionByDeviceId(id, request.DeviceID);
+                var session = await _sessionSqlService.GetSessionByDeviceId(user.ID, request.DeviceID);
 
                 if (session == null || session.ExpiresAt < DateTime.UtcNow || session.IsRevoked)
                 {
                     session = new()
                     {
-                        UserID = id,
+                        UserID = user.ID,
                         CreatedAt = DateTime.UtcNow,
                         ExpiresAt = DateTime.UtcNow.AddDays(30),
                         RefreshTokenHash = HashHelper.ComputeSha256(refreshToken),
@@ -252,7 +252,7 @@ namespace API.Controllers
                 //W claims zaszyte są dane użytkownika
                 var claims = new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
                     new Claim(ClaimTypes.Role, "user"),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim("sid", session.ID.ToString())

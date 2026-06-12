@@ -44,7 +44,7 @@ export default function LogInPage() {
                             type="text"
                             value={login}
                             onChange={(e) => setLogin(e.target.value)}
-                            placeholder="Wprowadź login"
+                            placeholder="Wprowadź login / email"
                         />
                     </div>
 
@@ -62,9 +62,12 @@ export default function LogInPage() {
                     <button className="auth-button" onClick={handleLogin}>
                         Zaloguj
                     </button>
-                    <button onClick={() => navigate("/reset-password")}>
+                    <p
+                        className="auth-link"
+                        onClick={() => navigate("/reset-password")}
+                    >
                         Zapomniałeś hasła?
-                    </button>
+                    </p>
                 </div>
             </div>
             <ModalWindow

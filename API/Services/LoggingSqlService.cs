@@ -6,8 +6,8 @@ namespace API.Services
     //Interfejs serwisu SQL do wsrtzykiwania zależności
     public interface ILoggingSqlService
     {
-        Task<int> ValidateLogIn(string Username, string Password);
-        Task<bool> IsVerified(string Username);
+        Task<UserModel> ValidateLogIn(string Username, string Password);
+        Task<bool> IsVerified(int UserID);
         Task<bool> CreateUser(LogInData data);
         Task<bool> ChangePassword(int UserID, string oldPass, string newPass);
         Task<bool> ChangePasswordExplicit(int UserID, string password);
@@ -23,22 +23,22 @@ namespace API.Services
 
         //Funkcja walidująca logowanie, sprawdza czy hasło zgadza się z hashem w bazie danych.
         //Jeśli walidacja przebiegła pomyślnie, zwraca id użytkownika, jeśli nie przebiegła pomyślnie, zwraca 0.
-        public async Task<int> ValidateLogIn(string Username, string Password)
+        public async Task<UserModel> ValidateLogIn(string Username, string Password)
         {
             string query;
 
-            //if (Username.Contains('@'))
-            //{
-            //    query = """
-            //            SELECT ID, Password FROM logindata WHERE BINARY Email = @Username
-            //            """;
-            //}
-            //else
-            //{
-            query = """
+            if (Username.Contains('@'))
+            {
+                query = """
+                        SELECT ID, Password FROM logindata WHERE BINARY Email = @Username
+                        """;
+            }
+            else
+            {
+                query = """
                     SELECT ID, Password FROM logindata WHERE BINARY Username = @Username
                     """;
-            //}
+            }
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
@@ -46,29 +46,29 @@ namespace API.Services
                 var data = await connection.QuerySingleAsync<LogInData>(query, new { Username });
                 if(BCrypt.Net.BCrypt.Verify(Password, data.Password))
                 {
-                    return data.ID;
+                    return await GetUserById(data.ID);
                 }
                 else
                 {
-                    return 0;
+                    throw new NotImplementedException();
                 }
             }
             catch
             {
-                return 0;
+                throw new NotImplementedException();
             }
         }
 
-        public async Task<bool> IsVerified(string Username)
+        public async Task<bool> IsVerified(int UserID)
         {
             string query = """
-                           SELECT Verified FROM logindata WHERE BINARY Username = @Username
+                           SELECT Verified FROM logindata WHERE ID = @UserID
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
-                return await connection.QuerySingleAsync<bool>(query, new { Username });
+                return await connection.QuerySingleAsync<bool>(query, new { UserID });
             }
             catch
             {
