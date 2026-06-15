@@ -35,7 +35,7 @@ namespace API.Helpers
 
             Shuffle(chars);
 
-            return new string(chars.ToArray());
+            return new string([.. chars]);
         }
 
         private static char GetRandomChar(string source)

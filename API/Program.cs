@@ -4,12 +4,16 @@ using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using System.Configuration;
 using System.Security.Cryptography;
 using System.Threading.RateLimiting;
 
+//Builder
+var builder = WebApplication.CreateBuilder(args);
+
 //Odczytanie RSA z pliku tekstowego
 var rsa = RSA.Create();
-rsa.ImportFromPem(File.ReadAllText("private_key.pem"));
+rsa.ImportFromPem(builder.Configuration["JWT_PRIVATE_KEY"]);
 
 //Wyeksportowanie klucza publicznego z RSA
 var publicKey = new RsaSecurityKey(rsa.ExportParameters(false))
@@ -22,9 +26,6 @@ var privateKey = new RsaSecurityKey(rsa)
 {
     KeyId = "RSA_KEY_ID"
 };
-
-//Builder
-var builder = WebApplication.CreateBuilder(args);
 
 //Konfiguracja maksymalnego rozmiaru Requesta
 builder.WebHost.ConfigureKestrel(options =>
