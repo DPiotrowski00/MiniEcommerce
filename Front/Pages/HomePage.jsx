@@ -18,7 +18,7 @@ export default function HomePage() {
         };
 
         fetchItems();
-    });
+    }, []);
 
     return (
         <div className="items-container">

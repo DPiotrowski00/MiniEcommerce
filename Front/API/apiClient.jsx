@@ -1,6 +1,7 @@
 import { getCookie } from "../Helpers/getCookie";
 
-const BASE_URL = "https://localhost:7153";
+const BASE_URL =
+    "https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net";
 
 const tryRefreshToken = async () => {
     try {

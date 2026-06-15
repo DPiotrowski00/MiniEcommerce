@@ -7,8 +7,8 @@
     <ShouldRunBuildScript>false</ShouldRunBuildScript>
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
-    <PackageJsonDirectory>$(MSBuildProjectDirectory)\front</PackageJsonDirectory>
-    <StartupCommandWorkingDirectory>$(MSBuildProjectDirectory)\front</StartupCommandWorkingDirectory>
+    <PackageJsonDirectory>$(MSBuildProjectDirectory)</PackageJsonDirectory>
+    <StartupCommandWorkingDirectory>$(MSBuildProjectDirectory)</StartupCommandWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Styles\" />

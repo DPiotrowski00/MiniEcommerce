@@ -32,3 +32,6 @@ Przekierowania:
 - Do logowania po potwierdzeniu konta
 - Po utworzeniu artykułu: komunikat i przekierowanie do strony artykułu
 - Po zmianie hasła
+
+Błędy:
+- Strona moje zamówienia, przy pustych data wyskakuje błąd

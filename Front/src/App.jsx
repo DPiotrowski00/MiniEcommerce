@@ -1,17 +1,17 @@
 import { Routes, Route } from "react-router-dom";
 
-import NavBar from "../../Components/NavBar";
+import NavBar from "../Components/NavBar";
 
-import HomePage from "../../Pages/HomePage";
-import LogInPage from "../../Pages/LogInPage";
-import RegisterPage from "../../Pages/RegisterPage";
-import ItemPage from "../../Pages/ItemPage";
-import ItemCreationPage from "../../Pages/ItemCreationPage";
-import AccountPage from "../../Pages/AccountPage";
-import CheckoutPage from "../../Pages/CheckoutPage";
-import OrderPage from "../../Pages/OrderPage";
-import MyOrdersPage from "../../Pages/MyOrdersPage";
-import PasswordResetPage from "../../Pages/PasswordResetPage";
+import HomePage from "../Pages/HomePage";
+import LogInPage from "../Pages/LogInPage";
+import RegisterPage from "../Pages/RegisterPage";
+import ItemPage from "../Pages/ItemPage";
+import ItemCreationPage from "../Pages/ItemCreationPage";
+import AccountPage from "../Pages/AccountPage";
+import CheckoutPage from "../Pages/CheckoutPage";
+import OrderPage from "../Pages/OrderPage";
+import MyOrdersPage from "../Pages/MyOrdersPage";
+import PasswordResetPage from "../Pages/PasswordResetPage";
 
 export default function App() {
     return (
