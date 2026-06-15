@@ -148,8 +148,12 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
-//
 var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
+
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
 
 app.UseStaticFiles(new StaticFileOptions
 {
