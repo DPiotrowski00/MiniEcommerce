@@ -20,7 +20,8 @@ Funkcjonalność kont:
 
 Mniejsze rzeczy:
 - Enter zatwierdza formularz,
-- Odklikiwanie menu
+- Odklikiwanie menu,
+- Konfigurowalny front - adres api
 
 Zabezpieczenia:
 - Odczytywanie zamówień innych użytkowników
