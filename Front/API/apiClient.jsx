@@ -1,5 +1,5 @@
 ﻿const BASE_URL =
-    "https://localhost:7153";
+    "https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net";
 
 const saveTokens = (data) => {
     localStorage.setItem("access-token", data.accessToken);
