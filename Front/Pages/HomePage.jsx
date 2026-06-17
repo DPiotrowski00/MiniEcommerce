@@ -33,7 +33,7 @@ export default function HomePage() {
 
                         <div className="item-image-wrapper">
                             <img
-                                src={`https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net${item.thumbnailURL}`}
+                                src={`https://localhost:7153${item.thumbnailURL}`}
                                 alt={item.name}
                                 className="item-image"
                             />

@@ -1,5 +1,5 @@
 ﻿const BASE_URL =
-    "https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net";
+    "https://localhost:7153";
 
 const saveTokens = (data) => {
     localStorage.setItem("access-token", data.accessToken);
@@ -51,7 +51,7 @@ export const apiFetch = async (url, options = {}) => {
     }
 
     if (csrfToken) {
-        headers["X-CSRF-Token"] = csrfToken;
+        headers["X-CSRF-Token"] = encodeURIComponent(csrfToken);
     }
 
     let response = await fetch(BASE_URL + url, {

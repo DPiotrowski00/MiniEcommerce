@@ -16,6 +16,9 @@ namespace API.Filters
             
             headerToken = WebUtility.UrlDecode(headerToken);
 
+            Console.WriteLine($"cookieToken: {cookieToken}");
+            Console.WriteLine($"headerToken: {headerToken}");
+
             if ((string.IsNullOrEmpty(cookieToken) || string.IsNullOrEmpty(headerToken) || cookieToken != headerToken))
             {
                 //W przypadku niezgodności tokenu zwracany jest status code 403
