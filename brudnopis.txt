@@ -36,3 +36,4 @@ Przekierowania:
 
 Błędy:
 - Strona moje zamówienia, przy pustych data wyskakuje błąd
+- Można kupować na minus XD

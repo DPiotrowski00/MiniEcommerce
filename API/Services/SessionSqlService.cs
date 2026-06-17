@@ -14,6 +14,7 @@ namespace API.Services
         public string? RefreshTokenHash { get; set; }
         public string? DeviceID { get; set; }
         public bool IsRevoked { get; set; }
+        public string? ExpectedToken { get; set; }
     }
     
     public interface ISessionSqlService
@@ -24,11 +25,29 @@ namespace API.Services
         Task<int> CreateSession(Session session);
         Task RevokeSession(int SessionID);
         Task<int> CheckForTokenReuse(string token);
+        Task<string?> GetExpectedToken(int sid);
     }
 
     public class SessionSqlService (IConfiguration configuration) : ISessionSqlService
     {
         private readonly string _connectionString = configuration.GetConnectionString("Default")!;
+        public async Task<string?> GetExpectedToken(int sid)
+        {
+            string query = """
+                           SELECT ExpectedToken FROM sessions WHERE ID = @sid AND ExpiresAt > NOW() AND IsRevoked = 0
+                           """;
+
+            using var connection = CreateSqlConnection.CreateConnection(_connectionString);
+            try
+            {
+                return await connection.QuerySingleAsync<string?>(query, new { sid });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return null;
+            }
+        }
 
         public async Task<Session?> GetSessionByDeviceId(int UserID, string DeviceID)
         {
@@ -51,7 +70,7 @@ namespace API.Services
         public async Task<Session?> GetSessionByToken(string RefreshToken)
         {
             string query = """
-                           SELECT s.ID, s.UserID, s.CreatedAt, s.ExpiresAt, t.RefreshTokenHash, s.DeviceID, s.IsRevoked FROM sessions s JOIN tokens t ON t.SessionID = s.ID WHERE t.RefreshTokenHash = @RefreshTokenHash AND s.ExpiresAt > NOW() AND s.IsRevoked = 0
+                           SELECT s.ID, s.UserID, s.CreatedAt, s.ExpiresAt, t.RefreshTokenHash, s.DeviceID, s.IsRevoked, s.ExpectedToken FROM sessions s JOIN tokens t ON t.SessionID = s.ID WHERE t.RefreshTokenHash = @RefreshTokenHash AND s.ExpiresAt > NOW() AND s.IsRevoked = 0
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -94,7 +113,7 @@ namespace API.Services
             using var transaction = connection.BeginTransaction();
             try
             {
-                var SessionID = await connection.ExecuteScalarAsync<int>("INSERT INTO sessions (UserID, DeviceID, CreatedAt, ExpiresAt, IsRevoked) VALUES (@UserID, @DeviceID, @CreatedAt, @ExpiresAt, 0); SELECT LAST_INSERT_ID();", new { session.UserID, session.CreatedAt, session.ExpiresAt, session.RefreshTokenHash, session.DeviceID }, transaction);
+                var SessionID = await connection.ExecuteScalarAsync<int>("INSERT INTO sessions (UserID, DeviceID, CreatedAt, ExpiresAt, IsRevoked, ExpectedToken) VALUES (@UserID, @DeviceID, @CreatedAt, @ExpiresAt, 0, @ExpectedToken); SELECT LAST_INSERT_ID();", new { session.UserID, session.CreatedAt, session.ExpiresAt, session.RefreshTokenHash, session.DeviceID, session.ExpectedToken }, transaction);
                 await connection.ExecuteAsync("INSERT INTO tokens (RefreshTokenHash, ReplacedByTokenID, CreatedAt, ExpiresAt, IsRevoked, RevokedAt, RevokedReason, SessionID) VALUES (@RefreshTokenHash, NULL, @CreatedAt, @ExpiresAt, 0, NULL, NULL, @SessionID)", new { session.UserID, session.CreatedAt, session.ExpiresAt, session.RefreshTokenHash, session.DeviceID, SessionID }, transaction);
 
                 transaction.Commit();

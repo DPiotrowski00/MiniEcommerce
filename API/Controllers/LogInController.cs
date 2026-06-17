@@ -238,6 +238,7 @@ namespace API.Controllers
                         CreatedAt = DateTime.UtcNow,
                         ExpiresAt = DateTime.UtcNow.AddDays(30),
                         RefreshTokenHash = HashHelper.ComputeSha256(refreshToken),
+                        ExpectedToken = csrfToken,
                         DeviceID = request.DeviceID,
                     };
                     session.ID = await _sessionSqlService.CreateSession(session);
@@ -247,6 +248,7 @@ namespace API.Controllers
                     var oldTokenHash = session.RefreshTokenHash;
                     session.RefreshTokenHash = HashHelper.ComputeSha256(refreshToken);
                     session.ExpiresAt = DateTime.UtcNow.AddDays(30);
+                    session.ExpectedToken = csrfToken;
 
                     await _sessionSqlService.RotateRefreshToken(session, oldTokenHash!);
                 }
