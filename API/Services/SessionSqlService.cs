@@ -95,6 +95,7 @@ namespace API.Services
             {
                 await connection.ExecuteAsync("INSERT INTO tokens (RefreshTokenHash, CreatedAt, ExpiresAt, SessionID) VALUES (@RefreshTokenHash, NOW(), @ExpiresAt, @ID)", new { session.RefreshTokenHash, session.CreatedAt, session.ExpiresAt, session.ID }, transaction);
                 await connection.ExecuteAsync("UPDATE tokens SET ReplacedByTokenID = LAST_INSERT_ID(), IsRevoked = 1, RevokedAt = NOW(), RevokedReason = 'Refresh' WHERE RefreshTokenHash = @OldTokenHash ", new { session.RefreshTokenHash, session.CreatedAt, session.ExpiresAt, session.ID, OldTokenHash }, transaction);
+                await connection.ExecuteAsync("UPDATE sessions SET ExpectedToken = @ExpectedToken WHERE ID = @ID", new { session.ExpectedToken, session.ID }, transaction);
 
                 transaction.Commit();
             }

@@ -174,16 +174,6 @@ namespace API.Controllers
                 Path = "/"
             });
 
-            //Dodanie tokena SCRF do cookies odpowiedzi
-            Response.Cookies.Append("CSRF-Token", csrfToken, new CookieOptions
-            {
-                HttpOnly = false,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddDays(30),
-                Path = "/"
-            });
-
             Response.Headers.CacheControl = "no-store";
             Response.Headers.Pragma = "no-cache";
 
@@ -278,16 +268,6 @@ namespace API.Controllers
                 Response.Cookies.Append("Refresh-Token", refreshToken, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTime.UtcNow.AddDays(30),
-                    Path = "/"
-                });
-
-                //Dodanie tokena CSRF do cookies odpowiedzi
-                Response.Cookies.Append("CSRF-Token", csrfToken, new CookieOptions
-                {
-                    HttpOnly = false,
                     Secure = true,
                     SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(30),
