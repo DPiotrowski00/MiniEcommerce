@@ -21,6 +21,9 @@ namespace API.Filters
 
             headerToken = WebUtility.UrlDecode(headerToken);
 
+            Console.WriteLine($"Expected Token: {expectedToken}");
+            Console.WriteLine($"Header Token: {headerToken}");
+
             if ((string.IsNullOrEmpty(expectedToken) || string.IsNullOrEmpty(headerToken) || expectedToken != headerToken))
             {
                 //W przypadku niezgodności tokenu zwracany jest status code 403
