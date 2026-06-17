@@ -1,4 +1,4 @@
-import { apiFetch } from "../API/apiClient";
+﻿import { apiFetch } from "../API/apiClient";
 import getDeviceId from "../Helpers/getDeviceId";
 
 export default function useLogin() {
@@ -31,7 +31,10 @@ export default function useLogin() {
         let accessToken = null;
 
         if (response.ok) {
-            accessToken = await response.text();
+            const data = await response.json();
+
+            accessToken = data.accessToken;
+            localStorage.setItem("csrf-token", data.csrfToken);
         } else {
             const data = await response.json();
 
