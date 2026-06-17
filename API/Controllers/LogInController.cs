@@ -18,7 +18,7 @@ namespace API.Controllers
     //Kontroler logowania oraz rejestracji
     [ApiController]
     [Route("[controller]")]
-    public class LogInController(ILoggingSqlService loginService, ISessionSqlService sessionService, IEmailService emailService, RsaSecurityKey privateKey, string issuer, string audience, string front) : ControllerBase
+    public class LogInController(ILoggingSqlService loginService, ISessionSqlService sessionService, IEmailService emailService, RsaSecurityKey privateKey, IConfiguration configuration) : ControllerBase
     {
         private readonly ILoggingSqlService _loginSqlService = loginService;
         private readonly ISessionSqlService _sessionSqlService = sessionService;
@@ -26,9 +26,9 @@ namespace API.Controllers
 
         private readonly RsaSecurityKey _privateKey = privateKey;
 
-        private readonly string _issuer = issuer;
-        private readonly string _audience = audience;
-        private readonly string _front = front;
+        private readonly string _issuer = configuration["Issuer"]!;
+        private readonly string _audience = configuration["Audience"]!;
+        private readonly string _front = configuration["Front"]!;
 
         //Szablony filtrujące login i hasło przesłane przez użytkownika
         private readonly string loginRegex = "^[0-9a-zA-Z]{3,8}$";
