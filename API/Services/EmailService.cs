@@ -26,7 +26,7 @@ namespace API.Services
             try
             {
                 string verificationLink = _apiAddress + "/login/verify-email?token=" + token;
-                var html = File.ReadAllText("EmailTemplates\\verification.html").Replace("{{verificationLink}}", verificationLink);
+                var html = File.ReadAllText(Path.Combine("EmailTemplates", "verification.html")).Replace("{{verificationLink}}", verificationLink);
                 
                 IResend resend = ResendClient.Create(_resendApiKey);
 
@@ -61,7 +61,7 @@ namespace API.Services
                 }
                 
                 string orderLink = _frontAddress + "order/" + order.ID;
-                var html = File.ReadAllText("EmailTemplates\\order_confirmation.html")
+                var html = File.ReadAllText(Path.Combine("EmailTemplates", "order_confirmation.html"))
                 .Replace("{{orderLink}}", orderLink)
                 .Replace("{{orderNumber}}", order.ID.ToString())
                 .Replace("{{orderTotal}}", $"{totalValue:F2} PLN")
@@ -89,7 +89,7 @@ namespace API.Services
         {
             try
             {
-                var html = File.ReadAllText("EmailTemplates//password_reset.html")
+                var html = File.ReadAllText(Path.Combine("EmailTemplates", "password_reset.html"))
                 .Replace("{{password}}", password);
 
                 IResend resend = ResendClient.Create(_resendApiKey);
