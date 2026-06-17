@@ -35,7 +35,7 @@ export default function ItemPage() {
 
                         <div className="item-image-container">
                             <img
-                                src={`https://localhost:7153${item.thumbnailURL}`}
+                                src={`https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net${item.thumbnailURL}`}
                                 alt={item.name}
                                 className="item-page-image"
                             />

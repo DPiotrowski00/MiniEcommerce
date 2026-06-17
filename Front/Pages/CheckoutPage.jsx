@@ -85,7 +85,7 @@ export default function CheckoutPage() {
                                         <td>
                                             <img
                                                 className="checkout-image"
-                                                src={`https://localhost:7153${item.PicURL}`}
+                                                src={`https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net${item.PicURL}`}
                                             />
                                         </td>
                                         <td>{item.Name}</td>

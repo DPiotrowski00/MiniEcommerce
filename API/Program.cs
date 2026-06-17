@@ -48,9 +48,11 @@ builder.Services.AddSingleton(privateKey);
 
 string? issuer = builder.Configuration["Issuer"];
 string? audience = builder.Configuration["Audience"];
+string? front = builder.Configuration["Front"];
 
 builder.Services.AddSingleton(issuer!);
 builder.Services.AddSingleton(audience!);
+builder.Services.AddSingleton(front!);
 
 //Autentykacja JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(jwtOptions =>
