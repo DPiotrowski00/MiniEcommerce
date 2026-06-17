@@ -1,7 +1,15 @@
-import { getCookie } from "../Helpers/getCookie";
-
-const BASE_URL =
+﻿const BASE_URL =
     "https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net";
+
+const saveTokens = (data) => {
+    localStorage.setItem("access-token", data.accessToken);
+    localStorage.setItem("csrf-token", data.csrfToken);
+};
+
+const clearTokens = () => {
+    localStorage.removeItem("access-token");
+    localStorage.removeItem("csrf-token");
+};
 
 const tryRefreshToken = async () => {
     try {
@@ -11,20 +19,24 @@ const tryRefreshToken = async () => {
         });
 
         if (!response.ok) {
+            clearTokens();
             return false;
         }
 
-        const accessToken = await response.text();
-        localStorage.setItem("access-token", accessToken);
+        const data = await response.json();
+
+        saveTokens(data);
 
         return true;
-    } catch {
+    } catch (error) {
+        console.error("Refresh token failed:", error);
+        clearTokens();
         return false;
     }
 };
 
-export const apiFetch = async (url, options) => {
-    const csrfToken = getCookie("CSRF-Token");
+export const apiFetch = async (url, options = {}) => {
+    const csrfToken = localStorage.getItem("csrf-token");
     const accessToken = localStorage.getItem("access-token");
 
     const isFormData = options.body instanceof FormData;
@@ -35,22 +47,40 @@ export const apiFetch = async (url, options) => {
     };
 
     if (accessToken) {
-        headers["Authorization"] = "Bearer " + accessToken;
+        headers["Authorization"] = `Bearer ${accessToken}`;
     }
 
     if (csrfToken) {
-        headers["X-CSRF-Token"] = encodeURIComponent(csrfToken);
+        headers["X-CSRF-Token"] = csrfToken;
     }
 
-    const response = await fetch(BASE_URL + url, {
+    let response = await fetch(BASE_URL + url, {
         ...options,
         headers,
         credentials: "include",
     });
 
+    // access token wygasł → próbujemy refresh
     if (response.status === 401) {
-        if (await tryRefreshToken()) {
-            return apiFetch(url, options);
+        const refreshed = await tryRefreshToken();
+
+        if (refreshed) {
+            const newAccessToken = localStorage.getItem("access-token");
+            const newCsrfToken = localStorage.getItem("csrf-token");
+
+            if (newAccessToken) {
+                headers["Authorization"] = `Bearer ${newAccessToken}`;
+            }
+
+            if (newCsrfToken) {
+                headers["X-CSRF-Token"] = newCsrfToken;
+            }
+
+            response = await fetch(BASE_URL + url, {
+                ...options,
+                headers,
+                credentials: "include",
+            });
         }
     }
 

@@ -186,7 +186,11 @@ namespace API.Controllers
             Response.Headers.CacheControl = "no-store";
             Response.Headers.Pragma = "no-cache";
 
-            return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
+            return Ok(new
+            {
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwt),
+                CsrfToken = csrfToken
+            });
         }
 
         //Endpoint do walidacji logowania. W odpowiedzi zwraca [JWS w body], [CSRF jako secure cookie] oraz [RefreshToken jako secure http-only cookie]
@@ -291,7 +295,11 @@ namespace API.Controllers
                 Response.Headers.Pragma = "no-cache";
 
                 //Zwracaj Ok jeśli poprawnie zalogowano
-                return Ok(new JwtSecurityTokenHandler().WriteToken(jwt));
+                return Ok(new
+                {
+                    AccessToken = new JwtSecurityTokenHandler().WriteToken(jwt),
+                    CsrfToken = csrfToken
+                });
             }
 
             //Zwracaj Unauthorized jeśli login lub hasło się nie zgadza
