@@ -8,7 +8,7 @@ import ModalWindow from "../Components/ModalWindow";
 import "../Styles/CheckoutPageStyle.css";
 
 export default function CheckoutPage() {
-    const API_URL = import.meta.env.API_ADDRESS;
+    const API_URL = import.meta.env.VITE_API_ADDRESS;
 
     const [items, setItems] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);

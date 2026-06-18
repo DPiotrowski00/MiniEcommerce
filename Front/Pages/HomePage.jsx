@@ -6,7 +6,7 @@ import stringFormatters from "../Helpers/stringFormatters";
 import "../Styles/HomePageStyle.css";
 
 export default function HomePage() {
-    const API_URL = import.meta.env.API_ADDRESS;
+    const API_URL = import.meta.env.VITE_API_ADDRESS;
 
     const [items, setItems] = useState([]);
     const { GetItems } = useItems();

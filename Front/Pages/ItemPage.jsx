@@ -7,7 +7,7 @@ import stringFormatters from "../Helpers/stringFormatters";
 import "../Styles/ItemPageStyle.css";
 
 export default function ItemPage() {
-    const API_URL = import.meta.env.API_ADDRESS;
+    const API_URL = import.meta.env.VITE_API_ADDRESS;
 
     const { id } = useParams();
     const { GetItemById } = useItems();

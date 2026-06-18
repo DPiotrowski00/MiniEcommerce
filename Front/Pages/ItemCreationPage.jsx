@@ -32,7 +32,7 @@ export default function ItemCreationPage() {
         setPreview(URL.createObjectURL(selectedFile));
     }
 
-    function handleClick() {
+    const handleClick = async() => {
         const ItemId = await TryCreateItem(file, name, description, price);
 
         if (ItemId !== null && ItemId !== 0) {

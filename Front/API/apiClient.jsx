@@ -1,4 +1,4 @@
-﻿const BASE_URL = import.meta.env.API_ADDRESS;
+﻿const BASE_URL = import.meta.env.VITE_API_ADDRESS;
 
 const saveTokens = (data) => {
     localStorage.setItem("access-token", data.accessToken);
