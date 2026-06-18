@@ -33,14 +33,17 @@ export default function ItemCreationPage() {
     }
 
     const handleClick = async() => {
-        const ItemId = await TryCreateItem(file, name, description, price);
+        const res = await TryCreateItem(file, name, description, price);
+        const data = await res.json();
 
-        if (ItemId !== null && ItemId !== 0) {
+        if (res.ok) {
+            const ItemId = data.itemId;
             setModalMessage("Pomyślnie utworzono artykuł.");
             toggleModal();
             navigate(`/item/${ItemId}`);
         } else {
-            setModalMessage("Wystąpił błąd przy tworzeniu artykułu.");
+            const message = data.message;
+            setModalMessage(message);
             toggleModal();
         }
     }

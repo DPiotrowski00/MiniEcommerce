@@ -27,8 +27,7 @@ export default function useItems() {
             body: formData,
         });
 
-        const data = await res.json();
-        return (data.ItemId);
+        return res;
     };
 
     return { GetItems, GetItemById, TryCreateItem };

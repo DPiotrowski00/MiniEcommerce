@@ -1,5 +1,5 @@
 ﻿import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import useLogin from "../Hooks/useLogin";
 
 import cart from "../Images/cart.png";
@@ -9,6 +9,9 @@ import "../Styles/NavBarStyle.css";
 export default function NavBar() {
     const navigate = useNavigate();
     const location = useLocation();
+
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
 
     const logInStatus =
         localStorage.getItem("logInStatus") !== null
@@ -20,9 +23,11 @@ export default function NavBar() {
     useEffect(() => {
         if (
             logInStatus === true &&
-            (location.pathname === "/login" ||
+            (
+                location.pathname === "/login" ||
                 location.pathname === "/register" ||
-                location.pathname === "/reset-password")
+                location.pathname === "/reset-password"
+            )
         ) {
             navigate("/");
         } else {
@@ -38,9 +43,31 @@ export default function NavBar() {
         }
     }, [location]);
 
-    function handleDropdown() {
-        document.getElementById("dropdown-content").classList.toggle("show");
-    }
+    // zamykanie dropdown po kliknięciu poza nim
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target)
+            ) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    const handleDropdown = () => {
+        setIsDropdownOpen((prev) => !prev);
+    };
+
+    const closeDropdown = () => {
+        setIsDropdownOpen(false);
+    };
 
     const logOut = async () => {
         await LogOut();
@@ -55,9 +82,11 @@ export default function NavBar() {
                 <Link className="nav-link" to="/">
                     Home
                 </Link>
+
                 <Link className="nav-link" to="/login">
                     Logowanie
                 </Link>
+
                 <Link className="nav-link" to="/register">
                     Rejestracja
                 </Link>
@@ -65,21 +94,35 @@ export default function NavBar() {
 
             {logInStatus === true && (
                 <div className="hidden-menu">
-                    <div className="dropdown">
-                        <button className="dropbtn" onClick={handleDropdown}>
-                            ꜜ
+                    <div className="dropdown" ref={dropdownRef}>
+                        <button
+                            className="dropbtn"
+                            onClick={handleDropdown}
+                        >
+                            ▼
                         </button>
 
-                        <div id="dropdown-content" className="dropdown-content">
-                            <Link to="/item/add" onClick={handleDropdown}>
+                        <div
+                            className={`dropdown-content ${isDropdownOpen ? "show" : ""}`}
+                        >
+                            <Link
+                                to="/item/add"
+                                onClick={closeDropdown}
+                            >
                                 Dodaj ofertę
                             </Link>
 
-                            <Link to="/account" onClick={handleDropdown}>
+                            <Link
+                                to="/account"
+                                onClick={closeDropdown}
+                            >
                                 Moje konto
                             </Link>
 
-                            <Link to="/orders" onClick={handleDropdown}>
+                            <Link
+                                to="/orders"
+                                onClick={closeDropdown}
+                            >
                                 Moje zamówienia
                             </Link>
                         </div>
@@ -89,7 +132,10 @@ export default function NavBar() {
                         <img src={cart} alt="koszyk" />
                     </Link>
 
-                    <button className="logout-button" onClick={logOut}>
+                    <button
+                        className="logout-button"
+                        onClick={logOut}
+                    >
                         Wyloguj
                     </button>
                 </div>
