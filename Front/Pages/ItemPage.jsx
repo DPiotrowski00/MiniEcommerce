@@ -7,6 +7,8 @@ import stringFormatters from "../Helpers/stringFormatters";
 import "../Styles/ItemPageStyle.css";
 
 export default function ItemPage() {
+    const API_URL = import.meta.env.API_ADDRESS;
+
     const { id } = useParams();
     const { GetItemById } = useItems();
     const [item, setItem] = useState();
@@ -35,7 +37,7 @@ export default function ItemPage() {
 
                         <div className="item-image-container">
                             <img
-                                src={`https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net${item.thumbnailURL}`}
+                                src={`${API_URL}${item.thumbnailURL}`}
                                 alt={item.name}
                                 className="item-page-image"
                             />

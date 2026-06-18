@@ -6,6 +6,8 @@ import stringFormatters from "../Helpers/stringFormatters";
 import "../Styles/HomePageStyle.css";
 
 export default function HomePage() {
+    const API_URL = import.meta.env.API_ADDRESS;
+
     const [items, setItems] = useState([]);
     const { GetItems } = useItems();
 
@@ -33,7 +35,7 @@ export default function HomePage() {
 
                         <div className="item-image-wrapper">
                             <img
-                                src={`https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net${item.thumbnailURL}`}
+                                src={`${API_URL}${item.thumbnailURL}`}
                                 alt={item.name}
                                 className="item-image"
                             />

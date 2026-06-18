@@ -26,11 +26,9 @@ export default function useItems() {
             method: "PUT",
             body: formData,
         });
-        if (res.status === 200) {
-            return true;
-        } else {
-            return false;
-        }
+
+        const data = await res.json();
+        return (data.ItemId);
     };
 
     return { GetItems, GetItemById, TryCreateItem };

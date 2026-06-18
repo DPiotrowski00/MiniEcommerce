@@ -1,9 +1,16 @@
 ﻿import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import useItems from "../Hooks/useItems";
+
+import ModalWindow from "../Components/ModalWindow";
 
 import "../Styles/ItemCreationPageStyle.css";
 
 export default function ItemCreationPage() {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalMessage, setModalMessage] = useState("");
+
     const [file, setFile] = useState(undefined);
     const [preview, setPreview] = useState(null);
 
@@ -13,6 +20,12 @@ export default function ItemCreationPage() {
 
     const { TryCreateItem } = useItems();
 
+    const navigate = useNavigate();
+
+    function toggleModal() {
+        setModalVisible(!modalVisible);
+    }
+
     function handleChangeFile(e) {
         const selectedFile = e.target.files[0];
         setFile(selectedFile);
@@ -20,7 +33,16 @@ export default function ItemCreationPage() {
     }
 
     function handleClick() {
-        TryCreateItem(file, name, description, price);
+        const ItemId = await TryCreateItem(file, name, description, price);
+
+        if (ItemId !== null && ItemId !== 0) {
+            setModalMessage("Pomyślnie utworzono artykuł.");
+            toggleModal();
+            navigate(`/item/${ItemId}`);
+        } else {
+            setModalMessage("Wystąpił błąd przy tworzeniu artykułu.");
+            toggleModal();
+        }
     }
 
     return (
@@ -86,6 +108,7 @@ export default function ItemCreationPage() {
                     Utwórz przedmiot
                 </button>
             </div>
+            <ModalWindow message={modalMessage} toggleModal={toggleModal} visible={modalVisible} showButtons={false} />
         </div>
     );
 }

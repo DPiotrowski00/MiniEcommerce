@@ -9,6 +9,7 @@ Funkcjonalność zamówień:
 - Płatność kartą / blikiem
 
 Funkcjonalność artykułów: !
+- Magazyn
 - Modyfikacja artykułów,
 - Usuwanie/blokowanie artykułów,
 - Maksymalna ilość artykułu do sprzedaży
@@ -29,15 +30,8 @@ Zabezpieczenia:
 - Role admin/user
 
 Przekierowania:
-- Do logowania po rejestracji
-- Do logowania po potwierdzeniu konta
 - Po utworzeniu artykułu: komunikat i przekierowanie do strony artykułu
 - Po zmianie hasła
 
 Błędy:
-- Strona moje zamówienia, przy pustych data wyskakuje błąd
 - Można kupować na minus XD
-- Strona moje zamówienia, przy pustych data wyskakuje błąd
-
-Mobilnie:
-- Skalowanie aplikacji na urządzenia mobilne

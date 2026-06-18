@@ -177,11 +177,6 @@ app.Use(async (context, next) =>
     await next();
 });
 
-if (!Directory.Exists(uploadsPath))
-{
-    Directory.CreateDirectory(uploadsPath);
-}
-
 //Mapowanie kontrolerów
 app.MapControllers();
 

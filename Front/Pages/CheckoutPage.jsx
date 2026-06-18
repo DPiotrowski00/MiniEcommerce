@@ -8,6 +8,8 @@ import ModalWindow from "../Components/ModalWindow";
 import "../Styles/CheckoutPageStyle.css";
 
 export default function CheckoutPage() {
+    const API_URL = import.meta.env.API_ADDRESS;
+
     const [items, setItems] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [message, setMessage] = useState("");
@@ -85,7 +87,7 @@ export default function CheckoutPage() {
                                         <td>
                                             <img
                                                 className="checkout-image"
-                                                src={`https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net${item.PicURL}`}
+                                                src={`${API_URL}${item.PicURL}`}
                                             />
                                         </td>
                                         <td>{item.Name}</td>

@@ -1,5 +1,4 @@
-﻿const BASE_URL =
-    "https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net";
+﻿const BASE_URL = import.meta.env.API_ADDRESS;
 
 const saveTokens = (data) => {
     localStorage.setItem("access-token", data.accessToken);

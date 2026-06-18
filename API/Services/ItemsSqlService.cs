@@ -8,7 +8,7 @@ namespace API.Services
     {
         Task<List<ItemModel>> GetItems();
         Task<ItemModel> GetItemById(int ID);
-        Task<bool> AddItem(ItemModel item);
+        Task<int> AddItem(ItemModel item);
         Task<bool> UpdateItem(ItemModel item);
         Task<bool> AddImages(ItemModel item, List<string> images);
         Task SwitchPrimaryImage(ItemModel item, string image);
@@ -54,7 +54,7 @@ namespace API.Services
             }
         }
 
-        public async Task<bool> AddItem(ItemModel item)
+        public async Task<int> AddItem(ItemModel item)
         {
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             connection.Open();
@@ -63,15 +63,16 @@ namespace API.Services
             {
                 await connection.ExecuteAsync("INSERT INTO items (CreatorID, Name, Description, Price, CreationTime) VALUES (@CreatorID, @Name, @Description, @Price, @CreationTime)", new { item.CreatorID, item.Name, item.Description, item.Price, CreationTime = DateTime.UtcNow });
                 await connection.ExecuteAsync("INSERT INTO images (GUID, ItemID, IsPrimary) VALUES (@Thumbnail, LAST_INSERT_ID(), 1)", new { item.Thumbnail });
+                int ItemID = await connection.QuerySingleAsync("SELECT LAST_INSERT_ID()");
 
                 transaction.Commit();
-                return true;
+                return ItemID;
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
                 transaction.Rollback();
-                return false;
+                return 0;
             }
         }
 

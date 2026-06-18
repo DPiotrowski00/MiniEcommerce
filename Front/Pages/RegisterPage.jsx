@@ -1,4 +1,5 @@
 ﻿import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useLogin from "../Hooks/useLogin";
 
 import ModalWindow from "../Components/ModalWindow";
@@ -15,6 +16,8 @@ export default function RegisterPage() {
 
     const [visible, setVisible] = useState(false);
 
+    const navigate = useNavigate();
+
     function toggleModal() {
         setVisible(!visible);
     }
@@ -26,6 +29,7 @@ export default function RegisterPage() {
             setPassword("");
             setDisplayName("");
             setEmail("");
+            navigate("/login");
         }
     };
 

@@ -169,14 +169,17 @@ namespace API.Controllers
                 item.Thumbnail = fileName;
             }
 
-            if (await _sqlService.AddItem(item))
-            {
-                return Ok("Item saved.");
-            }
-            else
+            int ItemID = await _sqlService.AddItem(item);
+
+            if (ItemID == 0)
             {
                 return BadRequest("Couldn't save Item.");
             }
+
+            return Ok(new
+            {
+                itemId = ItemID
+            });
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿import { useParams } from "react-router-dom";
+﻿import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import useOrders from "../Hooks/useOrders";
@@ -16,6 +16,8 @@ export default function OrderPage() {
     const { GetItemById } = useItems();
 
     const { formatPrice } = stringFormatters();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchOrder = async () => {
@@ -56,7 +58,8 @@ export default function OrderPage() {
                     <tbody>
                         {order.positions &&
                             order.positions.map((position) => (
-                                <tr key={position.itemID}>
+                                <tr key={position.itemID}
+                                    onClick={() => navigate(`/item/${position.itemID}`)}>
                                     <td>{position.name}</td>
                                     <td>{position.quantity}</td>
                                     <td>{formatPrice(position.value)}</td>
