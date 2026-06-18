@@ -14,7 +14,8 @@ import MyOrdersPage from "../Pages/MyOrdersPage";
 import PasswordResetPage from "../Pages/PasswordResetPage";
 
 export default function App() {
-    console.log(import.meta.env);
+    console.log("ENV", import.meta.env);
+    console.log("API", import.meta.env.VITE_API_ADDRESS);
     return (
         <>
             <NavBar />
