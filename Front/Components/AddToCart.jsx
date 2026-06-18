@@ -57,6 +57,9 @@ export default function AddToCart({ item }) {
     }
 
     function handleQuantChange(value) {
+        if (value <= 0) {
+            value = 1
+        }
         setQuant(value);
         setFullPrice(quant * item.price);
     }
