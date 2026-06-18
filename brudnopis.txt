@@ -36,3 +36,6 @@ Przekierowania:
 
 Błędy:
 - Strona moje zamówienia, przy pustych data wyskakuje błąd
+
+Mobilnie:
+- Skalowanie aplikacji na urządzenia mobilne
