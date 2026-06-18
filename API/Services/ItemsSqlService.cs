@@ -63,7 +63,7 @@ namespace API.Services
             {
                 await connection.ExecuteAsync("INSERT INTO items (CreatorID, Name, Description, Price, CreationTime) VALUES (@CreatorID, @Name, @Description, @Price, @CreationTime)", new { item.CreatorID, item.Name, item.Description, item.Price, CreationTime = DateTime.UtcNow });
                 await connection.ExecuteAsync("INSERT INTO images (GUID, ItemID, IsPrimary) VALUES (@Thumbnail, LAST_INSERT_ID(), 1)", new { item.Thumbnail });
-                int ItemID = await connection.QuerySingleAsync("SELECT LAST_INSERT_ID()");
+                int ItemID = await connection.QuerySingleAsync<int>("SELECT LAST_INSERT_ID()");
 
                 transaction.Commit();
                 return ItemID;

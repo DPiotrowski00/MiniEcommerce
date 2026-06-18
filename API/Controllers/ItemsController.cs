@@ -93,7 +93,10 @@ namespace API.Controllers
             int id = Convert.ToInt32(claims.Where(c => c.Type == ClaimTypes.NameIdentifier).First().Value);
             if (id == 0) return BadRequest("Id is null.");
 
-            if (ItemID == 0) return BadRequest("Item id not provided.");
+            if (ItemID == 0) return BadRequest(new
+            {
+                message = "ItemID nie może wynosić 0"
+            });
 
             List<string> fileNames = [];
 
@@ -130,7 +133,10 @@ namespace API.Controllers
                     }
                 }
 
-                return BadRequest("Saving item failed.");
+                return BadRequest(new
+                {
+                    message = "Nie udało się dodać zdjęcia"
+                });
             }
         }
 
@@ -173,7 +179,10 @@ namespace API.Controllers
 
             if (ItemID == 0)
             {
-                return BadRequest("Couldn't save Item.");
+                return BadRequest(new
+                {
+                    message = "Nie udało się dodać artykułu."
+                });
             }
 
             return Ok(new

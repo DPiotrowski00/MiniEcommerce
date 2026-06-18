@@ -13,6 +13,7 @@ export default function RegisterPage() {
     const [password, setPassword] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [email, setEmail] = useState("");
+    const [modalMessage, setModalMessage] = useState("");
 
     const [visible, setVisible] = useState(false);
 
@@ -23,13 +24,18 @@ export default function RegisterPage() {
     }
 
     const handleRegister = async () => {
-        if (await TryRegister(login, password, displayName, email)) {
+        const success = await TryRegister(login, password, displayName, email);
+        if (success) {
+            setModalMessage("Wysłano link aktywacyjny na podany adres email. Aby korzystać z serwisu potwierdź swój adres.");
             toggleModal();
             setLogin("");
             setPassword("");
             setDisplayName("");
             setEmail("");
             navigate("/login");
+        } else {
+            setModalMessage("Nieudana próba rejestracji");
+            toggleModal();
         }
     };
 
@@ -95,7 +101,7 @@ export default function RegisterPage() {
             <ModalWindow
                 visible={visible}
                 toggleModal={toggleModal}
-                message="Wysłano link aktywacyjny na podany adres email. Aby korzystać z serwisu potwierdź swój adres."
+                message={modalMessage}
                 showButtons={false}
             />
         </div>

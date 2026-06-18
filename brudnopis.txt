@@ -21,8 +21,6 @@ Funkcjonalność kont:
 
 Mniejsze rzeczy:
 - Enter zatwierdza formularz,
-- Odklikiwanie menu,
-- Konfigurowalny front - adres api
 
 Zabezpieczenia:
 - Odczytywanie zamówień innych użytkowników
@@ -35,3 +33,5 @@ Przekierowania:
 
 Błędy:
 - Można kupować na minus XD
+
+Zadbać o komunikaty przy niepowodzeniach w wypełnianiu formularzy
