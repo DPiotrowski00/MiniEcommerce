@@ -36,7 +36,7 @@ export default function MyOrdersPage() {
         fetchOrders();
     }, []);
 
-    if (!orders) {
+    if (orders.length === 0) {
         return <p>Nie posiadasz żadnych zamówień</p>;
     }
 

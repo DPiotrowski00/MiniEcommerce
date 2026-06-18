@@ -225,3 +225,29 @@ body {
     transform: translateY(0);
     opacity: 1;
 }
+
+/* === AI Responsive/Uniform Enhancement Layer === */
+*, *::before, *::after { box-sizing: border-box; }
+img, video, canvas, svg { max-width: 100%; height: auto; display:block; }
+button, input, textarea, select { font: inherit; }
+
+@media (max-width: 1024px) {
+  [class] {
+    transition: all .2s ease;
+  }
+}
+
+@media (max-width: 768px) {
+  body { overflow-x: hidden; }
+  [class*="container"], [class*="wrapper"], [class*="page"], [class*="section"], [class*="card"] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  html { font-size: 15px; }
+  [class] {
+    min-width: 0;
+  }
+}

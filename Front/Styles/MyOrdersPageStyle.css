@@ -87,3 +87,48 @@
         white-space: nowrap;
     }
 }
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+img,
+video,
+svg,
+canvas {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 15px;
+    }
+}
+
+.my-orders-table {
+    table-layout: auto;
+}
+
+    .my-orders-table th,
+    .my-orders-table td {
+        white-space: nowrap;
+    }
+
+    .my-orders-table tbody td {
+        color: rgba(255,255,255,0.95) !important;
+    }

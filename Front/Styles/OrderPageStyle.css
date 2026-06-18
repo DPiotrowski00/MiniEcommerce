@@ -114,3 +114,54 @@
         flex-direction: column;
     }
 }
+
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+img,
+video,
+canvas,
+svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 15px;
+    }
+}
+
+.order-table td,
+.order-table th {
+    white-space: nowrap;
+}
+
+.order-table tbody {
+    color: white !important;
+}
+
+.order-table {
+    table-layout: auto;
+}

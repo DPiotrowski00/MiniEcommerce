@@ -36,6 +36,8 @@ Przekierowania:
 
 Błędy:
 - Strona moje zamówienia, przy pustych data wyskakuje błąd
+- Można kupować na minus XD
+- Strona moje zamówienia, przy pustych data wyskakuje błąd
 
 Mobilnie:
 - Skalowanie aplikacji na urządzenia mobilne

@@ -17,6 +17,7 @@ namespace API.Services
         private readonly string _resendApiKey = configuration["ResendApiKey"]!;
         private readonly string _apiAddress = configuration["Issuer"]!;
         private readonly string _frontAddress = configuration["Front"]!;
+        private readonly string _fromEmail = configuration["FromEmail"]!;
 
         private readonly IItemsSqlService _itemsSqlService = itemsSqlService;
         private readonly ILoggingSqlService _loggingSqlService = loggingSqlService;
@@ -32,7 +33,7 @@ namespace API.Services
 
                 var resp = await resend.EmailSendAsync(new EmailMessage()
                 {
-                    From = "onboarding@resend.dev",
+                    From = _fromEmail,
                     To = recipent,
                     Subject = "Weryfikacja",
                     HtmlBody = html,
@@ -70,7 +71,7 @@ namespace API.Services
                 IResend resend = ResendClient.Create(_resendApiKey);
                 var resp = await resend.EmailSendAsync(new EmailMessage()
                 {
-                    From = "onboarding@resend.dev",
+                    From = _fromEmail,
                     To = user.Email,
                     Subject = "Potwierdzenie zamówienia",
                     HtmlBody = html,
@@ -95,7 +96,7 @@ namespace API.Services
                 IResend resend = ResendClient.Create(_resendApiKey);
                 var resp = await resend.EmailSendAsync(new EmailMessage()
                 {
-                    From = "onboarding@resend.dev",
+                    From = _fromEmail,
                     To = recipent,
                     Subject = "Resetowanie hasła",
                     HtmlBody = html,

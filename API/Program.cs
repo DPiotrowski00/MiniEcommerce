@@ -30,7 +30,7 @@ var privateKey = new RsaSecurityKey(rsa)
 //Konfiguracja maksymalnego rozmiaru Requesta
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.Limits.MaxRequestBodySize = 1_000_000;
+    options.Limits.MaxRequestBodySize = 10 * 1024 * 1024;
 });
 
 //Rejestracja serwisów
