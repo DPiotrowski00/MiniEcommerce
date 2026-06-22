@@ -44,10 +44,7 @@ export default function AddToCart({ item }) {
 
         const newItem = {
             ItemId: item.id,
-            Quantity: quant,
-            PicURL: item.thumbnailURL,
-            Name: item.name,
-            Price: item.price,
+            Quantity: quant
         };
 
         const updatedCart = [...storedCart, newItem];

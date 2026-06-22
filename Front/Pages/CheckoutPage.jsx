@@ -1,6 +1,9 @@
 ﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
 import useOrders from "../Hooks/useOrders";
+import useItems from "../Hooks/useItems";
+
 import stringFormatters from "../Helpers/stringFormatters";
 
 import ModalWindow from "../Components/ModalWindow";
@@ -15,6 +18,7 @@ export default function CheckoutPage() {
     const [message, setMessage] = useState("");
 
     const { tryPlaceOrder } = useOrders();
+    const { GetItemById } = useItems();
     const { formatPrice } = stringFormatters();
     const navigate = useNavigate();
 
@@ -23,10 +27,24 @@ export default function CheckoutPage() {
     }
 
     useEffect(() => {
-        const loadedItems = localStorage.getItem("cart")
-            ? JSON.parse(localStorage.getItem("cart"))
-            : [];
-        setItems(loadedItems);
+        const func = async () => {
+            const loadedItems = localStorage.getItem("cart")
+                ? JSON.parse(localStorage.getItem("cart"))
+                : [];
+
+            for (let index = 0; index < loadedItems.length; index++) {
+                const fullItem = await GetItemById(loadedItems[index].ItemId);
+
+                loadedItems[index] = {
+                    ...loadedItems[index],
+                    ...fullItem
+                };
+            }
+
+            setItems(loadedItems);
+        }
+
+        func();
     }, []);
 
     function handleQuantityChange(item, modifier) {
@@ -78,20 +96,20 @@ export default function CheckoutPage() {
                             {items &&
                                 items.map((item) => (
                                     <tr
-                                        key={item.ItemId}
+                                        key={item.id}
                                         className="checkout-row"
                                         onClick={() =>
-                                            navigate(`/item/${item.ItemId}`)
+                                            navigate(`/item/${item.id}`)
                                         }
                                     >
                                         <td>
                                             <img
                                                 className="checkout-image"
-                                                src={`${API_URL}${item.PicURL}`}
+                                                src={`${API_URL}${item.thumbnailURL}`}
                                             />
                                         </td>
-                                        <td>{item.Name}</td>
-                                        <td>{formatPrice(item.Price)}</td>
+                                        <td>{item.name}</td>
+                                        <td>{formatPrice(item.price)}</td>
                                         <td>
                                             <div className="quantity-controls">
                                                 <button
@@ -127,7 +145,7 @@ export default function CheckoutPage() {
                                         </td>
                                         <td>
                                             {formatPrice(
-                                                item.Quantity * item.Price
+                                                item.Quantity * item.price
                                             )}
                                         </td>
                                     </tr>
