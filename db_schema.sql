@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `miniecommerce` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `miniecommerce`;
 -- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
 --
 -- Host: localhost    Database: miniecommerce
@@ -69,13 +67,14 @@ CREATE TABLE `items` (
   `Name` varchar(255) NOT NULL,
   `Description` varchar(255) DEFAULT NULL,
   `Price` decimal(10,2) NOT NULL,
+  `AvailableQuantity` int NOT NULL,
   `CreationTime` datetime NOT NULL,
   `CreatorID` int DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   KEY `CreatorID_idx` (`CreatorID`),
   CONSTRAINT `CreatorID` FOREIGN KEY (`CreatorID`) REFERENCES `logindata` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -117,7 +116,7 @@ CREATE TABLE `orderitems` (
   KEY `FK_ORDERITEMS_ORDER_ID_idx` (`OrderID`),
   CONSTRAINT `FK_ORDERITEMS_ITEM_ID` FOREIGN KEY (`ItemID`) REFERENCES `items` (`ID`),
   CONSTRAINT `FK_ORDERITEMS_ORDER_ID` FOREIGN KEY (`OrderID`) REFERENCES `orders` (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -137,7 +136,7 @@ CREATE TABLE `orders` (
   KEY `FK_STATUS_CODE_ID_idx` (`StatusID`),
   CONSTRAINT `FK_STATUS_CODE_ID` FOREIGN KEY (`StatusID`) REFERENCES `statuscodes` (`ID`),
   CONSTRAINT `FK_USER_ID_ORDERS` FOREIGN KEY (`UserID`) REFERENCES `logindata` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -154,11 +153,12 @@ CREATE TABLE `sessions` (
   `CreatedAt` datetime NOT NULL,
   `ExpiresAt` datetime NOT NULL,
   `IsRevoked` bit(1) NOT NULL DEFAULT b'0',
+  `ExpectedToken` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ID_UNIQUE` (`ID`),
   KEY `UserID_idx` (`UserID`),
   CONSTRAINT `UserID` FOREIGN KEY (`UserID`) REFERENCES `logindata` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -196,16 +196,8 @@ CREATE TABLE `tokens` (
   PRIMARY KEY (`ID`),
   KEY `SessionID_idx` (`SessionID`),
   CONSTRAINT `FK_Session_ID` FOREIGN KEY (`SessionID`) REFERENCES `sessions` (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping events for database 'miniecommerce'
---
-
---
--- Dumping routines for database 'miniecommerce'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -216,4 +208,4 @@ CREATE TABLE `tokens` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-06-11 15:55:28
+-- Dump completed on 2026-06-23 11:58:37

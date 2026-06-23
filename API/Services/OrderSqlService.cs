@@ -25,11 +25,19 @@ namespace API.Services
             using var transaction = connection.BeginTransaction();
             try
             {
-                await connection.ExecuteAsync("INSERT INTO orders (UserID, StatusID, TimeStamp) VALUES (@UserID, 1, NOW())", new { order.UserID });
+                await connection.ExecuteAsync("INSERT INTO orders (UserID, StatusID, TimeStamp) VALUES (@UserID, 1, NOW())", new { order.UserID }, transaction);
                 var OrderID = await connection.QuerySingleAsync<int>("SELECT LAST_INSERT_ID()");
                 foreach (var pos in order.Positions)
                 {
-                    await connection.ExecuteAsync("INSERT INTO orderitems (OrderID, ItemID, Quantity) VALUES (@OrderID, @ItemID, @Quantity)", new { OrderID, pos.ItemID, pos.Quantity });
+                    if (await connection.QuerySingleAsync<bool>("SELECT 1 FROM items WHERE ID = @ItemID AND AvailableQuantity >= @Quantity", new { pos.ItemID, pos.Quantity }, transaction))
+                    {
+                        await connection.ExecuteAsync("UPDATE items SET AvailableQuantity = AvailableQuantity - @Quantity WHERE ID = @ItemID", new { pos.Quantity, pos.ItemID }, transaction);
+                        await connection.ExecuteAsync("INSERT INTO orderitems (OrderID, ItemID, Quantity) VALUES (@OrderID, @ItemID, @Quantity)", new { OrderID, pos.ItemID, pos.Quantity }, transaction);
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
                 }
 
                 transaction.Commit();

@@ -84,6 +84,21 @@ export default function ItemPage() {
                             </span>
                         </div>
 
+                        <div className="stock-info">
+                            <span>Dostępne:</span>
+                            <span
+                                className="stock-amount"
+                                style={{
+                                    color:
+                                        item.availableQuantity <= 3
+                                            ? "#ff7676"
+                                            : "#7effd8",
+                                }}
+                            >
+                                {item.availableQuantity} szt.
+                            </span>
+                        </div>
+
                         <div className="purchase-divider"></div>
 
                         <div className="purchase-info">

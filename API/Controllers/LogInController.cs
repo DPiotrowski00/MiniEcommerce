@@ -67,8 +67,6 @@ namespace API.Controllers
             return Ok();
         }
 
-        [ServiceFilter(typeof(CsrfFilter))]
-        [Authorize]
         [HttpPost]
         [Route("/logout")]
         public async Task<ActionResult> LogOut()
@@ -141,6 +139,7 @@ namespace API.Controllers
 
             session.ExpiresAt = DateTime.UtcNow.AddDays(30);
             session.RefreshTokenHash = HashHelper.ComputeSha256(refreshToken);
+            session.ExpectedToken = csrfToken;
 
             await _sessionSqlService.RotateRefreshToken(session, refreshTokenFromCookie);
 

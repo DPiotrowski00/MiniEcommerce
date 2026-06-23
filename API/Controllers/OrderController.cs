@@ -105,7 +105,10 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
-                return BadRequest();
+                return BadRequest(new
+                {
+                    message = "Nie udało się złożyć zamówienia. Stany magazynowe artykułów prawdopodobnie uległy zmianie. Odśwież stronę i spróbuj ponownie."
+                });
             }
 
             return Ok();

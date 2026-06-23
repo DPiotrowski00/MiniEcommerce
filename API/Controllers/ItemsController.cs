@@ -31,6 +31,7 @@ namespace API.Controllers
             public string? Name { get; set; }
             public string? Description { get; set; }
             public decimal Price { get; set; }
+            public int AvailableQuantity { get; set; }
             public string? ThumbnailURL { get; set; }
             public DateTime? CreationTime { get; set; }
         }
@@ -50,6 +51,7 @@ namespace API.Controllers
                     Name = i.Name,
                     Description = i.Description,
                     Price = i.Price,
+                    AvailableQuantity = i.AvailableQuantity,
                     ThumbnailURL = "/uploads/" + i.Thumbnail,
                     CreationTime = i.CreationTime
                 };
@@ -70,6 +72,7 @@ namespace API.Controllers
                 Name = item.Name,
                 Description = item.Description,
                 Price = item.Price,
+                AvailableQuantity = item.AvailableQuantity,
                 ThumbnailURL = "/uploads/" + item.Thumbnail,
                 CreationTime = item.CreationTime
             };

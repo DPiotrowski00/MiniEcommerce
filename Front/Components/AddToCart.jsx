@@ -7,7 +7,7 @@ import ModalWindow from "../Components/ModalWindow";
 export default function AddToCart({ item }) {
     const [fullPrice, setFullPrice] = useState(0.0);
     const [quant, setQuant] = useState(1);
-    const [items, setItems] = useState([]);
+
     const [modalVisible, setModalVisible] = useState(false);
 
     const { formatPrice } = stringFormatters();
@@ -17,9 +17,6 @@ export default function AddToCart({ item }) {
     }
 
     useEffect(() => {
-        const cart = localStorage.getItem("cart");
-
-        setItems(cart ? JSON.parse(cart) : []);
         setFullPrice(quant * item.price);
     }, [quant, item.price]);
 
@@ -35,7 +32,9 @@ export default function AddToCart({ item }) {
         for (let c of storedCart) {
             if (c.ItemId === item.id) {
                 c.Quantity += quant;
-                setItems(storedCart);
+                if (c.Quantity > item.availableQuantity) {
+                    c.Quantity = item.availableQuantity;
+                }
                 localStorage.setItem("cart", JSON.stringify(storedCart));
                 toggleModal();
                 return;
@@ -47,8 +46,11 @@ export default function AddToCart({ item }) {
             Quantity: quant
         };
 
+        if (newItem.Quantity > item.availableQuantity) {
+            newItem.Quantity = item.availableQuantity;
+        }
+
         const updatedCart = [...storedCart, newItem];
-        setItems(updatedCart);
         localStorage.setItem("cart", JSON.stringify(updatedCart));
         toggleModal();
     }
@@ -56,6 +58,9 @@ export default function AddToCart({ item }) {
     function handleQuantChange(value) {
         if (value <= 0) {
             value = 1
+        }
+        if (value > item.availableQuantity) {
+            value = item.availableQuantity;
         }
         setQuant(value);
         setFullPrice(quant * item.price);

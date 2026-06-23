@@ -22,7 +22,7 @@ namespace API.Services
         public async Task<List<ItemModel>> GetItems()
         {
             string query = """
-                           SELECT i.ID, i.CreatorID, l.DisplayName as CreatorName, i.Name, i.Description, i.Price, im.GUID as Thumbnail, i.CreationTime FROM items i JOIN images im ON i.ID = im.ItemID JOIN logindata l ON i.CreatorID = l.ID WHERE im.IsPrimary = 1
+                           SELECT i.ID, i.CreatorID, l.DisplayName as CreatorName, i.Name, i.Description, i.Price, i.AvailableQuantity, im.GUID as Thumbnail, i.CreationTime FROM items i JOIN images im ON i.ID = im.ItemID JOIN logindata l ON i.CreatorID = l.ID WHERE im.IsPrimary = 1
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -39,7 +39,7 @@ namespace API.Services
         public async Task<ItemModel> GetItemById(int ID)
         {
             string query = """
-                           SELECT i.ID, i.CreatorID, l.DisplayName as CreatorName, i.Name, i.Description, i.Price, im.GUID as Thumbnail, i.CreationTime FROM items i JOIN images im ON i.ID = im.ItemID JOIN logindata l ON i.CreatorID = l.ID WHERE im.IsPrimary = 1 AND i.ID = @ID
+                           SELECT i.ID, i.CreatorID, l.DisplayName as CreatorName, i.Name, i.Description, i.Price, i.AvailableQuantity, im.GUID as Thumbnail, i.CreationTime FROM items i JOIN images im ON i.ID = im.ItemID JOIN logindata l ON i.CreatorID = l.ID WHERE im.IsPrimary = 1 AND i.ID = @ID
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
@@ -61,7 +61,7 @@ namespace API.Services
             var transaction = connection.BeginTransaction();
             try
             {
-                await connection.ExecuteAsync("INSERT INTO items (CreatorID, Name, Description, Price, CreationTime) VALUES (@CreatorID, @Name, @Description, @Price, @CreationTime)", new { item.CreatorID, item.Name, item.Description, item.Price, CreationTime = DateTime.UtcNow });
+                await connection.ExecuteAsync("INSERT INTO items (CreatorID, Name, Description, Price, AvailableQuantity, CreationTime) VALUES (@CreatorID, @Name, @Description, @Price, @AvailableQuantity, @CreationTime)", new { item.CreatorID, item.Name, item.Description, item.Price, item.AvailableQuantity, CreationTime = DateTime.UtcNow });
                 await connection.ExecuteAsync("INSERT INTO images (GUID, ItemID, IsPrimary) VALUES (@Thumbnail, LAST_INSERT_ID(), 1)", new { item.Thumbnail });
                 int ItemID = await connection.QuerySingleAsync<int>("SELECT LAST_INSERT_ID()");
 
@@ -79,14 +79,14 @@ namespace API.Services
         public async Task<bool> UpdateItem(ItemModel item)
         {
             string query = """
-                           UPDATE items SET Name = @Name, Description = @Description, Price = @Price WHERE ID = @ID;
+                           UPDATE items SET Name = @Name, Description = @Description, Price = @Price, AvailableQuantity = @AvailableQuantity WHERE ID = @ID;
                            UPDATE images SET GUID = @Thumbnail WHERE ItemID = @ID AND IsPrimary = 1;
                            """;
 
             using var connection = CreateSqlConnection.CreateConnection(_connectionString);
             try
             {
-                await connection.ExecuteAsync(query, new { item.Name, item.Description, item.Price, item.Thumbnail, item.ID });
+                await connection.ExecuteAsync(query, new { item.Name, item.Description, item.Price, item.AvailableQuantity, item.Thumbnail, item.ID });
                 return true;
             }
             catch

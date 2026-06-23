@@ -41,6 +41,12 @@ export default function CheckoutPage() {
                 };
             }
 
+            for (let item of loadedItems) {
+                if (item.Quantity > item.availableQuantity) {
+                    item.Quantity = item.availableQuantity;
+                }
+            }
+
             setItems(loadedItems);
         }
 
@@ -51,15 +57,21 @@ export default function CheckoutPage() {
         const updatedItems = items
             .map((i) => {
                 if (i.ItemId === item.ItemId) {
+                    const newQuant = i.Quantity + modifier;
+                    if (newQuant > i.availableQuantity) {
+                        newQuant = i.availableQuantity;
+                    }
                     return {
                         ...i,
-                        Quantity: i.Quantity + modifier,
+                        Quantity: newQuant,
                     };
                 }
 
                 return i;
             })
             .filter((i) => i.Quantity > 0);
+
+
 
         setItems(updatedItems);
 
@@ -161,7 +173,7 @@ export default function CheckoutPage() {
                                 {formatPrice(
                                     items?.reduce(
                                         (sum, item) =>
-                                            sum + item.Price * item.Quantity,
+                                            sum + item.price * item.Quantity,
                                         0
                                     ) || 0
                                 )}

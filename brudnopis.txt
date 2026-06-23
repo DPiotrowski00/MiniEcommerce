@@ -9,10 +9,8 @@ Funkcjonalność zamówień:
 - Płatność kartą / blikiem
 
 Funkcjonalność artykułów: !
-- Magazyn
 - Modyfikacja artykułów,
 - Usuwanie/blokowanie artykułów,
-- Maksymalna ilość artykułu do sprzedaży
 
 Funkcjonalność kont:
 - Dwuskładnikowe logowanie
@@ -28,10 +26,6 @@ Zabezpieczenia:
 - Role admin/user
 
 Przekierowania:
-- Po utworzeniu artykułu: komunikat i przekierowanie do strony artykułu
 - Po zmianie hasła
-
-Błędy:
-- Można kupować na minus XD
 
 Zadbać o komunikaty przy niepowodzeniach w wypełnianiu formularzy

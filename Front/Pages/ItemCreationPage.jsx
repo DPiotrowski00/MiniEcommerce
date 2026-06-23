@@ -17,6 +17,7 @@ export default function ItemCreationPage() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState(0.0);
+    const [availableQuantity, setAvailableQuantity] = useState(0);
 
     const { TryCreateItem } = useItems();
 
@@ -33,7 +34,7 @@ export default function ItemCreationPage() {
     }
 
     const handleClick = async() => {
-        const res = await TryCreateItem(file, name, description, price);
+        const res = await TryCreateItem(file, name, description, price, availableQuantity);
         const data = await res.json();
 
         if (res.ok) {
@@ -70,7 +71,7 @@ export default function ItemCreationPage() {
                 <input
                     className="file-input"
                     type="file"
-                    accept="image/*"
+                    accept=".jpg,.jpeg,.png"
                     onChange={handleChangeFile}
                 />
 
@@ -103,6 +104,17 @@ export default function ItemCreationPage() {
                         value={price}
                         onChange={(e) => {
                             setPrice(Number(e.target.value));
+                        }}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Ilość</label>
+                    <input
+                        type="number"
+                        value={availableQuantity}
+                        onChange={(e) => {
+                            setAvailableQuantity(Number(e.target.value));
                         }}
                     />
                 </div>
