@@ -1,4 +1,4 @@
-/* HomePage.css */
+﻿/* HomePage.css */
 
 * {
     box-sizing: border-box;
@@ -135,15 +135,19 @@ body {
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 240px;
+    height: 260px;
+    background: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 24px 24px 0 0;
-    background: #181b24;
 }
 
 .item-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
     transition: transform 0.45s ease, filter 0.45s ease;
 }
 
