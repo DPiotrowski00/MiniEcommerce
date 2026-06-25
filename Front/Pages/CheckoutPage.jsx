@@ -57,7 +57,7 @@ export default function CheckoutPage() {
         const updatedItems = items
             .map((i) => {
                 if (i.ItemId === item.ItemId) {
-                    const newQuant = i.Quantity + modifier;
+                    let newQuant = i.Quantity + modifier;
                     if (newQuant > i.availableQuantity) {
                         newQuant = i.availableQuantity;
                     }
