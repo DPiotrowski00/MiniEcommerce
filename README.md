@@ -1,18 +1,26 @@
 # MiniEcommerce
 
-Full-stack e-commerce web application built as a portfolio project to demonstrate backend, frontend, authentication, database management, and cloud deployment skills.
+![ASP.NET](https://img.shields.io/badge/ASP.NET-Core-blue)
+![React](https://img.shields.io/badge/React-Frontend-61DAFB)
+![MySQL](https://img.shields.io/badge/MySQL-Database-orange)
+![Azure](https://img.shields.io/badge/Azure-Deployed-blue)
+![GitHub Actions](https://img.shields.io/badge/CI/CD-GitHub_Actions-black)
 
-The project focuses on secure API communication, scalable architecture, and production-like deployment workflow.
+Full-stack e-commerce application focused on secure API communication, authentication mechanisms, database integration, and cloud deployment architecture.
+
+The project was built to simulate production-like application architecture rather than a simple tutorial-based portfolio project.
 
 ---
 
 ## 🚀 Live Demo
 
-**Frontend**  
-[Demo](d-piotrowski-demo.com)
+### Frontend  
+🔗 **Demo**  
+[Live Demo](https://d-piotrowski-demo.com)
 
-**Backend API**  
-[API](miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net)
+### Backend API  
+🔗 **API**  
+[Backend API](https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net)
 
 ---
 
@@ -20,7 +28,7 @@ The project focuses on secure API communication, scalable architecture, and prod
 
 MiniEcommerce is a full-stack web application that simulates a modern online store.
 
-The project was created to practice real-world software engineering concepts including:
+The project was created to gain hands-on experience with real-world software engineering concepts, including:
 
 - REST API development  
 - Authentication and authorization  
@@ -30,7 +38,7 @@ The project was created to practice real-world software engineering concepts inc
 - Cloud deployment pipeline  
 - Production environment configuration  
 
-The main goal of the project was to build an application that resembles a real production-ready business system instead of a simple tutorial project.
+The main goal was to build an application resembling a real business-oriented production system rather than a basic CRUD tutorial project.
 
 ---
 
@@ -60,7 +68,8 @@ The main goal of the project was to build an application that resembles a real p
 ### Infrastructure
 
 - Microsoft Azure App Service
-- Azure Static Web Apps / Azure App Service
+- Azure Static Web Apps
+- Azure App Service
 - GitHub Actions CI/CD
 - Custom Domain Configuration
 
@@ -72,10 +81,8 @@ The main goal of the project was to build an application that resembles a real p
 
 - User registration
 - User login/logout
-- JWT authentication
-- Secure API communication
 - Product browsing
-- Search products
+- Product searching
 - Product details page
 - Shopping cart management
 - Persistent cart storage using localStorage
@@ -83,7 +90,7 @@ The main goal of the project was to build an application that resembles a real p
 ### Security Features
 
 - JWT Access Token authentication
-- HTTP-only refresh token cookies
+- HTTP-only Refresh Token cookies
 - CSRF token validation
 - Protected API endpoints
 - Password hashing
@@ -100,11 +107,11 @@ The main goal of the project was to build an application that resembles a real p
 
 ## 🏗 Architecture
 
-Application consists of two independent parts:
+Application consists of independent frontend and backend services.
 
 ### Frontend
 
-React application responsible for UI rendering and user interactions.
+React application responsible for UI rendering and client-side interactions.
 
 ### Backend
 
@@ -116,7 +123,7 @@ MySQL database storing users, products, and order-related data.
 
 ### Deployment
 
-Frontend and backend deployed independently on Microsoft Azure.
+Frontend and backend deployed independently on Microsoft Azure cloud infrastructure.
 
 ---
 
@@ -126,11 +133,11 @@ During development I worked on solving several real-world engineering problems.
 
 ### Authentication Flow
 
-Implemented JWT authentication with secure token storage and protected API endpoints.
+Implemented JWT authentication with secure token generation, storage, and protected API endpoints.
 
 ### CSRF Protection
 
-Implemented CSRF validation mechanism for state-changing HTTP requests.
+Implemented CSRF validation mechanism protecting state-changing HTTP requests.
 
 ### Cross-Origin Communication
 
@@ -138,11 +145,11 @@ Configured CORS policy for frontend and backend hosted on separate domains.
 
 ### Production Deployment
 
-Configured deployment pipeline using GitHub Actions and Microsoft Azure cloud services.
+Configured automated deployment pipeline using GitHub Actions and Microsoft Azure cloud services.
 
 ### Environment Configuration
 
-Managed environment variables for local and production environments.
+Managed separate local and production environment configuration using environment variables.
 
 ---
 
@@ -154,15 +161,15 @@ Managed environment variables for local and production environments.
 
 ### Product Page
 
-![Productpage](Screenshots/productpage.png)
+![Product Page](Screenshots/productpage.png)
 
-### Cart
+### Shopping Cart
 
 ![Cart](Screenshots/cart.png)
 
 ### Login Page
 
-![Loginpage](Screenshots/loginpage.png)
+![Login Page](Screenshots/loginpage.png)
 
 ---
 
@@ -170,24 +177,26 @@ Managed environment variables for local and production environments.
 
 ### Backend
 
+```text
 /backend
-
-- Controllers  
-- Services  
-- Middleware  
-- Models  
-- Authentication  
-- Database  
+ ├── Controllers
+ ├── Services
+ ├── Middleware
+ ├── Models
+ ├── Authentication
+ └── Database
+```
 
 ### Frontend
 
+```text
 /frontend
-
-- Pages  
-- Components  
-- Hooks  
-- API Services  
-- Routing  
+ ├── Pages
+ ├── Components
+ ├── Hooks
+ ├── API Services
+ └── Routing
+```
 
 ---
 
@@ -210,37 +219,54 @@ Planned improvements:
 
 ### Backend
 
-- bash
-- dotnet run
+```bash
+dotnet run
+```
 
 ### Frontend
 
-- npm install
-- npm run dev
+```bash
+npm install
+npm run dev
+```
 
-### Database
+### Database Setup
 
-- Import dbSchema.sql into MySql
-- Populate the statuscodes table with a record, for example 'In progress'
-- Configure MySQL connection string in appsettings.json
+1. Import `dbSchema.sql` into MySQL  
+2. Populate the `statuscodes` table with initial data  
+
+Example:
+
+```sql
+INSERT INTO statuscodes (Name) VALUES ('In progress');
+```
+
+3. Configure MySQL connection string in `appsettings.json`
+
+---
 
 ## 📚 What I Learned
 
 During this project I gained practical experience in:
 
-Building REST APIs
-Authentication systems
-Secure web application design
-Cloud deployment
-CI/CD workflows
-Full-stack architecture design
-Database integration
-Production debugging
+- Building REST APIs  
+- Authentication systems  
+- Secure web application design  
+- Cloud deployment  
+- CI/CD workflows  
+- Full-stack architecture design  
+- Database integration  
+- Production debugging  
+- Managing frontend/backend communication across separate domains  
+
+---
 
 ## 👤 Author
 
 ### Damian Piotrowski
 
-[GitHub](https://github.com/DPiotrowski00)
+🔗 GitHub  
+[GitHub Profile](https://github.com/DPiotrowski00)
 
-[LinkedIn](https://www.linkedin.com/in/damian-piotrowski-b8969734b/)
+🔗 LinkedIn  
+[LinkedIn Profile](https://www.linkedin.com/in/damian-piotrowski-b8969734b/)
