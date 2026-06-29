@@ -18,10 +18,6 @@ The project was built to simulate production-like application architecture rathe
 🔗 **Demo**  
 [Live Demo](https://d-piotrowski-demo.com)
 
-### Backend API  
-🔗 **API**  
-[Backend API](https://miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net)
-
 ---
 
 ## 📖 Project Overview
