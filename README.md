@@ -239,5 +239,7 @@ Production debugging
 👤 Author
 
 Damian Piotrowski
+
 [GitHub](https://github.com/DPiotrowski00)
+
 [LinkedIn](https://www.linkedin.com/in/damian-piotrowski-b8969734b/)
