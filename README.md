@@ -9,10 +9,10 @@ The project focuses on secure API communication, scalable architecture, and prod
 ## 🚀 Live Demo
 
 **Frontend**  
-d-piotrowski-demo.com
+![Demo](d-piotrowski-demo.com)
 
 **Backend API**  
-miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net
+![Backendapi](miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net)
 
 ---
 
@@ -150,23 +150,19 @@ Managed environment variables for local and production environments.
 
 ### Homepage
 
-[INSERT SCREENSHOT HERE]
-
-Example:
-
 ![Homepage](Screenshots/homepage.png)
 
 ### Product Page
 
-[INSERT SCREENSHOT HERE]
+![Productpage](Screenshots/productpage.png)
 
 ### Cart
 
-[INSERT SCREENSHOT HERE]
+![Cart](Screenshots/cart.png)
 
 ### Login Page
 
-[INSERT SCREENSHOT HERE]
+![Loginpage](Screenshots/loginpage.png)
 
 ---
 
@@ -245,7 +241,7 @@ Production debugging
 Damian Piotrowski
 
 GitHub
-https://github.com/DPiotrowski00
+![GitHub](https://github.com/DPiotrowski00)
 
 LinkedIn
-https://www.linkedin.com/in/damian-piotrowski-b8969734b/
+![LinkedIn](https://www.linkedin.com/in/damian-piotrowski-b8969734b/)
