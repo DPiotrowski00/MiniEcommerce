@@ -224,7 +224,7 @@ Planned improvements:
 - Populate the statuscodes table with a record, for example 'In progress'
 - Configure MySQL connection string in appsettings.json
 
-📚 What I Learned
+## 📚 What I Learned
 
 During this project I gained practical experience in:
 
@@ -237,9 +237,9 @@ Full-stack architecture design
 Database integration
 Production debugging
 
-👤 Author
+## 👤 Author
 
-Damian Piotrowski
+### Damian Piotrowski
 
 [GitHub](https://github.com/DPiotrowski00)
 
