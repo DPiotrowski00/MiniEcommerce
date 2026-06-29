@@ -210,18 +210,19 @@ Planned improvements:
 
 ### Backend
 
-bash
-dotnet run
+- bash
+- dotnet run
 
+### Frontend
 
-###Frontend
-npm install
-npm run dev
+- npm install
+- npm run dev
 
+### Database
 
-###Database
-
-Configure MySQL connection string in appsettings.json
+- Import dbSchema.sql into MySql
+- Populate the statuscodes table with a record, for example 'In progress'
+- Configure MySQL connection string in appsettings.json
 
 📚 What I Learned
 
