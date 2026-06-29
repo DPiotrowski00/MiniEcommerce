@@ -9,10 +9,10 @@ The project focuses on secure API communication, scalable architecture, and prod
 ## 🚀 Live Demo
 
 **Frontend**  
-![Demo](d-piotrowski-demo.com)
+[Demo](d-piotrowski-demo.com)
 
 **Backend API**  
-![Backendapi](miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net)
+[Backendapi](miniecommerceapi-hbdedmhyc3c7d3bf.polandcentral-01.azurewebsites.net)
 
 ---
 
@@ -241,7 +241,7 @@ Production debugging
 Damian Piotrowski
 
 GitHub
-![GitHub](https://github.com/DPiotrowski00)
+[GitHub](https://github.com/DPiotrowski00)
 
 LinkedIn
-![LinkedIn](https://www.linkedin.com/in/damian-piotrowski-b8969734b/)
+[LinkedIn](https://www.linkedin.com/in/damian-piotrowski-b8969734b/)
