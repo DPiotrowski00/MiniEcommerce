@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useLogin from "../Hooks/useLogin";
+import { useTranslation } from "react-i18next";
 
 export default function AccountPage() {
     const [oldPass, setOldPass] = useState("");
@@ -15,7 +16,7 @@ export default function AccountPage() {
         <>
             <div className="password-form">
                 <label>
-                    Old password
+                    {t("old_pass")}
                     <input
                         type="password"
                         value={oldPass}
@@ -23,14 +24,14 @@ export default function AccountPage() {
                     />
                 </label>
                 <label>
-                    New password
+                    {t("new_pass")}
                     <input
                         type="password"
                         value={newPass}
                         onChange={(e) => setNewPass(e.target.value)}
                     />
                 </label>
-                <button onClick={confirmPasswordChange}>Change password</button>
+                <button onClick={confirmPasswordChange}>{t("change_pass")}</button>
             </div>
         </>
     );

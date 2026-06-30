@@ -1,6 +1,7 @@
 ﻿import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next"
 
 import "../Styles/ModalWindowStyle.css";
 
@@ -11,6 +12,7 @@ export default function ModalWindow({
     toggleModal,
 }) {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (visible) {
@@ -31,9 +33,9 @@ export default function ModalWindow({
 
                 {showButtons && (
                     <div className="modal-buttons">
-                        <button onClick={toggleModal}>Kontynuuj zakupy</button>
+                        <button onClick={toggleModal}>{t("continue_shopping")}</button>
                         <button onClick={() => navigate("/checkout")}>
-                            Przejdź do koszyka
+                            {t("go_to_cart")}
                         </button>
                     </div>
                 )}

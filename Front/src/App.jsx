@@ -13,6 +13,8 @@ import OrderPage from "../Pages/OrderPage";
 import MyOrdersPage from "../Pages/MyOrdersPage";
 import PasswordResetPage from "../Pages/PasswordResetPage";
 
+import "../src/i18n";
+
 export default function App() {
     console.log("ENV", import.meta.env);
     console.log("API", import.meta.env.VITE_API_ADDRESS);

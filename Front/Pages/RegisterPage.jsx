@@ -26,7 +26,7 @@ export default function RegisterPage() {
     const handleRegister = async () => {
         const success = await TryRegister(login, password, displayName, email);
         if (success) {
-            setModalMessage("Wysłano link aktywacyjny na podany adres email. Aby korzystać z serwisu potwierdź swój adres.");
+            setModalMessage(t("email_confirmation_message"));
             toggleModal();
             setLogin("");
             setPassword("");
@@ -34,7 +34,7 @@ export default function RegisterPage() {
             setEmail("");
             navigate("/login");
         } else {
-            setModalMessage("Nieudana próba rejestracji");
+            setModalMessage(t("register_attempt_failed"));
             toggleModal();
         }
     };
@@ -42,7 +42,7 @@ export default function RegisterPage() {
     return (
         <div className="auth-page">
             <div className="auth-card">
-                <h1 className="auth-title">Rejestracja</h1>
+                <h1 className="auth-title">{t("register")}</h1>
 
                 <div className="auth-form">
                     <div className="auth-group">
@@ -52,40 +52,40 @@ export default function RegisterPage() {
                             type="text"
                             value={login}
                             onChange={(e) => setLogin(e.target.value)}
-                            placeholder="Wprowadź login"
+                            placeholder={t("enter_login")}
                         />
                     </div>
 
                     <div className="auth-group">
-                        <label>Hasło</label>
+                        <label>{t("password")}</label>
 
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Wprowadź hasło"
+                            placeholder={t("enter_password")}
                         />
                     </div>
 
                     <div className="auth-group">
-                        <label>Nazwa wyświetlana</label>
+                        <label>{t("display_name")}</label>
 
                         <input
                             type="text"
                             value={displayName}
                             onChange={(e) => setDisplayName(e.target.value)}
-                            placeholder="Wprowadź nazwę"
+                            placeholder={t("enter_name")}
                         />
                     </div>
 
                     <div className="auth-group">
-                        <label>Adres e-mail</label>
+                        <label>{t("email_address")}</label>
 
                         <input
                             type="text"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Wprowadź nazwę"
+                            placeholder={t("enter_email")}
                         />
                     </div>
 
@@ -94,7 +94,7 @@ export default function RegisterPage() {
                         type="submit"
                         onClick={handleRegister}
                     >
-                        Zarejestruj
+                        {t("register_confirm")}
                     </button>
                 </div>
             </div>

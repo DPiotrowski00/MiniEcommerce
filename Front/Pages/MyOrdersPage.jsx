@@ -36,24 +36,24 @@ export default function MyOrdersPage() {
         fetchOrders();
     }, []);
     if (!orders) {
-        return <p>Ładowanie...</p>
+        return <p>{t("loading")}</p>
     }
     if (orders.length === 0) {
-        return <p>Nie posiadasz żadnych zamówień</p>;
+        return <p>{t("you_dont_have_orders")}</p>;
     }
 
     return (
         <div className="my-orders-page">
             <div className="my-orders-card">
-                <h1 className="my-orders-title">Moje zamówienia</h1>
+                <h1 className="my-orders-title">{t("my_orders")}</h1>
 
                 <table className="my-orders-table">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Data zamówienia</th>
+                            <th>{t("order_date")}</th>
                             <th>Status</th>
-                            <th>Wartość</th>
+                            <th>{t("value")}</th>
                         </tr>
                     </thead>
 

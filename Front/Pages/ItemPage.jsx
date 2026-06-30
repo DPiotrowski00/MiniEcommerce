@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import useItems from "../Hooks/useItems";
 import AddToCart from "../Components/AddToCart";
 import stringFormatters from "../Helpers/stringFormatters";
+import { useTranslation } from "react-i18next";
 
 import "../Styles/ItemPageStyle.css";
 
@@ -14,6 +15,7 @@ export default function ItemPage() {
     const [item, setItem] = useState();
 
     const { formatPrice } = stringFormatters();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchItem = async () => {
@@ -45,13 +47,13 @@ export default function ItemPage() {
                     </div>
 
                     <div className="item-info-card">
-                        <div className="item-category">PRODUKT CYFROWY</div>
+                        <div className="item-category">{t("digital_product")}</div>
 
                         <h1 className="item-page-title">{item.name}</h1>
 
                         <div className="item-meta">
                             <div className="item-meta-box">
-                                <span className="meta-label">Właściciel</span>
+                                <span className="meta-label">{t("owner")}</span>
                                 <span className="meta-value">
                                     {item.creatorName}
                                 </span>
@@ -64,7 +66,7 @@ export default function ItemPage() {
                         </div>
 
                         <div className="item-description-box">
-                            <h2>Opis</h2>
+                            <h2>{t("description")}</h2>
 
                             <p>{item.description}</p>
                         </div>
@@ -78,14 +80,14 @@ export default function ItemPage() {
                         <div className="purchase-glow"></div>
 
                         <div className="price-section">
-                            <span className="price-label">Cena</span>
+                            <span className="price-label">{t("price")}</span>
                             <span className="item-page-price">
                                 {formatPrice(item.price)}
                             </span>
                         </div>
 
                         <div className="stock-info">
-                            <span>Dostępne:</span>
+                            <span>{t("available")}</span>
                             <span
                                 className="stock-amount"
                                 style={{
@@ -95,7 +97,7 @@ export default function ItemPage() {
                                             : "#7effd8",
                                 }}
                             >
-                                {item.availableQuantity} szt.
+                                {item.availableQuantity} {t("szt")}
                             </span>
                         </div>
 
@@ -103,17 +105,17 @@ export default function ItemPage() {
 
                         <div className="purchase-info">
                             <div className="purchase-info-row">
-                                <span>Natychmiastowa dostawa</span>
+                                <span>{t("instant_delivery")}</span>
                                 <span className="purchase-check">✓</span>
                             </div>
 
                             <div className="purchase-info-row">
-                                <span>Bezpieczna płatność</span>
+                                <span>{t("safe_payment")}</span>
                                 <span className="purchase-check">✓</span>
                             </div>
 
                             <div className="purchase-info-row">
-                                <span>Jakość premium</span>
+                                <span>{t("premium_quality")}</span>
                                 <span className="purchase-check">✓</span>
                             </div>
                         </div>

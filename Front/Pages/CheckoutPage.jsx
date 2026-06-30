@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import useOrders from "../Hooks/useOrders";
 import useItems from "../Hooks/useItems";
@@ -21,6 +22,7 @@ export default function CheckoutPage() {
     const { GetItemById } = useItems();
     const { formatPrice } = stringFormatters();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     function toggleModal() {
         setModalVisible(!modalVisible);
@@ -92,16 +94,16 @@ export default function CheckoutPage() {
     return (
         <div className="checkout-page">
             <div className="checkout-container">
-                <h1 className="checkout-title">CHECKOUT</h1>
+                <h1 className="checkout-title">{t("checkout")}</h1>
                 <div className="checkout-card">
                     <table className="checkout-table">
                         <thead>
                             <tr>
-                                <th>Zdjęcie</th>
-                                <th>Nazwa</th>
-                                <th>Cena jednostkowa</th>
-                                <th>Ilość</th>
-                                <th>Cena całościowa</th>
+                                <th>{t("picture")}</th>
+                                <th>{t("name")}</th>
+                                <th>{t("price_per_item")}</th>
+                                <th>{t("quantity")}</th>
+                                <th>{t("sum")}</th>
                             </tr>
                         </thead>
                         <tbody>

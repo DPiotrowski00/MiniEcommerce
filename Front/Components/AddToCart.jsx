@@ -1,4 +1,5 @@
 ﻿import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import stringFormatters from "../Helpers/stringFormatters";
 
 import "../Styles/AddToCart.css";
@@ -11,6 +12,8 @@ export default function AddToCart({ item }) {
     const [modalVisible, setModalVisible] = useState(false);
 
     const { formatPrice } = stringFormatters();
+
+    const { t } = useTranslation();
 
     function toggleModal() {
         setModalVisible(!modalVisible);
@@ -72,13 +75,13 @@ export default function AddToCart({ item }) {
             <div className="cart-widget-glow"></div>
 
             <div className="cart-header">
-                <h2>Dodaj do koszyka</h2>
+                <h2>{t("add_to_cart")}</h2>
 
                 <span className="cart-badge">Premium</span>
             </div>
 
             <div className="cart-price-section">
-                <span className="cart-price-label">Łączna kwota</span>
+                <span className="cart-price-label">{t("sum")}</span>
 
                 <span className="cart-full-price">
                     {formatPrice(fullPrice)}
@@ -86,7 +89,7 @@ export default function AddToCart({ item }) {
             </div>
 
             <div className="cart-quantity-section">
-                <label className="cart-label">Ilość</label>
+                <label className="cart-label">{t("quantity")}</label>
 
                 <div className="quantity-box">
                     <button
@@ -115,27 +118,27 @@ export default function AddToCart({ item }) {
 
             <div className="cart-summary">
                 <div className="cart-summary-row">
-                    <span>Cena za sztukę</span>
+                    <span>{t("price_per_item")}</span>
                     <span>{formatPrice(item.price)}</span>
                 </div>
 
                 <div className="cart-summary-row">
-                    <span>Ilość</span>
+                    <span>{t("quantity")}</span>
                     <span>{quant}</span>
                 </div>
             </div>
 
             <button className="add-cart-btn" onClick={AddToCart}>
-                Dodaj do koszyka
+                {t("add_to_cart")}
             </button>
 
             <div className="cart-footer-info">
-                Natychmiastowa dostawa po zakupie
+                {t("instant_delivery_after_buying")}
             </div>
             <ModalWindow
                 visible={modalVisible}
                 toggleModal={toggleModal}
-                message="Artykuł został dodany do koszyka"
+                message={t("article_added_message")}
                 showButtons={true}
             />
         </div>

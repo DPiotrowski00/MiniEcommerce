@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import stringFormatters from "../Helpers/stringFormatters";
+import { useTranslation } from "react-i18next";
 
 import "../Styles/HomePageStyle.css";
 
@@ -14,6 +15,7 @@ export default function HomePage() {
     const { GetItems } = useItems();
 
     const { formatPrice } = stringFormatters();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchItems = async () => {
@@ -33,7 +35,7 @@ export default function HomePage() {
                     <input
                         type="text"
                         className="search-input"
-                        placeholder="Szukaj produktu..."
+                        placeholder={t("search_text")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />

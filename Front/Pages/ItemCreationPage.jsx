@@ -7,6 +7,8 @@ import ModalWindow from "../Components/ModalWindow";
 
 import "../Styles/ItemCreationPageStyle.css";
 
+import { useTranslation } from "react-i18next";
+
 export default function ItemCreationPage() {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState("");
@@ -22,6 +24,7 @@ export default function ItemCreationPage() {
     const { TryCreateItem } = useItems();
 
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     function toggleModal() {
         setModalVisible(!modalVisible);
@@ -39,7 +42,7 @@ export default function ItemCreationPage() {
 
         if (res.ok) {
             const ItemId = data.itemId;
-            setModalMessage("Pomyślnie utworzono artykuł.");
+            setModalMessage(t("article_creation_success"));
             toggleModal();
             navigate(`/item/${ItemId}`);
         } else {
@@ -52,18 +55,18 @@ export default function ItemCreationPage() {
     return (
         <div className="item-creation-page">
             <div className="item-creation-card">
-                <h1 className="item-creation-title">Dodaj nowy przedmiot</h1>
+                <h1 className="item-creation-title">{t("add_new_article")}</h1>
 
                 <div className="image-preview-container">
                     {preview ? (
                         <img
                             src={preview}
-                            alt="Podgląd"
+                            alt={t("preview")}
                             className="image-preview"
                         />
                     ) : (
                         <span className="image-placeholder">
-                            Brak wybranego zdjęcia
+                            {t("no_image_selected")}
                         </span>
                     )}
                 </div>
@@ -76,7 +79,7 @@ export default function ItemCreationPage() {
                 />
 
                 <div className="form-group">
-                    <label>Nazwa</label>
+                    <label>{t("name")}</label>
                     <input
                         type="text"
                         value={name}
@@ -87,7 +90,7 @@ export default function ItemCreationPage() {
                 </div>
 
                 <div className="form-group">
-                    <label>Opis</label>
+                    <label>{t("description")}</label>
                     <input
                         type="text"
                         value={description}
@@ -98,7 +101,7 @@ export default function ItemCreationPage() {
                 </div>
 
                 <div className="form-group">
-                    <label>Wartość</label>
+                    <label>{t("value")}</label>
                     <input
                         type="number"
                         value={price}
@@ -109,7 +112,7 @@ export default function ItemCreationPage() {
                 </div>
 
                 <div className="form-group">
-                    <label>Ilość</label>
+                    <label>{t("quantity")}</label>
                     <input
                         type="number"
                         value={availableQuantity}
@@ -120,7 +123,7 @@ export default function ItemCreationPage() {
                 </div>
 
                 <button className="create-button" onClick={handleClick}>
-                    Utwórz przedmiot
+                    {t("create_item")}
                 </button>
             </div>
             <ModalWindow message={modalMessage} toggleModal={toggleModal} visible={modalVisible} showButtons={false} />

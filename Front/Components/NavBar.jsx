@@ -1,5 +1,6 @@
 ﻿import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
+import { useTranslation } from "react-i18next"
 import useLogin from "../Hooks/useLogin";
 
 import cart from "../Images/cart.png";
@@ -19,6 +20,7 @@ export default function NavBar() {
             : false;
 
     const { LogOut } = useLogin();
+    const { t, i18n } = useTranslation();
 
     useEffect(() => {
         if (
@@ -80,65 +82,92 @@ export default function NavBar() {
         <div className="navbar">
             <div className="navbar-links">
                 <Link className="nav-link" to="/">
-                    Home
+                    {t("home")}
                 </Link>
 
                 <Link className="nav-link" to="/login">
-                    Logowanie
+                    {t("login")}
                 </Link>
 
                 <Link className="nav-link" to="/register">
-                    Rejestracja
+                    {t("register")}
                 </Link>
             </div>
 
             {logInStatus === true && (
-                <div className="hidden-menu">
-                    <div className="dropdown" ref={dropdownRef}>
-                        <button
-                            className="dropbtn"
-                            onClick={handleDropdown}
-                        >
-                            ▼
-                        </button>
-
-                        <div
-                            className={`dropdown-content ${isDropdownOpen ? "show" : ""}`}
-                        >
-                            <Link
-                                to="/item/add"
-                                onClick={closeDropdown}
+                <>
+                    <div className="language-switcher">
+                            <button
+                                className={`lang-btn ${i18n.language === "pl" ? "active" : ""
+                                    }`}
+                                onClick={() => i18n.changeLanguage("pl")}
+                                aria-label="Polski"
                             >
-                                Dodaj ofertę
-                            </Link>
+                                <img
+                                    src="/flags/pl.svg"
+                                    alt="Polski"
+                                />
+                            </button>
 
-                            <Link
-                                to="/account"
-                                onClick={closeDropdown}
+                            <button
+                                className={`lang-btn ${i18n.language === "en" ? "active" : ""
+                                    }`}
+                                onClick={() => i18n.changeLanguage("en")}
+                                aria-label="English"
                             >
-                                Moje konto
-                            </Link>
-
-                            <Link
-                                to="/orders"
-                                onClick={closeDropdown}
-                            >
-                                Moje zamówienia
-                            </Link>
+                                <img
+                                    src="flags/gb.svg"
+                                    alt="English"
+                                />
+                            </button>
                         </div>
+                    <div className="hidden-menu">
+                        <div className="dropdown" ref={dropdownRef}>
+                            <button
+                                className="dropbtn"
+                                onClick={handleDropdown}
+                            >
+                                ▼
+                            </button>
+
+                            <div
+                                className={`dropdown-content ${isDropdownOpen ? "show" : ""}`}
+                            >
+                                <Link
+                                    to="/item/add"
+                                    onClick={closeDropdown}
+                                >
+                                    {t("add_offer")}
+                                </Link>
+
+                                <Link
+                                    to="/account"
+                                    onClick={closeDropdown}
+                                >
+                                    {t("my_account")}
+                                </Link>
+
+                                <Link
+                                    to="/orders"
+                                    onClick={closeDropdown}
+                                >
+                                    {t("my_orders")}
+                                </Link>
+                            </div>
+                        </div>
+
+                        <Link to="/checkout" className="cart-link">
+                            <img src={cart} alt="koszyk" />
+                        </Link>
+
+                        <button
+                            className="logout-button"
+                            onClick={logOut}
+                        >
+                            {t("log_out")}
+                        </button>
                     </div>
-
-                    <Link to="/checkout" className="cart-link">
-                        <img src={cart} alt="koszyk" />
-                    </Link>
-
-                    <button
-                        className="logout-button"
-                        onClick={logOut}
-                    >
-                        Wyloguj
-                    </button>
-                </div>
+                </>
             )}
         </div>
     );

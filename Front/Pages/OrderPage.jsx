@@ -1,5 +1,6 @@
 ﻿import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 import useOrders from "../Hooks/useOrders";
 import useItems from "../Hooks/useItems";
@@ -18,6 +19,7 @@ export default function OrderPage() {
     const { formatPrice } = stringFormatters();
 
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchOrder = async () => {
@@ -38,20 +40,20 @@ export default function OrderPage() {
     }, [id]);
 
     if (!order) {
-        return <div>Ładowanie...</div>;
+        return <div>{t("loading")}</div>;
     }
 
     return (
         <div className="order-page">
             <div className="order-card">
-                <h1 className="order-title">Zamówienie nr {order.id}</h1>
+                <h1 className="order-title">{t("order_nr")} {order.id}</h1>
 
                 <table className="order-table">
                     <thead>
                         <tr>
-                            <th>Artykuł</th>
-                            <th>Ilość</th>
-                            <th>Wartość</th>
+                            <th>{t("article")}</th>
+                            <th>{t("quantity")}</th>
+                            <th>{t("value")}</th>
                         </tr>
                     </thead>
 
@@ -70,7 +72,7 @@ export default function OrderPage() {
 
                 <div className="order-summary">
                     <p>
-                        <span>Wartość zamówienia</span>
+                        <span>{t("order_value")}</span>
                         <strong>{formatPrice(order.value)}</strong>
                     </p>
 

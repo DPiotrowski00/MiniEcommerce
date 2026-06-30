@@ -260,3 +260,39 @@ textarea,
 select {
     font: inherit;
 }
+
+.language-switcher {
+    display: flex;
+    gap: 10px;
+}
+
+.lang-btn {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 16px;
+    border: none;
+    background: linear-gradient( 145deg, rgba(33, 37, 48, 0.96), rgba(20, 22, 31, 0.98) );
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.lang-btn:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0,255,200,0.22);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35), 0 0 18px rgba(0,255,200,0.08);
+}
+
+.lang-btn img {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+}
+
+.lang-btn.active {
+    border-color: rgba(0,255,200,0.3);
+    box-shadow: 0 0 14px rgba(0,255,200,0.1);
+}

@@ -32,10 +32,10 @@ export default function PasswordResetPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
             />
-            <button onClick={handleResetClick}>Zresetuj hasło</button>
+            <button onClick={handleResetClick}>{t("reset_password")}</button>
             <ModalWindow
                 visible={modal}
-                message={"Coś poszło nie tak."}
+                message={t("something_went_wrong")}
                 showButtons={false}
                 toggleModal={toggleModal}
             />

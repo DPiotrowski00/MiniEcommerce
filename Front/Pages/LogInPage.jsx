@@ -1,5 +1,6 @@
 ﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import useLogin from "../Hooks/useLogin";
 
 import ModalWindow from "../Components/ModalWindow";
@@ -16,6 +17,7 @@ export default function LogInPage() {
     const navigate = useNavigate();
 
     const { TryLogin } = useLogin();
+    const { t } = useTranslation();
 
     function toggleModal() {
         setVisible(!visible);
@@ -34,7 +36,7 @@ export default function LogInPage() {
     return (
         <div className="auth-page">
             <div className="auth-card">
-                <h1 className="auth-title">Logowanie</h1>
+                <h1 className="auth-title">{t("login")}</h1>
 
                 <div className="auth-form">
                     <div className="auth-group">
@@ -49,7 +51,7 @@ export default function LogInPage() {
                     </div>
 
                     <div className="auth-group">
-                        <label>Hasło</label>
+                        <label>{t("password")}</label>
 
                         <input
                             type="password"
@@ -60,13 +62,13 @@ export default function LogInPage() {
                     </div>
 
                     <button className="auth-button" onClick={handleLogin}>
-                        Zaloguj
+                        {t("log_in")}
                     </button>
                     <p
                         className="auth-link"
                         onClick={() => navigate("/reset-password")}
                     >
-                        Zapomniałeś hasła?
+                        {t("forgot_password")}
                     </p>
                 </div>
             </div>
