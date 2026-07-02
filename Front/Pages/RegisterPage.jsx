@@ -1,6 +1,7 @@
 ﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useLogin from "../Hooks/useLogin";
+import { useTranslation } from "react-i18next";
 
 import ModalWindow from "../Components/ModalWindow";
 
@@ -18,6 +19,7 @@ export default function RegisterPage() {
     const [visible, setVisible] = useState(false);
 
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     function toggleModal() {
         setVisible(!visible);

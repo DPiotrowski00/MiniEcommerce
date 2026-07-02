@@ -46,7 +46,7 @@ export default function LogInPage() {
                             type="text"
                             value={login}
                             onChange={(e) => setLogin(e.target.value)}
-                            placeholder="Wprowadź login / email"
+                            placeholder={t("enter_login_email")}
                         />
                     </div>
 
@@ -57,7 +57,7 @@ export default function LogInPage() {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Wprowadź hasło"
+                            placeholder={t("enter_password")}
                         />
                     </div>
 

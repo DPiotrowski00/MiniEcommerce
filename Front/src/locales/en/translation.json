@@ -52,6 +52,7 @@
   "display_name": "Display name",
   "email_address": "Email address",
   "enter_login": "Enter login",
+  "enter_login_email": "Enter login / email",
   "enter_password": "Enter password",
   "enter_name": "Enter name",
   "enter_email": "Enter email address"

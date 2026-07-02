@@ -264,6 +264,8 @@ select {
 .language-switcher {
     display: flex;
     gap: 10px;
+    margin-left: auto;
+    margin-right: 10px;
 }
 
 .lang-btn {

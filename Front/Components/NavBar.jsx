@@ -7,6 +7,9 @@ import cart from "../Images/cart.png";
 
 import "../Styles/NavBarStyle.css";
 
+import plFlag from "../Images/flags/pl.svg";
+import gbFlag from "../Images/flags/gb.svg";
+
 export default function NavBar() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -36,6 +39,7 @@ export default function NavBar() {
             if (
                 logInStatus === false &&
                 location.pathname !== "/" &&
+                !location.pathname.startsWith("/item") &&
                 location.pathname !== "/login" &&
                 location.pathname !== "/register" &&
                 location.pathname !== "/reset-password"
@@ -93,34 +97,33 @@ export default function NavBar() {
                     {t("register")}
                 </Link>
             </div>
+            <div className="language-switcher">
+                <button
+                    className={`lang-btn ${i18n.language === "pl" ? "active" : ""
+                        }`}
+                    onClick={() => i18n.changeLanguage("pl")}
+                    aria-label="Polski"
+                >
+                    <img
+                        src={plFlag}
+                        alt="Polski"
+                    />
+                </button>
 
+                <button
+                    className={`lang-btn ${i18n.language === "en" ? "active" : ""
+                        }`}
+                    onClick={() => i18n.changeLanguage("en")}
+                    aria-label="English"
+                >
+                    <img
+                        src={gbFlag}
+                        alt="English"
+                    />
+                </button>
+            </div>
             {logInStatus === true && (
                 <>
-                    <div className="language-switcher">
-                            <button
-                                className={`lang-btn ${i18n.language === "pl" ? "active" : ""
-                                    }`}
-                                onClick={() => i18n.changeLanguage("pl")}
-                                aria-label="Polski"
-                            >
-                                <img
-                                    src="/public/flags/pl.svg"
-                                    alt="Polski"
-                                />
-                            </button>
-
-                            <button
-                                className={`lang-btn ${i18n.language === "en" ? "active" : ""
-                                    }`}
-                                onClick={() => i18n.changeLanguage("en")}
-                                aria-label="English"
-                            >
-                                <img
-                                    src="public/flags/gb.svg"
-                                    alt="English"
-                                />
-                            </button>
-                        </div>
                     <div className="hidden-menu">
                         <div className="dropdown" ref={dropdownRef}>
                             <button
