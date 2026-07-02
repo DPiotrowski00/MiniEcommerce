@@ -11,7 +11,7 @@
     <StartupCommandWorkingDirectory>$(MSBuildProjectDirectory)</StartupCommandWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="flags\" />
+    <Folder Include="public\flags\" />
     <Folder Include="Styles\" />
   </ItemGroup>
 </Project>

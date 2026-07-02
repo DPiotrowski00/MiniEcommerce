@@ -104,7 +104,7 @@ export default function NavBar() {
                                 aria-label="Polski"
                             >
                                 <img
-                                    src="/flags/pl.svg"
+                                    src="/public/flags/pl.svg"
                                     alt="Polski"
                                 />
                             </button>
@@ -116,7 +116,7 @@ export default function NavBar() {
                                 aria-label="English"
                             >
                                 <img
-                                    src="flags/gb.svg"
+                                    src="public/flags/gb.svg"
                                     alt="English"
                                 />
                             </button>
