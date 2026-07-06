@@ -13,6 +13,7 @@ Funkcjonalność artykułów: !
 - Usuwanie/blokowanie artykułów,
 
 Funkcjonalność kont:
+- Potwierdzenie hasła przy rejestracji
 - Dwuskładnikowe logowanie
 - Logowanie kontem google
 - Przerobić generator haseł na token do zmiany hasła !
