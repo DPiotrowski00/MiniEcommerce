@@ -9,7 +9,7 @@
   "login": "Logowanie",
   "register": "Rejestracja",
   "add_offer": "Dodaj ofertę",
-  "my_account": "Moje konto",
+  "my_account": "Zmiana hasła",
   "my_orders": "Moje zamówienia",
   "log_out": "Wyloguj",
   "continue_shopping": "Kontynuuj zakupy",
@@ -56,6 +56,9 @@
   "enter_password": "Wprowadź hasło",
   "repeat_password": "Powtórz hasło",
   "passwords_do_not_match": "Podane hasła nie są jednakowe",
+  "old_new_passwords_cant_be_the_same": "Nowe hasło musi być inne od starego",
+  "password_change_succeeded": "Zmiana hasła przebiegła pomyślnie",
+  "password_change_failed": "Password change failed",
   "enter_name": "Wprowadź nazwę",
   "enter_email": "Wprowadź adres e-mail"
 }

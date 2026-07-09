@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import useOrders from "../Hooks/useOrders";
 import useItems from "../Hooks/useItems";
+import { useTranslation } from "react-i18next";
 
 import stringFormatters from "../Helpers/stringFormatters";
 
@@ -15,6 +16,8 @@ export default function MyOrdersPage() {
     const { GetItemById } = useItems();
     const { formatPrice, formatDate } = stringFormatters();
     const navigate = useNavigate();
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchOrders = async () => {

@@ -1,0 +1,134 @@
+/* PAGE */
+
+.account-page {
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+/* CARD */
+
+.password-form {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 36px;
+    border-radius: 28px;
+    background: linear-gradient( 145deg, rgba(33, 37, 48, 0.96), rgba(20, 22, 31, 0.98) );
+    border: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+    .password-form::before {
+        content: "";
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: radial-gradient( rgba(0,255,200,.12), transparent 70% );
+        pointer-events: none;
+    }
+
+/* TITLE */
+
+.password-title {
+    margin: 0 0 10px;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+}
+
+/* LABEL */
+
+.password-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #dce7f7;
+    font-size: .95rem;
+    font-weight: 600;
+    letter-spacing: .2px;
+}
+
+/* INPUT */
+
+.password-form input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.08);
+    color: white;
+    font-size: .95rem;
+    transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease, background .25s ease;
+}
+
+    .password-form input::placeholder {
+        color: #7d8796;
+    }
+
+    .password-form input:hover {
+        border-color: rgba(255,255,255,.16);
+    }
+
+    .password-form input:focus {
+        outline: none;
+        border-color: rgba(0,255,200,.4);
+        background: rgba(255,255,255,.05);
+        box-shadow: 0 0 0 4px rgba(0,255,200,.08), 0 0 20px rgba(0,255,200,.08);
+        transform: translateY(-1px);
+    }
+
+/* BUTTON */
+
+.password-form button {
+    margin-top: 8px;
+    padding: 16px;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    background: linear-gradient( 135deg, rgba(0,255,200,.18), rgba(0,140,255,.20) );
+    border: 1px solid rgba(0,255,200,.18);
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .3px;
+    transition: transform .3s ease, box-shadow .3s ease, background .3s ease;
+}
+
+    .password-form button:hover {
+        transform: translateY(-3px);
+        background: linear-gradient( 135deg, rgba(0,255,200,.24), rgba(0,140,255,.26) );
+        box-shadow: 0 10px 25px rgba(0,255,200,.15), 0 0 20px rgba(0,255,200,.10);
+    }
+
+    .password-form button:active {
+        transform: scale(.98);
+    }
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .account-page {
+        padding: 24px 16px;
+    }
+
+    .password-form {
+        padding: 28px 24px;
+        border-radius: 24px;
+    }
+
+    .password-title {
+        font-size: 1.55rem;
+    }
+}

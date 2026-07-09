@@ -8,8 +8,8 @@
   "home": "Home",
   "login": "Login",
   "register": "Register",
-  "add_offer": "Add offer",
-  "my_account": "My account",
+  "add_offer": "Add an offer",
+  "my_account": "Change password",
   "my_orders": "My orders",
   "log_out": "Log out",
   "continue_shopping": "Continue shopping",
@@ -56,6 +56,9 @@
   "enter_password": "Enter password",
   "repeat_password": "Repeat password",
   "passwords_do_not_match": "Provided passwords do not match",
+  "old_new_passwords_cant_be_the_same": "New password has to be different than the old one",
+  "password_change_succeeded": "Password change succeeded",
+  "password_change_failed": "Password change failed",
   "enter_name": "Enter name",
   "enter_email": "Enter email address"
 }

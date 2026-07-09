@@ -68,13 +68,15 @@ export default function useLogin() {
     };
 
     const TryChangePassword = async (OldPass, NewPass) => {
-        await apiFetch("/password", {
+        const response = await apiFetch("/password", {
             method: "POST",
             body: JSON.stringify({
                 OldPass,
                 NewPass,
             }),
         });
+
+        return response.ok;
     };
 
     const ResetPassword = async (email) => {
