@@ -54,6 +54,8 @@
   "enter_login": "Wprowadź login",
   "enter_login_email": "Wprowadź login / email",
   "enter_password": "Wprowadź hasło",
+  "repeat_password": "Powtórz hasło",
+  "passwords_do_not_match": "Podane hasła nie są jednakowe",
   "enter_name": "Wprowadź nazwę",
   "enter_email": "Wprowadź adres e-mail"
 }

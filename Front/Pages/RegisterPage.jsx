@@ -12,6 +12,7 @@ export default function RegisterPage() {
 
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
+    const [repeatPassword, setRepeatPassword] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [email, setEmail] = useState("");
     const [modalMessage, setModalMessage] = useState("");
@@ -26,18 +27,23 @@ export default function RegisterPage() {
     }
 
     const handleRegister = async () => {
-        const success = await TryRegister(login, password, displayName, email);
-        if (success) {
-            setModalMessage(t("email_confirmation_message"));
+        if (password !== repeatPassword) {
+            setModalMessage(t("passwords_do_not_match"));
             toggleModal();
-            setLogin("");
-            setPassword("");
-            setDisplayName("");
-            setEmail("");
-            navigate("/login");
         } else {
-            setModalMessage(t("register_attempt_failed"));
-            toggleModal();
+            const success = await TryRegister(login, password, displayName, email);
+            if (success) {
+                setModalMessage(t("email_confirmation_message"));
+                toggleModal();
+                setLogin("");
+                setPassword("");
+                setDisplayName("");
+                setEmail("");
+                navigate("/login");
+            } else {
+                setModalMessage(t("register_attempt_failed"));
+                toggleModal();
+            }
         }
     };
 
@@ -66,6 +72,17 @@ export default function RegisterPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder={t("enter_password")}
+                        />
+                    </div>
+
+                    <div className="auth-group">
+                        <label>{t("repeat_password")}</label>
+
+                        <input
+                            type="password"
+                            value={repeatPassword}
+                            onChange={(e) => setRepeatPassword(e.target.value)}
+                            placeholder={t("repeat_password")}
                         />
                     </div>
 
